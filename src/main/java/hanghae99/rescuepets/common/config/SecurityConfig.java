@@ -50,11 +50,9 @@ public class SecurityConfig {
 
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .antMatchers("/api/users/signup", "/api/users/login","/api/users/email/**","/api/users/nickName/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/houses", "/api/houses/{houseId}").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/tagTypes", "/api/tagTypes/byHome").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/tags").permitAll()
-                .antMatchers("/api/tag/**").permitAll()
+                .antMatchers("/api/member/signup", "/api/member/login","/api/users/email-duplicate/**","/api/users/nickName/**").permitAll()
+                .antMatchers(HttpMethod.GET, "api/pets/petinfobyapi/**", "api/pets/catch/**","api/pets/missing","api/pets/missing/comments/**").permitAll()
+                .antMatchers(HttpMethod.GET, "api/chat/catchroom/**","api/chat/missingroom/**","chat/rooms","chat/rooms/**").permitAll()
                 .antMatchers("/api/**").authenticated()
 
                 .and()
