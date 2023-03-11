@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("api")
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class PublicPetController {
     private final PublicPetService publicPetService;
@@ -25,7 +25,7 @@ public class PublicPetController {
 
 
 
-    @GetMapping("api/pets/petinfobyapi")
+    @GetMapping("/pets/petinfobyapi")
     public PublicPetResponsDto getPublicPet() {
         return publicPetService.getPublicPet();
     }
