@@ -36,5 +36,12 @@ public class MemberController {
     public MemberResponseDto login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         return memberService.login(loginRequestDto, response);
     }
-}
+
+    // 삭제 여기는 전역 Response 나오면 처리 하겠습니다
+    @PostMapping("/member/Withdrawal")
+        public void Withdrawal(@RequestBody WithDrawalRequestDto withDrawalRequestDto) {
+            memberService.Withdrawal(withDrawalRequestDto);
+        }
+    }
+
 

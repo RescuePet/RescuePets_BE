@@ -78,4 +78,21 @@ public class MemberService {
     }
 
 
+    public void Withdrawal(WithDrawalRequestDto withDrawalRequestDto) {
+        String email = withDrawalRequestDto.getEmail();
+        String password = withDrawalRequestDto.getPassword();
+
+        // 사용자 확인
+        Member member = memberRepository.findByEmail(email).orElseThrow(
+                () -> new IllegalArgumentException("사용자가 없습니다")
+        );
+
+        // 비밀번호 확인
+        if(!passwordEncoder.matches(password, member.getPassword())){
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+        }
+        memberRepository.delete(member);
+
+
+    }
 }
