@@ -1,6 +1,8 @@
 package hanghae99.rescuepets.common.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hanghae99.rescuepets.common.dto.ErrorResponseDto;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -52,7 +54,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         try {
-            String json = new ObjectMapper().writeValueAsString(ErrorResponseDto.of(statusCode, ErrorMessage.TOKEN_ERROR.getDescription()));
+            String json = new ObjectMapper().writeValueAsString(ErrorResponseDto.of(statusCode, "토큰에러가 발생하였습니다"));
             response.getWriter().write(json);
         } catch (Exception e) {
             log.error(e.getMessage());

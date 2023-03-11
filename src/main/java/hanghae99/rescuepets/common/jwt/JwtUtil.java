@@ -1,14 +1,17 @@
 package hanghae99.rescuepets.common.jwt;
 
 import hanghae99.rescuepets.common.entity.MemberRoleEnum;
-import hanghae99.rescuepets.common.security.MemberDetailService;
+
 import hanghae99.rescuepets.common.security.MemberDetailServiceImpl;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -21,7 +24,7 @@ import java.util.Date;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtUtil {
+public class JwtUtil  {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String AUTHORIZATION_KEY = "auth";
@@ -30,7 +33,7 @@ public class JwtUtil {
 
     private final MemberDetailServiceImpl memberDetailService;
 
-    @Value("${jwt.secret.key}")
+
     private String secretKey;
     private Key key;
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
@@ -94,7 +97,7 @@ public class JwtUtil {
 
     // 인증 객체 생성
     public Authentication createAuthentication(String email) {
-        UserDetails userDetails = MemberDetailServiceImpl.loadUserByUsername(email);
+        UserDetails userDetails = memberDetailService.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
