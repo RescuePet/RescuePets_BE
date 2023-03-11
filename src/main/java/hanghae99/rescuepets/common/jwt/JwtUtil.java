@@ -1,5 +1,8 @@
 package hanghae99.rescuepets.common.jwt;
 
+import hanghae99.rescuepets.common.entity.MemberRoleEnum;
+import hanghae99.rescuepets.common.security.MemberDetailService;
+import hanghae99.rescuepets.common.security.MemberDetailServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +28,7 @@ public class JwtUtil {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 24 * 60 * 60 * 1000L;
 
-    private final UserDetailsServiceImpl userDetailsService;
+    private final MemberDetailServiceImpl memberDetailService;
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -48,7 +51,7 @@ public class JwtUtil {
     }
 
     // 토큰 생성
-    public String createToken(String email, UserRoleEnum role) {
+    public String createToken(String email, MemberRoleEnum role) {
         Date date = new Date();
 
         return BEARER_PREFIX +
@@ -91,7 +94,7 @@ public class JwtUtil {
 
     // 인증 객체 생성
     public Authentication createAuthentication(String email) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        UserDetails userDetails = MemberDetailServiceImpl.loadUserByUsername(email);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 

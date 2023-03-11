@@ -1,6 +1,9 @@
 package hanghae99.rescuepets.common.config;
 
 
+import hanghae99.rescuepets.common.jwt.JwtAuthFilter;
+import hanghae99.rescuepets.common.security.JwtAccessDeniedHandler;
+import hanghae99.rescuepets.common.security.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -77,5 +80,3 @@ public class SecurityConfig {
     }
 }
 
-
-}

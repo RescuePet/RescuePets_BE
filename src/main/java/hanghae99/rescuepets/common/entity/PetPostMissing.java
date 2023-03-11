@@ -16,4 +16,6 @@ public class PetPostMissing {
     private String kindCd;
     private String specialMark;
     private String content;
-}
+
+    }
+
