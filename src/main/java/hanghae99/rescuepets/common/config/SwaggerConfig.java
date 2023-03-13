@@ -17,9 +17,9 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
 
         Info info = new Info()
-                .title("Kurly copy API 문서") // 타이틀
+                .title("RescuePets API 문서") // 타이틀
                 .version("1.0") // 문서 버전
-                .description("Kurly api docs") // 문서 설명
+                .description("RescuePets api docs") // 문서 설명
                 .contact(new Contact());
 
         // SecuritySecheme명
