@@ -16,6 +16,12 @@ public class RescuePetsApplication {
         System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
     }
 
+
+    @PostConstruct
+    public void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(RescuePetsApplication.class, args);
     }
