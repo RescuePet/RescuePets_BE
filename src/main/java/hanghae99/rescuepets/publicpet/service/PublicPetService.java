@@ -24,6 +24,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -107,11 +108,10 @@ public class PublicPetService {
         }
         return "성공";
     }
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PublicPetResponsDto> getPublicPet(int page, int size, String sortBy, Member member) {
 
-//        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetInfoByAPI> postPage = publicPetRepository.findAll(pageable);
 
@@ -126,4 +126,11 @@ public class PublicPetService {
     }
 
 
+    @Transactional(readOnly = true)
+    public PublicPetResponsDto getPublicPetDetails(String desertionNo, Member member) {
+        PetInfoByAPI dto = publicPetRepository.findByDesertionNo(desertionNo).orElseThrow(
+                () -> new NullPointerException("해당 유기동물 상세 정보가 없습니다.")
+        );
+        return PublicPetResponsDto.of(dto);
+    }
 }
