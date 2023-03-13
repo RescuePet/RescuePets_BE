@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class PublicPetService {
     private String publicApiKey;
     private final PublicPetRepository publicPetRepository;
     @Transactional
-    public String apiSave() throws IOException {
+    public String apiSave(String pageNo, String state) throws IOException {
         //추후 메서드 빼는거 고려 / 필요한 값은 변수명 지정하여 중복 코드 수정필요할것으로 생각됨.
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1543061/abandonmentPublicSrvc/abandonmentPublic"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + publicApiKey); /*Service Key*/
@@ -38,8 +39,8 @@ public class PublicPetService {
         urlBuilder.append("&" + URLEncoder.encode("org_cd","UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*시군구코드 (시군구 조회 OPEN API 참조)*/
         urlBuilder.append("&" + URLEncoder.encode("care_reg_no","UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*보호소번호 (보호소 조회 OPEN API 참조)*/
         urlBuilder.append("&" + URLEncoder.encode("state","UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*상태(전체 : null(빈값), 공고중 : notice, 보호중 : protect)*/
-        urlBuilder.append("&" + URLEncoder.encode("neuter_yn","UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*상태 (전체 : null(빈값), 예 : Y, 아니오 : N, 미상 : U)*/
-        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지 번호 (기본값 : 1)*/
+        urlBuilder.append("&" + URLEncoder.encode("neuter_yn","UTF-8") + "=" + URLEncoder.encode(state, "UTF-8")); /*상태 (전체 : null(빈값), 예 : Y, 아니오 : N, 미상 : U)*/
+        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode(pageNo, "UTF-8")); /*페이지 번호 (기본값 : 1)*/
         urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*페이지당 보여줄 개수 (1,000 이하), 기본값 : 10*/
         urlBuilder.append("&" + URLEncoder.encode("_type","UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*xml(기본값) 또는 json*/
         URL url = new URL(urlBuilder.toString());
@@ -54,11 +55,6 @@ public class PublicPetService {
             log.info(new BufferedReader(new InputStreamReader(conn.getErrorStream())) + "");
             throw new IOException();
         }
-//        StringBuilder sb = new StringBuilder();
-//        String line; //JSON 출력 용도
-//        while ((line = rd.readLine()) != null) {
-//            sb.append(line);
-//        }
         StringBuilder sb = new StringBuilder();
         String line;
         while ((line = rd.readLine()) != null) {
@@ -79,33 +75,34 @@ public class PublicPetService {
             JSONObject itemObject = itemList.getJSONObject(i);
 
             PetInfoByAPI petInfo = PetInfoByAPI.builder()
-                    .desertionNo(itemObject.getString("desertionNo"))
-                    .filename(itemObject.getString("filename"))
-                    .happenDt(itemObject.getString("happenDt"))
-                    .happenPlace(itemObject.getString("happenPlace"))
-                    .kindCd(itemObject.getString("kindCd"))
-                    .colorCd(itemObject.getString("colorCd"))
-                    .age(itemObject.getString("age"))
-                    .weight(itemObject.getString("weight"))
-                    .noticeNo(itemObject.getString("noticeNo"))
-                    .noticeSdt(itemObject.getString("noticeSdt"))
-                    .noticeEdt(itemObject.getString("noticeEdt"))
-                    .popfile(itemObject.getString("popfile"))
-                    .processState(itemObject.getString("processState"))
-                    .sexCd(itemObject.getString("sexCd"))
-                    .neuterYn(itemObject.getString("neuterYn"))
-                    .specialMark(itemObject.getString("specialMark"))
-                    .careNm(itemObject.getString("careNm"))
-                    .careTel(itemObject.getString("careTel"))
-                    .careAddr(itemObject.getString("careAddr"))
-                    .orgNm(itemObject.getString("orgNm"))
-                    .chargeNm(itemObject.getString("chargeNm"))
+                    .desertionNo(itemObject.optString("desertionNo"))
+                    .filename(itemObject.optString("filename"))
+                    .happenDt(itemObject.optString("happenDt"))
+                    .happenPlace(itemObject.optString("happenPlace"))
+                    .kindCd(itemObject.optString("kindCd"))
+                    .colorCd(itemObject.optString("colorCd"))
+                    .age(itemObject.optString("age"))
+                    .weight(itemObject.optString("weight"))
+                    .noticeNo(itemObject.optString("noticeNo"))
+                    .noticeSdt(itemObject.optString("noticeSdt"))
+                    .noticeEdt(itemObject.optString("noticeEdt"))
+                    .popfile(itemObject.optString("popfile"))
+                    .processState(itemObject.optString("processState"))
+                    .sexCd(itemObject.optString("sexCd"))
+                    .neuterYn(itemObject.optString("neuterYn"))
+                    .specialMark(itemObject.optString("specialMark"))
+                    .careNm(itemObject.optString("careNm"))
+                    .careTel(itemObject.optString("careTel"))
+                    .careAddr(itemObject.optString("careAddr"))
+                    .orgNm(itemObject.optString("orgNm"))
+                    .chargeNm(itemObject.optString("chargeNm"))
                     .build();
             publicPetRepository.save(new PetInfoByAPI(petInfo));
         }
         return "성공";
     }
-    public PublicPetResponsDto getPublicPet() {
+    public List<PublicPetResponsDto> getPublicPet() {
+
         return null;
     }
 
