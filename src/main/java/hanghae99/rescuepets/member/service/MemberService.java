@@ -19,7 +19,7 @@ public class MemberService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
-    @Value("${admin_token}")
+    @Value("${ADMIN_TOKEN}")
     private String ADMIN_TOKEN;
 
     public MemberResponseDto signup(SignupRequestDto signupRequestDto) {
