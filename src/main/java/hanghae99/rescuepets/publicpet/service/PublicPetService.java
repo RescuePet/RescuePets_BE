@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.publicpet.service;
 
+import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetInfoByAPI;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
 import hanghae99.rescuepets.publicpet.repository.PublicPetRepository;
@@ -8,6 +9,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +22,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -101,9 +107,22 @@ public class PublicPetService {
         }
         return "성공";
     }
-    public List<PublicPetResponsDto> getPublicPet() {
+    @Transactional
+    public List<PublicPetResponsDto> getPublicPet(int page, int size, String sortBy, Member member) {
 
-        return null;
+//        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<PetInfoByAPI> postPage = publicPetRepository.findAll(pageable);
+
+        List<PetInfoByAPI> pets = postPage.getContent();
+        List<PublicPetResponsDto> dtoList = new ArrayList<>();
+
+        for (PetInfoByAPI petInfoByAPI : pets) {
+            PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI);
+            dtoList.add(responseDto);
+        }
+    return dtoList;
     }
 
 

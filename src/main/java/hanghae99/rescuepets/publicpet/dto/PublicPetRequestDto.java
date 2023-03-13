@@ -9,7 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PublicPetRequestDto {
     private Long id;
-
     private String desertionNo;
     private String filename;
     private String happenDt;
