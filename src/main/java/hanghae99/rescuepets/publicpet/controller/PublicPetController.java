@@ -26,22 +26,28 @@ public class PublicPetController {
         return publicPetService.apiSave(pageNo, state);
     }
 
-
     //    @SecurityRequirements
     @GetMapping("/info-list")
     @Operation(summary = "유기동물 전체 정보 가져오기", description = "자세한 설명")
     public List<PublicPetResponsDto> getPublicPet(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy", required = false, defaultValue = "happenDt") String sortBy, @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.getPublicPet(page - 1, size, sortBy, memberDetails.getMember());
     }
+    //    @SecurityRequirements
     @GetMapping("/details/{desertionNo}")
     @Operation(summary = "유기동물 상세 정보 가져오기", description = "자세한 설명")
     public PublicPetResponsDto getPublicPetDetails(@PathVariable(value = "desertionNo") String desertionNo, @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.getPublicPetDetails(desertionNo, memberDetails.getMember());
     }
 
-    @PostMapping("/likes")
+    //마이페이지에 PetinfoLike 연관관계로 풀어보면 될듯, 관심 등록한 유기동물은 desertionNo로 상세페이지 API를 통해 이동하면 될듯함
+    @PostMapping("/likes/{desertionNo}")
     @Operation(summary = "유기동물 관심 등록", description = "자세한 설명")
-    public String petinfoLike(@PathVariable(value = "desertionNo") String desertionNo) {
-        return null;
+    public String petInfoLike(@PathVariable(value = "desertionNo") String desertionNo, @AuthenticationPrincipal MemberDetails memberDetails) {
+        return publicPetService.petInfoLike(desertionNo, memberDetails.getMember());
+    }
+    @DeleteMapping("/likes/{PetInfoLikeId}")
+    @Operation(summary = "유기동물 관심 삭제", description = "자세한 설명")
+    public String deletePetInfoLike(@PathVariable(value = "PetInfoLikeId") Long PetInfoLikeId, @AuthenticationPrincipal MemberDetails memberDetails) {
+        return publicPetService.deletePetInfoLike(PetInfoLikeId, memberDetails.getMember());
     }
 }

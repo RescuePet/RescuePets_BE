@@ -5,10 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 
 @Entity
 @NoArgsConstructor
@@ -19,7 +17,8 @@ public class PetInfoByAPI extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    //테스트로 유니크 주석 처리
+//    @Column(nullable = false, unique = true)
     private String desertionNo;
     private String filename;
     private String happenDt;
