@@ -23,8 +23,6 @@ public class MemberResponseDto {
         this.nickname = member.getNickname();
         this.email = member.getEmail();
         this.role = member.getRole();
-
-
     }
 
 }
