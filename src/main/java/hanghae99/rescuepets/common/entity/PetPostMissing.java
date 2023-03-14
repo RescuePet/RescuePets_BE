@@ -1,12 +1,19 @@
 package hanghae99.rescuepets.common.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import hanghae99.rescuepets.memberpet.dto.MemberPetRequestDto;
+import hanghae99.rescuepets.memberpet.dto.PetPostMissingRequestDto;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 @Entity
-public class PetPostMissing {
+@Getter
+@NoArgsConstructor
+public class PetPostMissing extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,5 +25,25 @@ public class PetPostMissing {
     private String specialMark;
     private String content;
 
+    @ManyToOne
+    @JoinColumn(name = "memberId", nullable = false)
+    private Member member;
+
+    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
+    private List<Wish> wishList = new ArrayList<>();
+
+    public PetPostMissing(PetPostMissingRequestDto requestDto, Member member) {
+        this.postedDate = requestDto.getPostedDate();
+        this.happenPlace = requestDto.getHappenPlace();
+        this.popfile = requestDto.getPopfile();
+        this.kindCd = requestDto.getKindCd();
+        this.specialMark = requestDto.getSpecialMark();
+        this.content = requestDto.getContent();
+        this.member = member;
     }
+
+}
 

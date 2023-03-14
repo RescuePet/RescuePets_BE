@@ -1,10 +1,10 @@
 package hanghae99.rescuepets.memberpet.dto;
 
 import java.util.Date;
-
 import lombok.Getter;
+
 @Getter
-public class MemberPetRequestDto {
+public class PetPostCatchRequestDto {
 
     private Date postedDate;
     private String happenPlace;
@@ -13,5 +13,4 @@ public class MemberPetRequestDto {
     private String specialMark;
     private String content;
     private boolean openNickname;
-
 }

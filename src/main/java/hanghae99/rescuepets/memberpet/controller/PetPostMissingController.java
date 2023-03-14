@@ -1,7 +1,5 @@
 package hanghae99.rescuepets.memberpet.controller;
 
-import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.memberpet.dto.MemberPetRequestDto;
 import hanghae99.rescuepets.memberpet.service.MemberPetService;
 import lombok.RequiredArgsConstructor;
 //import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -12,9 +10,9 @@ import java.io.IOException;
 import java.util.List;
 
 
-@RequestMapping("/api/pets")
+@RequestMapping("/api/pets/missing")
 @RequiredArgsConstructor
 @RestController
-public class MemberPetController {
+public class PetPostMissingController {
 
 }
