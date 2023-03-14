@@ -2,7 +2,9 @@ package hanghae99.rescuepets.publicpet.service;
 
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetInfoByAPI;
+import hanghae99.rescuepets.common.entity.PetInfoLike;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
+import hanghae99.rescuepets.publicpet.repository.PetInfoLikeRepository;
 import hanghae99.rescuepets.publicpet.repository.PublicPetRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
@@ -32,6 +34,10 @@ public class PublicPetService {
     @Value("${public.api.key}")
     private String publicApiKey;
     private final PublicPetRepository publicPetRepository;
+    private final PetInfoLikeRepository petInfoLikeRepository;
+
+
+    //apiSave는 테스트 완료시 분리 예정 @Scheduled
     @Transactional
     public String apiSave(String pageNo, String state) throws IOException {
         //추후 메서드 빼는거 고려 / 필요한 값은 변수명 지정하여 중복 코드 수정필요할것으로 생각됨.
@@ -107,11 +113,10 @@ public class PublicPetService {
         }
         return "성공";
     }
-    @Transactional
+    @Transactional(readOnly = true)
     public List<PublicPetResponsDto> getPublicPet(int page, int size, String sortBy, Member member) {
 
-//        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetInfoByAPI> postPage = publicPetRepository.findAll(pageable);
 
@@ -126,4 +131,40 @@ public class PublicPetService {
     }
 
 
+    @Transactional(readOnly = true)
+    public PublicPetResponsDto getPublicPetDetails(String desertionNo, Member member) {
+        PetInfoByAPI petInfoByAPI = getPetInfo(desertionNo);
+        return PublicPetResponsDto.of(petInfoByAPI);
+    }
+
+    //관심 유기동물 등록
+    @Transactional
+    public String petInfoLike(String desertionNo, Member member) {
+        getPetInfo(desertionNo);
+        if (petInfoLikeRepository.findByMemberIdAndDesertionNo(member.getId(),desertionNo).isPresent()){
+            //이미 등록한 상태
+            log.error("이미 관심 등록되어 있습니다.");
+            throw new RuntimeException();
+        }
+        petInfoLikeRepository.save(new PetInfoLike(member, desertionNo));
+        return "성공";
+    }
+
+    //관심 유기동물 삭제
+    @Transactional
+    public String deletePetInfoLike(Long PetInfoLikeId, Member member) {
+        boolean test = !petInfoLikeRepository.findByMemberIdAndId(member.getId(), PetInfoLikeId).isPresent();
+        if (!petInfoLikeRepository.findByMemberIdAndId(member.getId(), PetInfoLikeId).isPresent()){
+            log.error("요청하신 유저는 해당 관심 유기 동물이 등록되어 있지 않습니다.");
+            throw new NullPointerException();
+        }
+        petInfoLikeRepository.deleteByMemberIdAndId(member.getId(), PetInfoLikeId);
+        return "성공";
+    }
+
+    private PetInfoByAPI getPetInfo(String desertionNo) {
+        return publicPetRepository.findByDesertionNo(desertionNo).orElseThrow(
+                () -> new NullPointerException("해당 유기동물 정보가 없습니다.")
+        );
+    }
 }
