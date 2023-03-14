@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.common.entity;
 
+import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,27 +37,27 @@ public class PetPostCatch extends TimeStamped{
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.REMOVE)
     private List<Wish> wishList = new ArrayList<>();
 
-//
-//    public PetPostCatch(PetPostCatchRequestDto requestDto, Member member) {
-//        this.postedDate = requestDto.getPostedDate();
-//        this.happenPlace = requestDto.getHappenPlace();
-//        this.popfile = requestDto.getPopfile();
-//        this.kindCd = requestDto.getKindCd();
-//        this.specialMark = requestDto.getSpecialMark();
-//        this.content = requestDto.getContent();
-//        this.member = member;
-//    }
-//    public void setOpenNickname(boolean isOpenNickname) {
-//        openNickname = isOpenNickname;
-//    }
-//
-//
-//    public void update(PetPostCatchRequestDto requestDto) {
-//        this.postedDate = requestDto.getPostedDate();
-//        this.happenPlace = requestDto.getHappenPlace();
-//        this.popfile = requestDto.getPopfile();
-//        this.kindCd = requestDto.getKindCd();
-//        this.specialMark = requestDto.getSpecialMark();
-//        this.content = requestDto.getContent();
-//    }
+
+    public PetPostCatch(PetPostCatchRequestDto requestDto, Member member) {
+        this.postedDate = requestDto.getPostedDate();
+        this.happenPlace = requestDto.getHappenPlace();
+        this.popfile = requestDto.getPopfile();
+        this.kindCd = requestDto.getKindCd();
+        this.specialMark = requestDto.getSpecialMark();
+        this.content = requestDto.getContent();
+        this.member = member;
+    }
+    public void setOpenNickname(boolean isOpenNickname) {
+        openNickname = isOpenNickname;
+    }
+
+
+    public void update(PetPostCatchRequestDto requestDto) {
+        this.postedDate = requestDto.getPostedDate();
+        this.happenPlace = requestDto.getHappenPlace();
+        this.popfile = requestDto.getPopfile();
+        this.kindCd = requestDto.getKindCd();
+        this.specialMark = requestDto.getSpecialMark();
+        this.content = requestDto.getContent();
+    }
 }
