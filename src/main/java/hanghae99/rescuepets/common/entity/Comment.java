@@ -27,12 +27,12 @@ public class Comment extends TimeStamped{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
-//
-//    public Comment(String content, PetPostMissing petPostMissing, Member member) {
-//        this.content = content;
-//        this.petPostMissing = petPostMissing;
-//        this.member = member;
-//    }
+
+    public Comment(String content, PetPostMissing petPostMissing, Member member) {
+        this.content = content;
+        this.petPostMissing = petPostMissing;
+        this.member = member;
+    }
 
     public void update(String content) {
         this.content = content;
