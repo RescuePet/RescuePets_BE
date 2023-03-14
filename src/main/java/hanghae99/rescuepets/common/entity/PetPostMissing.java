@@ -28,12 +28,12 @@ public class PetPostMissing extends TimeStamped{
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
-//
-//    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
-//    private List<Comment> commentList = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
-//    private List<Wish> wishList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
+    private List<Wish> wishList = new ArrayList<>();
 
 //    public PetPostMissing(PetPostMissingRequestDto requestDto, Member member) {
 //        this.postedDate = requestDto.getPostedDate();
