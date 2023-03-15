@@ -30,7 +30,7 @@ public class PublicPetResponsDto {
     private String orgNm;
     private String chargeNm;
     private String officetel;
-    private String status; //지정 해줘야 함/ 고려할것
+    private String state;
     public static PublicPetResponsDto of(PetInfoByAPI petInfoByAPI) {
         return PublicPetResponsDto.builder()
                 .id(petInfoByAPI.getId())
@@ -56,7 +56,7 @@ public class PublicPetResponsDto {
                 .orgNm(petInfoByAPI.getOrgNm())
                 .chargeNm(petInfoByAPI.getChargeNm())
                 .officetel(petInfoByAPI.getOfficetel())
-                .status(petInfoByAPI.getStatus())
+                .state(petInfoByAPI.getState())
                 .build();
     }
 }

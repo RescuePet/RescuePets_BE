@@ -26,12 +26,23 @@ public class PublicPetController {
         return publicPetService.apiSave(pageNo, state);
     }
 
+    //메서드 분리 중
+    @PostMapping("/api-saves/{pageNo}")
+    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 저장 Refactor 진행", description = "자세한 설명")
+    public String apiSaves(@PathVariable(value = "pageNo") String pageNo,
+                          @RequestParam(value = "state") String state) throws IOException {
+        return publicPetService.apiSaves(pageNo, state);
+    }
+
+
+
     //    @SecurityRequirements
     @GetMapping("/info-list")
     @Operation(summary = "유기동물 전체 정보 가져오기", description = "자세한 설명")
     public List<PublicPetResponsDto> getPublicPet(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy", required = false, defaultValue = "happenDt") String sortBy, @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.getPublicPet(page - 1, size, sortBy, memberDetails.getMember());
     }
+
     //    @SecurityRequirements
     @GetMapping("/details/{desertionNo}")
     @Operation(summary = "유기동물 상세 정보 가져오기", description = "자세한 설명")
@@ -45,6 +56,7 @@ public class PublicPetController {
     public String petInfoLike(@PathVariable(value = "desertionNo") String desertionNo, @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.petInfoLike(desertionNo, memberDetails.getMember());
     }
+
     @DeleteMapping("/likes/{PetInfoLikeId}")
     @Operation(summary = "유기동물 관심 삭제", description = "자세한 설명")
     public String deletePetInfoLike(@PathVariable(value = "PetInfoLikeId") Long PetInfoLikeId, @AuthenticationPrincipal MemberDetails memberDetails) {

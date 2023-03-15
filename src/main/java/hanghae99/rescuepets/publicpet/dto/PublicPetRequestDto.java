@@ -31,6 +31,6 @@ public class PublicPetRequestDto {
     private String orgNm;
     private String chargeNm;
     private String officetel;
-    private String status; //지정 해줘야 함/ 고려할것
+    private String state;
 
 }
