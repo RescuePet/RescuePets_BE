@@ -2,6 +2,7 @@ package hanghae99.rescuepets.publicpet.controller;
 
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
+import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
 import hanghae99.rescuepets.publicpet.service.PublicPetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
@@ -41,7 +42,7 @@ public class PublicPetController {
     @SecurityRequirements
     @GetMapping("/info-list")
     @Operation(summary = "유기동물 전체 정보 가져오기", description = "자세한 설명")
-    public List<PublicPetResponsDto> getPublicPet(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy", required = false, defaultValue = "happenDt") String sortBy) {
+    public PublicPetsResponsDto getPublicPet(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy", required = false, defaultValue = "happenDt") String sortBy) {
         return publicPetService.getPublicPet(page - 1, size, sortBy);
     }
 

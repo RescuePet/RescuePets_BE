@@ -5,6 +5,7 @@ import hanghae99.rescuepets.common.entity.PetInfoByAPI;
 import hanghae99.rescuepets.common.entity.PetInfoLike;
 import hanghae99.rescuepets.common.entity.PetInfoState;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
+import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
 import hanghae99.rescuepets.publicpet.repository.PetInfoLikeRepository;
 import hanghae99.rescuepets.publicpet.repository.PetInfoStateRepository;
 import hanghae99.rescuepets.publicpet.repository.PublicPetRepository;
@@ -413,7 +414,7 @@ public class PublicPetService {
 
 
     @Transactional(readOnly = true)
-    public List<PublicPetResponsDto> getPublicPet(int page, int size, String sortBy) {
+    public PublicPetsResponsDto getPublicPet(int page, int size, String sortBy) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -426,7 +427,7 @@ public class PublicPetService {
             PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI);
             dtoList.add(responseDto);
         }
-    return dtoList;
+    return new PublicPetsResponsDto(dtoList, postPage.isLast());
     }
 
 
@@ -441,9 +442,7 @@ public class PublicPetService {
     public String petInfoLike(String desertionNo, Member member) {
         getPetInfo(desertionNo);
         if (petInfoLikeRepository.findByMemberIdAndDesertionNo(member.getId(),desertionNo).isPresent()){
-            //이미 등록한 상태
-            log.error("이미 관심 등록되어 있습니다.");
-            throw new RuntimeException();
+            throw new RuntimeException("이미 관심 등록되어 있습니다.");
         }
         petInfoLikeRepository.save(new PetInfoLike(member, desertionNo));
         return "성공";
@@ -453,8 +452,7 @@ public class PublicPetService {
     @Transactional
     public String deletePetInfoLike(Long PetInfoLikeId, Member member) {
         if (petInfoLikeRepository.findByMemberIdAndId(member.getId(), PetInfoLikeId).isEmpty()){
-            log.error("요청하신 유저는 해당 관심 유기 동물이 등록되어 있지 않습니다.");
-            throw new NullPointerException();
+            throw new NullPointerException("요청하신 유저는 해당 관심 유기 동물이 등록되어 있지 않습니다.");
         }
         petInfoLikeRepository.deleteByMemberIdAndId(member.getId(), PetInfoLikeId);
         return "성공";
