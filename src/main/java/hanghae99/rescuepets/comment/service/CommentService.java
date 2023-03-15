@@ -41,7 +41,7 @@ public class CommentService {
     }
     @Transactional
     public ResponseDto<String> create(Long petPostMissingId, CommentRequestDto requestDto, Member member) {
-        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("댓글이 없는데용")
+        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
 //                CustomException(ErrorCode.NotFoundPost)
         );
         commentRepository.save(new Comment(requestDto.getContent(), petPostMissing, member));

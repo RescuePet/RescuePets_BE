@@ -15,7 +15,8 @@ public class PetPostCatchResponseDto {
     private String nickname;
     private String createdAt;
     private String modifiedAt;
-    private boolean openNickname;
+    private Boolean openNickname;
+    private Boolean isWished;
 
     public static PetPostCatchResponseDto of(PetPostCatch petPostCatch) {
         return PetPostCatchResponseDto.builder()
@@ -27,9 +28,11 @@ public class PetPostCatchResponseDto {
                 .nickname(petPostCatch.getMember().getNickname())
                 .createdAt(petPostCatch.getCreatedAt().toString())
                 .modifiedAt(petPostCatch.getModifiedAt().toString())
+                .openNickname(petPostCatch.getOpenNickname())
                 .build();
     }
-    public void setOpenNickname(boolean isOpenNickname) {
-        openNickname = isOpenNickname;
+
+    public void setWished(boolean wished) {
+        isWished = wished;
     }
 }

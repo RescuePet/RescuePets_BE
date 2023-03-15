@@ -29,21 +29,21 @@ public class PetPostCatchController {
     public ResponseDto<List<PetPostCatchResponseDto>> getPetPostCatchList(@RequestParam int page,
                                                                   @RequestParam int size,
                                                                   @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-                                                                  @AuthenticationPrincipal MemberDetails memberDetails) {
+                                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
         //sortBy = postLikeCount,
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
     }
 
     @GetMapping("/{petPostCatchId}")
-    public ResponseDto<PetPostCatchResponseDto> getPetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseDto<PetPostCatchResponseDto> getPetPostCatch(@PathVariable Long petPostCatchId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
         return petPostCatchService.getPetPostCatch(petPostCatchId, member);
     }
 
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<String> createPost(@ModelAttribute PetPostCatchRequestDto requestDto,
-                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) throws IOException {
+                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return petPostCatchService.create(requestDto, memberDetails.getMember());
     }
 
@@ -51,7 +51,7 @@ public class PetPostCatchController {
     @PutMapping(value = "/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<String> updatePost(@PathVariable Long petPostCatchId,
                                           @ModelAttribute PetPostCatchRequestDto requestDto,
-                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) throws IOException{
+                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return petPostCatchService.update(petPostCatchId, requestDto, memberDetails.getMember());
     }
 

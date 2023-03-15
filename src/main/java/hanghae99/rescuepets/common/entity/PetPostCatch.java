@@ -23,7 +23,7 @@ public class PetPostCatch extends TimeStamped{
     private String kindCd;
     private String specialMark;
     private String content;
-    private boolean openNickname;
+    private Boolean openNickname;
 
 
 
@@ -45,11 +45,8 @@ public class PetPostCatch extends TimeStamped{
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
         this.member = member;
+        this.openNickname = requestDto.getOpenNickname();
     }
-    public void setOpenNickname(boolean isOpenNickname) {
-        openNickname = isOpenNickname;
-    }
-
 
     public void update(PetPostCatchRequestDto requestDto, String imageUrl) {
         this.happenPlace = requestDto.getHappenPlace();
@@ -57,5 +54,6 @@ public class PetPostCatch extends TimeStamped{
         this.kindCd = requestDto.getKindCd();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
+        this.openNickname = requestDto.getOpenNickname();
     }
 }

@@ -5,6 +5,7 @@ import hanghae99.rescuepets.comment.dto.CommentRequestDto;
 import hanghae99.rescuepets.comment.service.CommentService;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.security.MemberDetails;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -23,23 +24,23 @@ public class CommentController {
 //        return commentService.getCommentList(userDetails.getMember());
 //    }
 
-    @GetMapping("/pets/missing/{petPostMissingId}/comments")
+    @GetMapping("/pets/missing/comments/{petPostMissingId}")
     public ResponseDto<List<CommentResponseDto>> getCommentByPost(@PathVariable Long petPostMissingId) {
         return commentService.getCommentCurrentList(petPostMissingId);
     }
 
-    @PostMapping("/pets/missing/{petPostMissingId}/comments")
-    public ResponseDto<String> createComment(@PathVariable Long petPostMissingId, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal MemberDetails userDetails) {
+    @PostMapping("/pets/missing/comments/{petPostMissingId}")
+    public ResponseDto<String> createComment(@PathVariable Long petPostMissingId, @RequestBody CommentRequestDto requestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return commentService.create(petPostMissingId, requestDto, userDetails.getMember());
     }
 
-    @PutMapping("/pets/missing/{petPostMissingId}/comments/{commentId}")
-    public ResponseDto<String> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal MemberDetails userDetails) {
+    @PutMapping("/pets/missing/comments/{commentId}")
+    public ResponseDto<String> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return commentService.update(commentId, requestDto, userDetails.getMember());
     }
 
-    @DeleteMapping("/pets/missing/{petPostMissingId}/comments/{commentId}")
-    public ResponseDto<String> deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal MemberDetails userDetails) {
+    @DeleteMapping("/pets/missing/comments/{commentId}")
+    public ResponseDto<String> deleteComment(@PathVariable Long commentId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return commentService.delete(commentId, userDetails.getMember());
     }
 }

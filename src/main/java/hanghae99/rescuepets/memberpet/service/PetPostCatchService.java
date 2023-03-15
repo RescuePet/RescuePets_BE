@@ -36,17 +36,13 @@ public class PetPostCatchService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findAll(pageable);
 
-        List<PetPostCatch> PetPostCatchs = PetPostCatchPage.getContent();
+        List<PetPostCatch> PetPostCatches = PetPostCatchPage.getContent();
         List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
 
-        for (PetPostCatch petPostCatch : PetPostCatchs) {
-            boolean isOpenNickname = false;
-            PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
-            if(member != null) { // 로그인 했을 때 좋아요 여부 체크
-                isOpenNickname = wishRepository.findByPetPostCatchIdAndMemberId(petPostCatch.getId(),member.getId()).isPresent();
-            }
-            responseDto.setOpenNickname(isOpenNickname);
-            dtoList.add(responseDto);
+        for (PetPostCatch petPostCatch : PetPostCatches) {
+            PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
+            dto.setWished(wishRepository.findByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+            dtoList.add(dto);
         }
         return ResponseDto.success(dtoList);
     }
@@ -57,16 +53,12 @@ public class PetPostCatchService {
 //                new CustomException(ErrorCode.NotFoundPost)
         );
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
-        boolean isOpenNickname = false;
-        if(member != null) {
-            isOpenNickname = wishRepository.findByPetPostCatchIdAndMemberId(petPostCatch.getId(),member.getId()).isPresent();
-        }
-        responseDto.setOpenNickname(isOpenNickname);
+        responseDto.setWished(wishRepository.findByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
         return ResponseDto.success(responseDto);
     }
 
     @Transactional
-    public ResponseDto<String> create(PetPostCatchRequestDto requestDto, Member member) throws IOException {
+    public ResponseDto<String> create(PetPostCatchRequestDto requestDto, Member member) {
         String imageUrl = s3Uploader.uploadSingle(requestDto.getPopfile());
         petPostCatchRepository.save(new PetPostCatch(requestDto, imageUrl, member));
 
@@ -75,7 +67,7 @@ public class PetPostCatchService {
 
 
     @Transactional
-    public ResponseDto<String> update(Long petPostCatchId, PetPostCatchRequestDto requestDto, Member member) throws IOException {
+    public ResponseDto<String> update(Long petPostCatchId, PetPostCatchRequestDto requestDto, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
 //                CustomException(ErrorCode.NotFoundPost)
         );
