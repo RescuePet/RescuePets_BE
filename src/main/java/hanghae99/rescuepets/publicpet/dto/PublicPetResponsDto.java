@@ -39,7 +39,7 @@ public class PublicPetResponsDto {
                 .happenDt(petInfoByAPI.getHappenDt())
                 .happenPlace(petInfoByAPI.getHappenPlace())
                 .kindCd(petInfoByAPI.getKindCd())
-                .colorCd(petInfoByAPI.getAge())
+                .colorCd(petInfoByAPI.getColorCd())
                 .age(petInfoByAPI.getAge())
                 .weight(petInfoByAPI.getWeight())
                 .noticeNo(petInfoByAPI.getNoticeNo())
