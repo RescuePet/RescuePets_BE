@@ -21,18 +21,18 @@ import java.util.List;
 public class PublicPetController {
     private final PublicPetService publicPetService;
 
-    @SecurityRequirements
-    @PostMapping("/api-save/{pageNo}")
-    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 저장", description = "자세한 설명")
-    public String apiSave(@PathVariable(value = "pageNo") String pageNo,
-                          @RequestParam(value = "state") String state) throws IOException {
-        return publicPetService.apiSave(pageNo, state);
-    }
+//    @SecurityRequirements
+//    @PostMapping("/api-save/{pageNo}")
+//    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 저장", description = "자세한 설명")
+//    public String apiSave(@PathVariable(value = "pageNo") String pageNo,
+//                          @RequestParam(value = "state") String state) throws IOException {
+//        return publicPetService.apiSave(pageNo, state);
+//    }
 
     //메서드 분리 중
     @SecurityRequirements
-    @PostMapping("/api-saves/{pageNo}")
-    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 저장 Refactor 진행", description = "자세한 설명")
+    @PostMapping("/api-save/{pageNo}")
+    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 저장 진행", description = "자세한 설명")
     public String apiSaves(@PathVariable(value = "pageNo") String pageNo,
                            @RequestParam(value = "state") String state) throws IOException {
         return publicPetService.apiSaves(pageNo, state);
