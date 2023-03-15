@@ -413,7 +413,7 @@ public class PublicPetService {
 
 
     @Transactional(readOnly = true)
-    public List<PublicPetResponsDto> getPublicPet(int page, int size, String sortBy, Member member) {
+    public List<PublicPetResponsDto> getPublicPet(int page, int size, String sortBy) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -431,7 +431,7 @@ public class PublicPetService {
 
 
     @Transactional(readOnly = true)
-    public PublicPetResponsDto getPublicPetDetails(String desertionNo, Member member) {
+    public PublicPetResponsDto getPublicPetDetails(String desertionNo) {
         PetInfoByAPI petInfoByAPI = getPetInfo(desertionNo);
         return PublicPetResponsDto.of(petInfoByAPI);
     }
