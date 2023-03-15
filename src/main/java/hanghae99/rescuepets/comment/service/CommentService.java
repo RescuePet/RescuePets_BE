@@ -48,32 +48,32 @@ public class CommentService {
         return ResponseDto.success("댓글 등록 성공");
     }
 
-//    @Transactional
-//    public ResponseDto<String> update(Long petPostMissingId, CommentRequestDto requestDto, Member member) {
-//        Comment comment = commentRepository.findById(requestDto.getId()).orElseThrow(() -> new NullPointerException("댓글이 없는데용")
-////                CustomException(ErrorCode.NotFoundComment)
-//        );
-//        if (comment.getMember().getNickname().equals(member.getNickname())) {
-//            comment.update(requestDto.getContent());
-//            return ResponseDto.success("댓글 수정 성공");
-//        } else {
-//            throw new NullPointerException("수정권한이 없는데용");
-////                    CustomException(ErrorCode.NoModifyPermission);
-//        }
-//    }
-//
-//    @Transactional
-//    public ResponseDto<String> delete(Long petPostMissingId, Member member) {
-//        Comment comment = commentRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("댓글이 없는데용")
-////                CustomException(ErrorCode.NotFoundComment)
-//        );
-//        if (comment.getMember().getNickname().equals(member.getNickname())) {
-//            commentRepository.deleteById(petPostMissingId);
-//            return ResponseDto.success("댓글 삭제 성공");
-//        } else {
-//            throw new NullPointerException("삭제권한이 없는데용");
-////                    CustomException(ErrorCode.NoDeletePermission);
-//        }
-//    }
+    @Transactional
+    public ResponseDto<String> update(Long commentId, CommentRequestDto requestDto, Member member) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NullPointerException("댓글이 없는데용")
+//                CustomException(ErrorCode.NotFoundComment)
+        );
+        if (comment.getMember().getNickname().equals(member.getNickname())) {
+            comment.update(requestDto.getContent());
+            return ResponseDto.success("댓글 수정 성공");
+        } else {
+            throw new NullPointerException("수정권한이 없는데용");
+//                    CustomException(ErrorCode.NoModifyPermission);
+        }
+    }
+
+    @Transactional
+    public ResponseDto<String> delete(Long commentId, Member member) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new NullPointerException("댓글이 없는데용")
+//                CustomException(ErrorCode.NotFoundComment)
+        );
+        if (comment.getMember().getNickname().equals(member.getNickname())) {
+            commentRepository.deleteById(commentId);
+            return ResponseDto.success("댓글 삭제 성공");
+        } else {
+            throw new NullPointerException("삭제권한이 없는데용");
+//                    CustomException(ErrorCode.NoDeletePermission);
+        }
+    }
 
 }

@@ -6,11 +6,14 @@ import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
 import hanghae99.rescuepets.memberpet.service.PetPostCatchService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,25 +30,29 @@ public class PetPostCatchController {
                                                                   @RequestParam int size,
                                                                   @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                                                   @AuthenticationPrincipal MemberDetails memberDetails) {
-        Member member = null;
-        if(memberDetails != null) {
-            member = memberDetails.getMember();
-        }
+        Member member = memberDetails.getMember();
         //sortBy = postLikeCount,
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
     }
 
-    @PostMapping("/")
-    public ResponseDto<String> createPost(@RequestPart PetPostCatchRequestDto requestDto, @RequestPart(value = "image") MultipartFile multipartFile, @AuthenticationPrincipal MemberDetails memberDetails) throws IOException {
-        return petPostCatchService.create(requestDto, multipartFile, memberDetails.getMember());
+    @GetMapping("/{petPostCatchId}")
+    public ResponseDto<PetPostCatchResponseDto> getPetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails memberDetails) {
+        Member member = memberDetails.getMember();
+        return petPostCatchService.getPetPostCatch(petPostCatchId, member);
+    }
+
+    @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseDto<String> createPost(@ModelAttribute PetPostCatchRequestDto requestDto,
+                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) throws IOException {
+        return petPostCatchService.create(requestDto, memberDetails.getMember());
     }
 
 
-    @PutMapping("/{petPostCatchId}")
+    @PutMapping(value = "/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<String> updatePost(@PathVariable Long petPostCatchId,
-                                          @RequestPart PetPostCatchRequestDto requestDto,
-                                          @RequestPart(value = "image") MultipartFile multipartFile, @AuthenticationPrincipal MemberDetails userDetails) throws IOException{
-        return petPostCatchService.update(petPostCatchId, requestDto, multipartFile, userDetails.getMember());
+                                          @ModelAttribute PetPostCatchRequestDto requestDto,
+                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) throws IOException{
+        return petPostCatchService.update(petPostCatchId, requestDto, memberDetails.getMember());
     }
 
     @DeleteMapping("/{petPostCatchId}")

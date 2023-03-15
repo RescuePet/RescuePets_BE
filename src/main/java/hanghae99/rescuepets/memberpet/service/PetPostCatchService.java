@@ -4,6 +4,7 @@ package hanghae99.rescuepets.memberpet.service;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetPostCatch;
+import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
@@ -26,6 +27,7 @@ import java.util.List;
 public class PetPostCatchService {
     private final PetPostCatchRepository petPostCatchRepository;
     private final WishRepository wishRepository;
+    private final S3Uploader s3Uploader;
 
     @Transactional
     public ResponseDto<List<PetPostCatchResponseDto>> getPetPostCatchList(int page, int size, String sortBy, Member member) {
@@ -48,23 +50,38 @@ public class PetPostCatchService {
         }
         return ResponseDto.success(dtoList);
     }
+
     @Transactional
-    public ResponseDto<String> create(PetPostCatchRequestDto requestDto, MultipartFile multipartFile, Member member) throws IOException {
-//        String imageUrl = s3Uploader.uploadFiles(multipartFile, "images");
-        petPostCatchRepository.save(new PetPostCatch(requestDto, member));
+    public ResponseDto<PetPostCatchResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
+//                new CustomException(ErrorCode.NotFoundPost)
+        );
+        PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
+        boolean isOpenNickname = false;
+        if(member != null) {
+            isOpenNickname = wishRepository.findByPetPostCatchIdAndMemberId(petPostCatch.getId(),member.getId()).isPresent();
+        }
+        responseDto.setOpenNickname(isOpenNickname);
+        return ResponseDto.success(responseDto);
+    }
+
+    @Transactional
+    public ResponseDto<String> create(PetPostCatchRequestDto requestDto, Member member) throws IOException {
+        String imageUrl = s3Uploader.uploadSingle(requestDto.getPopfile());
+        petPostCatchRepository.save(new PetPostCatch(requestDto, imageUrl, member));
 
         return ResponseDto.success("게시물 등록 성공");
     }
 
 
     @Transactional
-    public ResponseDto<String> update(Long petPostCatchId, PetPostCatchRequestDto requestDto, MultipartFile multipartFile, Member member) throws IOException {
+    public ResponseDto<String> update(Long petPostCatchId, PetPostCatchRequestDto requestDto, Member member) throws IOException {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
 //                CustomException(ErrorCode.NotFoundPost)
         );
-//        String imageUrl = s3Uploader.uploadFiles(multipartFile, "images");
+        String imageUrl = s3Uploader.uploadSingle(requestDto.getPopfile());
         if (member.getNickname().equals(petPostCatch.getMember().getNickname())) {
-            petPostCatch.update(requestDto);
+            petPostCatch.update(requestDto, imageUrl);
             return ResponseDto.success("게시물 수정 성공");
         } else {
             throw new NullPointerException("수정권한이 없는데용")

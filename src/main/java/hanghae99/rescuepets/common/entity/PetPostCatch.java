@@ -9,7 +9,6 @@ import javax.persistence.*;
 //import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -19,13 +18,14 @@ public class PetPostCatch extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date postedDate;
     private String happenPlace;
     private String popfile;
     private String kindCd;
     private String specialMark;
     private String content;
     private boolean openNickname;
+
+
 
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
@@ -38,10 +38,9 @@ public class PetPostCatch extends TimeStamped{
     private List<Wish> wishList = new ArrayList<>();
 
 
-    public PetPostCatch(PetPostCatchRequestDto requestDto, Member member) {
-        this.postedDate = requestDto.getPostedDate();
+    public PetPostCatch(PetPostCatchRequestDto requestDto, String imageUrl, Member member) {
         this.happenPlace = requestDto.getHappenPlace();
-        this.popfile = requestDto.getPopfile();
+        this.popfile = imageUrl;
         this.kindCd = requestDto.getKindCd();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
@@ -52,10 +51,9 @@ public class PetPostCatch extends TimeStamped{
     }
 
 
-    public void update(PetPostCatchRequestDto requestDto) {
-        this.postedDate = requestDto.getPostedDate();
+    public void update(PetPostCatchRequestDto requestDto, String imageUrl) {
         this.happenPlace = requestDto.getHappenPlace();
-        this.popfile = requestDto.getPopfile();
+        this.popfile = imageUrl;
         this.kindCd = requestDto.getKindCd();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();

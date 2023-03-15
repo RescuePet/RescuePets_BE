@@ -32,14 +32,14 @@ public class CommentController {
     public ResponseDto<String> createComment(@PathVariable Long petPostMissingId, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal MemberDetails userDetails) {
         return commentService.create(petPostMissingId, requestDto, userDetails.getMember());
     }
-//
-//    @PutMapping("/pets/missing/{petPostMissingId}/comments/{commentId}")
-//    public ResponseDto<String> updateComment(@PathVariable Long petPostMissingId, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal MemberDetails userDetails) {
-//        return commentService.update(petPostMissingId, requestDto, userDetails.getMember());
-//    }
-//
-//    @DeleteMapping("/pets/missing/{petPostMissingId}/comments/{commentId}")
-//    public ResponseDto<String> deleteComment(@PathVariable Long petPostMissingId, @AuthenticationPrincipal MemberDetails userDetails) {
-//        return commentService.delete(petPostMissingId, userDetails.getMember());
-//    }
+
+    @PutMapping("/pets/missing/{petPostMissingId}/comments/{commentId}")
+    public ResponseDto<String> updateComment(@PathVariable Long commentId, @RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal MemberDetails userDetails) {
+        return commentService.update(commentId, requestDto, userDetails.getMember());
+    }
+
+    @DeleteMapping("/pets/missing/{petPostMissingId}/comments/{commentId}")
+    public ResponseDto<String> deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal MemberDetails userDetails) {
+        return commentService.delete(commentId, userDetails.getMember());
+    }
 }

@@ -21,7 +21,6 @@ public class PetPostMissingResponseDto {
 
     public static PetPostCatchResponseDto of(PetPostCatch petPostCatch) {
         return PetPostCatchResponseDto.builder()
-                .postedDate(petPostCatch.getPostedDate())
                 .happenPlace(petPostCatch.getHappenPlace())
                 .popfile(petPostCatch.getPopfile())
                 .kindCd(petPostCatch.getKindCd())

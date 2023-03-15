@@ -3,12 +3,10 @@ package hanghae99.rescuepets.memberpet.dto;
 import hanghae99.rescuepets.common.entity.PetPostCatch;
 import lombok.Builder;
 import lombok.Getter;
-import java.util.Date;
 @Getter
 @Builder
 public class PetPostCatchResponseDto {
 
-    private Date postedDate;
     private String happenPlace;
     private String popfile;
     private String kindCd;
@@ -21,7 +19,6 @@ public class PetPostCatchResponseDto {
 
     public static PetPostCatchResponseDto of(PetPostCatch petPostCatch) {
         return PetPostCatchResponseDto.builder()
-                .postedDate(petPostCatch.getPostedDate())
                 .happenPlace(petPostCatch.getHappenPlace())
                 .popfile(petPostCatch.getPopfile())
                 .kindCd(petPostCatch.getKindCd())
