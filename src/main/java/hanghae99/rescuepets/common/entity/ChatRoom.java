@@ -25,25 +25,52 @@ public class ChatRoom {
     @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
     List<Chat> chatMessages = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private PetPostCatch catchPost;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private PetPostMissing missingPost;
 
-    public static ChatRoom createRoom(PetPostCatch post) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member host;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member guest;
+
+//
+//    public static ChatRoom createRoom(PetPostCatch post) {
+//        return ChatRoom.builder()
+//                .roomId(UUID.randomUUID().toString())
+//                .roomName(post.getTitle)
+//                .catchPost(post)
+//                .build();
+//    }
+//
+//    public static ChatRoom createRoom(PetPostMissing post) {
+//        return ChatRoom.builder()
+//                .roomId(UUID.randomUUID().toString())
+//                .roomName(post.getTitle)
+//                .catchPost(post)
+//                .build();
+//    }
+
+    public static ChatRoom of(PetPostCatch post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
-                .roomName(post.getTitle)
+//                .roomName(post.getTitle())
                 .catchPost(post)
+                .host(post.getMember())
+                .guest(member)
                 .build();
     }
 
-    public static ChatRoom createRoom(PetPostMissing post) {
+    public static ChatRoom of(PetPostMissing post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
-                .roomName(post.getTitle)
-                .catchPost(post)
+//                .roomName(post.getTitle())
+                .missingPost(post)
+                .host(post.getMember())
+                .guest(member)
                 .build();
     }
 }

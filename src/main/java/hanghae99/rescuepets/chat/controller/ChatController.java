@@ -1,26 +1,43 @@
 package hanghae99.rescuepets.chat.controller;
 
 import hanghae99.rescuepets.chat.dto.ChatRequestDto;
+import hanghae99.rescuepets.chat.dto.ChatRoomResponseDto;
 import hanghae99.rescuepets.chat.service.ChatService;
-import hanghae99.rescuepets.common.entity.Chat;
+import hanghae99.rescuepets.common.security.MemberDetails;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
 
     private final ChatService chatService;
-    private final SimpMessageSendingOperations sendingOperations;
+    private final SimpMessagingTemplate template;
 
-    @MessageMapping("/chat/message")
-    public void enter(ChatRequestDto requestDto) {
-        if (Chat.MessageType.ENTER.equals(requestDto.getType())) {
+    //채팅
+    @MessageMapping(value = "{roomId}")
+    @SendTo("/sub/{roomId}")
+    public void enter(@DestinationVariable String roomId, ChatRequestDto requestDto) {
+        if (requestDto.getType().equals(ChatRequestDto.MessageType.ENTER)) {
             requestDto.setMessage(requestDto.getSender() + "님이 입장하였습니다.");
         }
-        chatService.createChat(requestDto);
-        sendingOperations.convertAndSend("/topic/chat/room/" + requestDto.getRoomId(), requestDto);
+        chatService.createChat(roomId, requestDto);
+        template.convertAndSend("/sub/" + roomId, requestDto);
+    }
+
+    //채팅 조회
+    @GetMapping("/room/{roomId}")
+    @ResponseBody
+    public ChatRoomResponseDto chat(@PathVariable String roomId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return chatService.getMessages(roomId, memberDetails.getMember());
     }
 }
