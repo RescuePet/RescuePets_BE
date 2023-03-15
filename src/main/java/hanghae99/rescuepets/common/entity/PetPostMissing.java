@@ -2,6 +2,7 @@ package hanghae99.rescuepets.common.entity;
 
 //import hanghae99.rescuepets.memberpet.dto.MemberPetRequestDto;
 //import hanghae99.rescuepets.memberpet.dto.PetPostMissingRequestDto;
+import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostMissingRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,14 +37,21 @@ public class PetPostMissing extends TimeStamped{
     @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
     private List<Wish> wishList = new ArrayList<>();
 
-    public PetPostMissing(PetPostMissingRequestDto requestDto, Member member) {
-        this.postedDate = requestDto.getPostedDate();
+    public PetPostMissing(PetPostMissingRequestDto requestDto, String imageUrl, Member member) {
         this.happenPlace = requestDto.getHappenPlace();
-        this.popfile = requestDto.getPopfile();
+        this.popfile = imageUrl;
         this.kindCd = requestDto.getKindCd();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
         this.member = member;
+    }
+
+    public void update(PetPostMissingRequestDto requestDto, String imageUrl) {
+        this.happenPlace = requestDto.getHappenPlace();
+        this.popfile = imageUrl;
+        this.kindCd = requestDto.getKindCd();
+        this.specialMark = requestDto.getSpecialMark();
+        this.content = requestDto.getContent();
     }
 
 }

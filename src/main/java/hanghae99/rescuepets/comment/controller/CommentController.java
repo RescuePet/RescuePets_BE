@@ -30,8 +30,8 @@ public class CommentController {
     }
 
     @PostMapping("/pets/missing/comments/{petPostMissingId}")
-    public ResponseDto<String> createComment(@PathVariable Long petPostMissingId, @RequestBody CommentRequestDto requestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
-        return commentService.create(petPostMissingId, requestDto, userDetails.getMember());
+    public ResponseDto<String> createComment(@PathVariable Long petPostMissingId, @RequestBody CommentRequestDto requestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return commentService.create(petPostMissingId, requestDto, memberDetails.getMember());
     }
 
     @PutMapping("/pets/missing/comments/{commentId}")

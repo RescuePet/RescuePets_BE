@@ -49,14 +49,14 @@ public class PetPostCatchController {
 
 
     @PutMapping(value = "/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseDto<String> updatePost(@PathVariable Long petPostCatchId,
+    public ResponseDto<String> updatePetPostCatch(@PathVariable Long petPostCatchId,
                                           @ModelAttribute PetPostCatchRequestDto requestDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return petPostCatchService.update(petPostCatchId, requestDto, memberDetails.getMember());
     }
 
     @DeleteMapping("/{petPostCatchId}")
-    public ResponseDto<String> deletePost(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
+    public ResponseDto<String> deletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
         return petPostCatchService.delete(petPostCatchId, userDetails.getMember());
     }
 
