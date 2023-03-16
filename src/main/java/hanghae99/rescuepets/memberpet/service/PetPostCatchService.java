@@ -4,6 +4,7 @@ package hanghae99.rescuepets.memberpet.service;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetPostCatch;
+import hanghae99.rescuepets.common.entity.PostImage;
 import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
@@ -59,9 +60,15 @@ public class PetPostCatchService {
 
     @Transactional
     public ResponseDto<String> create(PetPostCatchRequestDto requestDto, Member member) {
-        String imageUrl = s3Uploader.uploadSingle(requestDto.getPopfile());
-        petPostCatchRepository.save(new PetPostCatch(requestDto, imageUrl, member));
-
+        List<String> postImageURLs = new ArrayList<>();
+        if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
+            postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
+        }
+        PetPostCatch petPostCatch = new PetPostCatch(requestDto, member);
+        for (String postImageURL : postImageURLs) {
+            petPostCatch.addPostImage(PostImage.builder().petPostCatch(petPostCatch).imageURL(postImageURL).build());
+        }
+        petPostCatchRepository.save(petPostCatch);
         return ResponseDto.success("게시물 등록 성공");
     }
 

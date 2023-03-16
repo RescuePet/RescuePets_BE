@@ -10,6 +10,7 @@ import javax.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -28,7 +29,8 @@ public class PetPostCatch extends TimeStamped{
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
-
+    @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostImage> postImages = new ArrayList<>();;
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
 
@@ -36,19 +38,24 @@ public class PetPostCatch extends TimeStamped{
     private List<Wish> wishList = new ArrayList<>();
 
 
-    public PetPostCatch(PetPostCatchRequestDto requestDto, String imageUrl, Member member) {
+    public PetPostCatch(PetPostCatchRequestDto requestDto, Member member) {
         this.happenPlace = requestDto.getHappenPlace();
-        this.popfile = imageUrl;
+//        this.PostImages = imageUrl;
         this.kindCd = requestDto.getKindCd();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
         this.member = member;
         this.openNickname = requestDto.getOpenNickname();
     }
-
+    public void addPostImage(PostImage postImage) {
+        this.postImages.add(postImage);
+        if (!postImage.getPetPostCatch().equals(this)) {
+            postImage.setPostImage(this);
+        }
+    }
     public void update(PetPostCatchRequestDto requestDto, String imageUrl) {
         this.happenPlace = requestDto.getHappenPlace();
-        this.popfile = imageUrl;
+//        this.popfile = imageUrl;
         this.kindCd = requestDto.getKindCd();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();

@@ -18,6 +18,8 @@ public class PetPostMissingRequestDto {
     private String kindCd;
     private String specialMark;
     private String content;
-    @Nullable
+        @Nullable
     private MultipartFile popfile;
+    @Nullable
+    private List<MultipartFile> popfiles;
 }
