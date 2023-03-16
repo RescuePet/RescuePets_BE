@@ -47,6 +47,22 @@ public class PetPostCatchService {
         }
         return ResponseDto.success(dtoList);
     }
+    @Transactional
+    public ResponseDto<List<PetPostCatchResponseDto>> getPetPostCatchListByMember(int page, int size, String sortBy, Member member) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findAll(pageable);
+        List<PetPostCatch> PetPostCatches = PetPostCatchPage.getContent();
+        List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
+
+        for (PetPostCatch petPostCatch : PetPostCatches) {
+            PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
+            dto.setWished(wishRepository.findByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+            dtoList.add(dto);
+        }
+        return ResponseDto.success(dtoList);
+    }
 
     @Transactional
     public ResponseDto<PetPostCatchResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
@@ -66,7 +82,7 @@ public class PetPostCatchService {
         }
         PetPostCatch petPostCatch = new PetPostCatch(requestDto, member);
         for (String postImageURL : postImageURLs) {
-            petPostCatch.addPostImage(PostImage.builder().petPostCatch(petPostCatch).imageURL(postImageURL).build());
+            petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
         }
         petPostCatchRepository.save(petPostCatch);
         return ResponseDto.success("게시물 등록 성공");
@@ -78,9 +94,13 @@ public class PetPostCatchService {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
 //                CustomException(ErrorCode.NotFoundPost)
         );
-        String imageUrl = s3Uploader.uploadSingle(requestDto.getPopfile());
         if (member.getNickname().equals(petPostCatch.getMember().getNickname())) {
-            petPostCatch.update(requestDto, imageUrl);
+            List<String> postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
+            petPostCatch.getPostImages().clear();
+            for (String postImageURL : postImageURLs) {
+                petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
+            }
+            petPostCatch.update(requestDto);
             return ResponseDto.success("게시물 수정 성공");
         } else {
             throw new NullPointerException("수정권한이 없는데용")

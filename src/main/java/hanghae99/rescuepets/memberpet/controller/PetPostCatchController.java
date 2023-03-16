@@ -34,6 +34,15 @@ public class PetPostCatchController {
         //sortBy = postLikeCount,
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
     }
+    @GetMapping("/member")
+    public ResponseDto<List<PetPostCatchResponseDto>> getPetPostCatchListByMember(@RequestParam int page,
+                                                                  @RequestParam int size,
+                                                                  @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        Member member = memberDetails.getMember();
+        //sortBy = postLikeCount,
+        return petPostCatchService.getPetPostCatchListByMember(page-1, size, sortBy, member);
+    }
 
     @GetMapping("/{petPostCatchId}")
     public ResponseDto<PetPostCatchResponseDto> getPetPostCatch(@PathVariable Long petPostCatchId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {

@@ -4,6 +4,7 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetPostCatch;
 import hanghae99.rescuepets.common.entity.PetPostMissing;
+import hanghae99.rescuepets.common.entity.PostImage;
 import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
@@ -60,22 +61,32 @@ public class PetPostMissingService {
     }
 
     @Transactional
-    public ResponseDto<String> createPetPostMissing(PetPostMissingRequestDto requestDto, Member member) {
-        String imageUrl = s3Uploader.uploadSingle(requestDto.getPopfile());
-        petPostMissingRepository.save(new PetPostMissing(requestDto, imageUrl, member));
-
+    public ResponseDto<String> create(PetPostMissingRequestDto requestDto, Member member) {
+        List<String> postImageURLs = new ArrayList<>();
+        if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
+            postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
+        }
+        PetPostMissing petPostMissing = new PetPostMissing(requestDto, member);
+        for (String postImageURL : postImageURLs) {
+            petPostMissing.addPostImage(new PostImage(petPostMissing, postImageURL));
+        }
+        petPostMissingRepository.save(petPostMissing);
         return ResponseDto.success("게시물 등록 성공");
     }
 
 
     @Transactional
-    public ResponseDto<String> updatePetPostMissing(Long petPostMissingId, PetPostMissingRequestDto requestDto, Member member) {
+    public ResponseDto<String> update(Long petPostMissingId, PetPostMissingRequestDto requestDto, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
 //                CustomException(ErrorCode.NotFoundPost)
         );
-        String imageUrl = s3Uploader.uploadSingle(requestDto.getPopfile());
         if (member.getNickname().equals(petPostMissing.getMember().getNickname())) {
-            petPostMissing.update(requestDto, imageUrl);
+            List<String> postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
+            petPostMissing.getPostImages().clear();
+            for (String postImageURL : postImageURLs) {
+                petPostMissing.addPostImage(new PostImage(petPostMissing, postImageURL));
+            }
+            petPostMissing.update(requestDto);
             return ResponseDto.success("게시물 수정 성공");
         } else {
             throw new NullPointerException("수정권한이 없는데용")
@@ -85,7 +96,7 @@ public class PetPostMissingService {
     }
 
     @Transactional
-    public ResponseDto<String> deletePetPostMissing(Long petPostMissingId, Member member) {
+    public ResponseDto<String> delete(Long petPostMissingId, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
 //                CustomException(ErrorCode.NotFoundPost)
         );

@@ -40,27 +40,25 @@ public class PetPostMissingController {
 
     @GetMapping("/{petPostMissingId}")
     public ResponseDto<PetPostMissingResponseDto> getPetPostMissing(@PathVariable Long petPostMissingId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        Member member = memberDetails.getMember();
-        return petPostMissingService.getPetPostMissing(petPostMissingId, member);
+        return petPostMissingService.getPetPostMissing(petPostMissingId, memberDetails.getMember());
     }
-
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<String> createPetPostMissing(@ModelAttribute PetPostMissingRequestDto requestDto,
-                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) throws IOException {
-        return petPostMissingService.createPetPostMissing(requestDto, memberDetails.getMember());
+                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return petPostMissingService.create(requestDto, memberDetails.getMember());
     }
 
 
     @PutMapping(value = "/{petPostMissingId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseDto<String> updatePetPostMissing(@PathVariable Long petPostMissingId,
                                           @ModelAttribute PetPostMissingRequestDto requestDto,
-                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) throws IOException{
-        return petPostMissingService.updatePetPostMissing(petPostMissingId, requestDto, memberDetails.getMember());
+                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return petPostMissingService.update(petPostMissingId, requestDto, memberDetails.getMember());
     }
 
     @DeleteMapping("/{petPostMissingId}")
     public ResponseDto<String> deletePetPostMissing(@PathVariable Long petPostMissingId, @AuthenticationPrincipal MemberDetails userDetails) {
-        return petPostMissingService.deletePetPostMissing(petPostMissingId, userDetails.getMember());
+        return petPostMissingService.delete(petPostMissingId, userDetails.getMember());
     }
 
 

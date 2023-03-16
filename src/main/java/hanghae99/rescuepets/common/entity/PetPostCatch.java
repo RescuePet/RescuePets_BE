@@ -30,10 +30,9 @@ public class PetPostCatch extends TimeStamped{
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostImage> postImages = new ArrayList<>();;
+    private List<PostImage> postImages = new ArrayList<>();
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
-
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.REMOVE)
     private List<Wish> wishList = new ArrayList<>();
 
@@ -53,7 +52,7 @@ public class PetPostCatch extends TimeStamped{
             postImage.setPostImage(this);
         }
     }
-    public void update(PetPostCatchRequestDto requestDto, String imageUrl) {
+    public void update(PetPostCatchRequestDto requestDto) {
         this.happenPlace = requestDto.getHappenPlace();
 //        this.popfile = imageUrl;
         this.kindCd = requestDto.getKindCd();

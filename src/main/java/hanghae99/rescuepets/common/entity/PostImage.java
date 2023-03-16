@@ -18,13 +18,26 @@ public class PostImage {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "petPostCatchId", nullable = true)
     private PetPostCatch petPostCatch;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "petPostMissingId", nullable = true)
     private PetPostMissing petPostMissing;
-    @Builder
+
+//    @Builder
+//    public PostImage(PetPostCatch petPostCatch, String imageURL) {
+//        this.petPostCatch = petPostCatch;
+//        this.imageURL = imageURL;
+//    }
+//    @Builder
+//    public PostImage(PetPostMissing petPostMissing, String imageURL) {
+//        this.petPostMissing = petPostMissing;
+//        this.imageURL = imageURL;
+//    }
     public PostImage(PetPostCatch petPostCatch, String imageURL) {
         this.petPostCatch = petPostCatch;
+        this.imageURL = imageURL;
+    }
+    public PostImage(PetPostMissing petPostMissing, String imageURL) {
+        this.petPostMissing = petPostMissing;
         this.imageURL = imageURL;
     }
     public void setPostImage(PetPostCatch petPostCatch) {
@@ -34,6 +47,15 @@ public class PostImage {
         this.petPostCatch = petPostCatch;
         if(!petPostCatch.getPostImages().contains(this)) {
             petPostCatch.addPostImage(this);
+        }
+    }
+    public void setPostImage(PetPostMissing petPostMissing) {
+        if(this.petPostMissing != null) {
+            this.petPostMissing.getPostImages().remove(this);
+        }
+        this.petPostMissing = petPostMissing;
+        if(!petPostMissing.getPostImages().contains(this)) {
+            petPostMissing.addPostImage(this);
         }
     }
 }
