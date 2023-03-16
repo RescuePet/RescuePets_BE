@@ -37,6 +37,7 @@ public class KakaoService {
 
     @Value("${kakao.api.key}")
     private String kakaoApiKey;
+
     @Transactional
     public String kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         String message = "님 환영합니다.";
@@ -48,18 +49,14 @@ public class KakaoService {
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
 
         // 3. "카카오 사용자 정보"로 필요시 회원가입
-        Member kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
-
-        //토큰 발급
-        TokenDto tokenDto = jwtUtil.createAllToken(kakaoUserInfo.getEmail());
+        Member kakaoMember = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         // 4. 강제 로그인 처리
-        forceLogin(kakaoUser);
+        forceLogin(kakaoMember);
 
-        //토큰을 header에 넣어서 클라이언트에게 전달하기
-        setHeader(response, tokenDto);
+        jwtUtil.createToken(response, kakaoMember);
 
-        return kakaoUserInfo.getNickname() + message + "(" + kakaoUser.getEmail() + ")";
+        return kakaoUserInfo.getNickname() + message + "(" + kakaoMember.getEmail() + ")";
     }
 
     private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
@@ -150,7 +147,12 @@ public class KakaoService {
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
-                kakaoUser = new Member(nickname, encodedPassword, email, kakaoId);
+                kakaoUser = Member.builder()
+                        .nickname(nickname)
+                        .password(encodedPassword)
+                        .email(email)
+                        .kakaoId(kakaoId)
+                        .build();
             }
 
             memberRepository.save(kakaoUser);
