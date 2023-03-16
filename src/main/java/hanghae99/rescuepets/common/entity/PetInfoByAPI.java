@@ -17,8 +17,7 @@ public class PetInfoByAPI extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //테스트로 유니크 주석 처리
-//    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String desertionNo;
     private String filename;
     private String happenDt;

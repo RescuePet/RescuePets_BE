@@ -8,12 +8,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
+@Slf4j
 @Tag(name = "유기동물 공공 API")
 @RestController
 @RequestMapping("/api/pets")
@@ -51,6 +52,7 @@ public class PublicPetController {
     @GetMapping("/info-list")
     @Operation(summary = "유기동물 전체 정보 가져오기", description = "자세한 설명")
     public PublicPetsResponsDto getPublicPet(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy", required = false, defaultValue = "happenDt") String sortBy) {
+        log.info("전체 불러오기가 요청 되었습니다.");
         return publicPetService.getPublicPet(page - 1, size, sortBy);
     }
 
