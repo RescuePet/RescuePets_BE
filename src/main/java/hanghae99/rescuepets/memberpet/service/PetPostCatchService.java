@@ -52,7 +52,7 @@ public class PetPostCatchService {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findAll(pageable);
+        Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findByMemberId(member.getId(), pageable);
         List<PetPostCatch> PetPostCatches = PetPostCatchPage.getContent();
         List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
 

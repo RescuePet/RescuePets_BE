@@ -49,6 +49,23 @@ public class PetPostMissingService {
         }
         return ResponseDto.success(dtoList);
     }
+    @Transactional
+    public ResponseDto<List<PetPostMissingResponseDto>> getPetPostMissingListByMember(int page, int size, String sortBy, Member member) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<PetPostMissing> PetPostMissingPage = petPostMissingRepository.findByMemberId(member.getId(), pageable);
+        List<PetPostMissing> PetPostMissings = PetPostMissingPage.getContent();
+        List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
+
+        for (PetPostMissing petPostMissing : PetPostMissings) {
+            PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
+            dto.setWished(wishRepository.findByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
+            dtoList.add(dto);
+        }
+        return ResponseDto.success(dtoList);
+    }
+
 
     @Transactional
     public ResponseDto<PetPostMissingResponseDto> getPetPostMissing(Long petPostMissingId, Member member) {

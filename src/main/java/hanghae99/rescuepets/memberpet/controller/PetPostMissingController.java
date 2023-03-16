@@ -37,6 +37,15 @@ public class PetPostMissingController {
         //sortBy = postLikeCount,
         return petPostMissingService.getPetPostMissingList(page-1, size, sortBy, member);
     }
+    @GetMapping("/member")
+    public ResponseDto<List<PetPostMissingResponseDto>> getPetPostMissingListByMember(@RequestParam int page,
+                                                                                  @RequestParam int size,
+                                                                                  @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        Member member = memberDetails.getMember();
+        //sortBy = postLikeCount,
+        return petPostMissingService.getPetPostMissingListByMember(page-1, size, sortBy, member);
+    }
 
     @GetMapping("/{petPostMissingId}")
     public ResponseDto<PetPostMissingResponseDto> getPetPostMissing(@PathVariable Long petPostMissingId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {

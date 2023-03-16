@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Entity
+@Entity(name = "petPostCatch")
 @Getter
 @NoArgsConstructor
 public class PetPostCatch extends TimeStamped{
