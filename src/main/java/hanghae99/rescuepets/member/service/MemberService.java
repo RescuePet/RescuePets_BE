@@ -2,9 +2,11 @@ package hanghae99.rescuepets.member.service;
 
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.MemberRoleEnum;
+import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
+import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +22,8 @@ public class MemberService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+
     @Value("${ADMIN_TOKEN}")
     private String ADMIN_TOKEN;
 
@@ -52,7 +57,17 @@ public class MemberService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
 
-        response.addHeader(JwtUtil.AUTHORIZATION_HEADER, jwtUtil.createToken(member.getEmail(), member.getRole()));
+        TokenDto tokenDto = jwtUtil.createAllToken(loginRequestDto.getEmail());
+
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmail(loginRequestDto.getEmail());
+        if (refreshToken.isPresent()) {
+            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+        } else {
+            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), loginRequestDto.getEmail());
+            refreshTokenRepository.save(newToken);
+        }
+
+        setHeader(response, tokenDto);
 
         return new MemberResponseDto(member);
     }
@@ -92,7 +107,10 @@ public class MemberService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
         memberRepository.delete(member);
+    }
 
-
+    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
+        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
+        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
     }
 }

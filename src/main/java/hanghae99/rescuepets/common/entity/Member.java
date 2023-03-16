@@ -23,6 +23,8 @@ public class Member {
     private String password;
     @Column
     private MemberRoleEnum role;
+    @Column
+    private Long kakaoId;
 
 
     @Builder
@@ -42,5 +44,16 @@ public class Member {
         this.password = password;
         this.role = memberRoleEnum;
         this.address = address;
+    }
+
+    public void setKakaoId(Long kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
+    public Member(String nickname, String encodedPassword, String email, Long kakaoId) {
+        this.nickname = nickname;
+        this.password = encodedPassword;
+        this.email = email;
+        this.kakaoId = kakaoId;
     }
 }

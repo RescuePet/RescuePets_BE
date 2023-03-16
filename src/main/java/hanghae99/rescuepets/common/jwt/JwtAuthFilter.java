@@ -2,12 +2,10 @@ package hanghae99.rescuepets.common.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hanghae99.rescuepets.common.dto.ErrorResponseDto;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,25 +26,28 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = jwtUtil.resolveToken(request);
+        String accessToken = jwtUtil.resolveToken(request, "Access");
+        String refreshToken = jwtUtil.resolveToken(request, "Refresh");
 
-        if(token != null) {
-            if(!jwtUtil.validateToken(token)){
-                jwtExceptionHandler(response, HttpStatus.UNAUTHORIZED.value());
+        if (accessToken != null) {
+            if (!jwtUtil.validateToken(accessToken)) {
+                jwtExceptionHandler(response, HttpStatus.BAD_REQUEST.value());
                 return;
             }
-            Claims info = jwtUtil.getUserInfoFromToken(token);
-            setAuthentication(info.getSubject());
+            setAuthentication(jwtUtil.getEmailFromToken(accessToken));
+        } else if (refreshToken != null) {
+            if (!jwtUtil.refreshTokenValidation(refreshToken)) {
+                jwtExceptionHandler(response, HttpStatus.BAD_REQUEST.value());
+                return;
+            }
+            setAuthentication(jwtUtil.getEmailFromToken(refreshToken));
         }
         filterChain.doFilter(request,response);
     }
 
     public void setAuthentication(String email) {
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication authentication = jwtUtil.createAuthentication(email);
-        context.setAuthentication(authentication);
-
-        SecurityContextHolder.setContext(context);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
     public void jwtExceptionHandler(HttpServletResponse response, int statusCode) {
