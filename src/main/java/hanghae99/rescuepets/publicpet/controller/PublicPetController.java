@@ -21,6 +21,15 @@ import java.util.List;
 public class PublicPetController {
     private final PublicPetService publicPetService;
 
+    //DB Update
+    @SecurityRequirements
+    @PostMapping("api-new-save/{pageNo}")
+    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화 진행", description = "자세한 설명")
+    public String apiNewSave(@PathVariable(value = "pageNo") String pageNo,
+                           @RequestParam(value = "state") String state, @RequestParam(value = "size") String size) throws IOException {
+        return publicPetService.dataComparison(pageNo, state, size);
+    }
+
 //    @SecurityRequirements
 //    @PostMapping("/api-save/{pageNo}")
 //    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 저장", description = "자세한 설명")
@@ -29,7 +38,6 @@ public class PublicPetController {
 //        return publicPetService.apiSave(pageNo, state);
 //    }
 
-    //메서드 분리 중
     @SecurityRequirements
     @PostMapping("/api-save/{pageNo}")
     @Operation(summary = "공공데이터 유기동물API 호출 및 DB 저장 진행", description = "자세한 설명")
