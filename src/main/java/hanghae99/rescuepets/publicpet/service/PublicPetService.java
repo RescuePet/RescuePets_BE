@@ -90,6 +90,7 @@ public class PublicPetService {
         return urlBuilder.toString();
     }
 
+    //테스트 최초 저장
     private String createApiUrl(String pageNo, String state) throws UnsupportedEncodingException {
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1543061/abandonmentPublicSrvc/abandonmentPublic");
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + publicApiKey);
@@ -110,7 +111,7 @@ public class PublicPetService {
         }
 
         urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode(pageNo, "UTF-8"));
-        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지당 보여줄 개수 (1,000 이하), 기본값 : 10*/
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8")); /*페이지당 보여줄 개수 (1,000 이하), 기본값 : 10*/
         urlBuilder.append("&" + URLEncoder.encode("_type","UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*xml(기본값) 또는 json*/
 
         return urlBuilder.toString();
@@ -282,6 +283,8 @@ public class PublicPetService {
             PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI);
             dtoList.add(responseDto);
         }
+        log.info("요청된 내용" + "page: " + page + "size: " + size +  "sortBy: " + sortBy);
+        log.info("dtoList contents: {}", "내용 물:    1번: " + dtoList.get(0).getDesertionNo() + "    2번:" + dtoList.get(1).getDesertionNo() + "    3번: " + dtoList.get(2).getDesertionNo() + "    4번: " + dtoList.get(3).getDesertionNo() + "    5번: " + dtoList.get(4).getDesertionNo());
     return new PublicPetsResponsDto(dtoList, postPage.isLast());
     }
 
