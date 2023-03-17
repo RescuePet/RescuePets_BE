@@ -5,6 +5,7 @@ import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
 import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
 import hanghae99.rescuepets.publicpet.service.PublicPetService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -66,13 +67,13 @@ public class PublicPetController {
     //마이페이지에 PetinfoLike 연관관계로 풀어보면 될듯, 관심 등록한 유기동물은 desertionNo로 상세페이지 API를 통해 이동하면 될듯함
     @PostMapping("/likes/{desertionNo}")
     @Operation(summary = "유기동물 관심 등록", description = "자세한 설명")
-    public String petInfoLike(@PathVariable(value = "desertionNo") String desertionNo, @AuthenticationPrincipal MemberDetails memberDetails) {
+    public String petInfoLike(@PathVariable(value = "desertionNo") String desertionNo,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.petInfoLike(desertionNo, memberDetails.getMember());
     }
 
     @DeleteMapping("/likes/{PetInfoLikeId}")
     @Operation(summary = "유기동물 관심 삭제", description = "자세한 설명")
-    public String deletePetInfoLike(@PathVariable(value = "PetInfoLikeId") Long PetInfoLikeId, @AuthenticationPrincipal MemberDetails memberDetails) {
+    public String deletePetInfoLike(@PathVariable(value = "PetInfoLikeId") Long PetInfoLikeId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.deletePetInfoLike(PetInfoLikeId, memberDetails.getMember());
     }
 }
