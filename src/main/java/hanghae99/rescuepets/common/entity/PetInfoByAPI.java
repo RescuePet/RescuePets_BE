@@ -17,8 +17,7 @@ public class PetInfoByAPI extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //테스트로 유니크 주석 처리
-//    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String desertionNo;
     private String filename;
     private String happenDt;
@@ -41,9 +40,9 @@ public class PetInfoByAPI extends TimeStamped{
     private String orgNm;
     private String chargeNm;
     private String officetel;
-    private String status;
+    private String state;
 
-    public PetInfoByAPI(PetInfoByAPI petInfo) {
+    public void update(PetInfoByAPI petInfo) {
         this.desertionNo = petInfo.desertionNo;
         this.filename = petInfo.filename;
         this.happenDt = petInfo.happenDt;
@@ -66,6 +65,7 @@ public class PetInfoByAPI extends TimeStamped{
         this.orgNm = petInfo.orgNm;
         this.chargeNm = petInfo.chargeNm;
         this.officetel = petInfo.officetel;
-        this.status = petInfo.status;
+        this.state = petInfo.state;
     }
+
 }

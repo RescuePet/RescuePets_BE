@@ -22,8 +22,4 @@ public class SignupRequestDto {
     @NotNull
     private String nickname;
 
-    @NotNull
-    private Boolean isAdmin;
-
-    private String adminToken = "";
 }

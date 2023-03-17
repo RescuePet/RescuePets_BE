@@ -1,32 +1,42 @@
 package hanghae99.rescuepets.common.entity;
 
-import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
+@Getter
+@NoArgsConstructor
 public class Wish {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "memberId")
     private Member member;
 
-    @ManyToOne
-    private PetPostCatch catchPost;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "petPostCatchId")
+    private PetPostCatch petPostCatch;
 
-    @ManyToOne
-    private PetPostMissing missingPost;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "petPostMissingId")
+    private PetPostMissing petPostMissing;
 
-    public Wish(Member member, PetPostCatch postCatch) {
-        this.member = member;
-        this.catchPost = postCatch;
+    public void setPetPostCatch(PetPostCatch petPostCatch) {
+        this.petPostCatch = petPostCatch;
     }
 
-    public Wish(Member member, PetPostMissing postMissing) {
+    public Wish(Member member, PetPostMissing petPostMissing) {
         this.member = member;
-        this.missingPost = postMissing;
+        this.petPostMissing = petPostMissing;
+    }
+
+    public Wish(Member member, PetPostCatch petPostCatch) {
+        this.member = member;
+        this.petPostCatch = petPostCatch;
     }
 }

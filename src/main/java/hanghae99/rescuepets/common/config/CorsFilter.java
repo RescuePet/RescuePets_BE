@@ -17,13 +17,15 @@ public class CorsFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
 
         // 모든 출처에서의 요청을 허용하도록 설정합니다.
-        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         // 요청 메서드를 허용합니다.
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
         // 요청 헤더를 허용합니다.
         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
         // Access-Control-Expose-Headers 헤더 설정
         response.setHeader("Access-Control-Expose-Headers", "Authorization");
+
+        response.setHeader("Access-Control-Allow-Credentials", "true");
 
         // preflight 요청인 경우, 응답을 보내고 체인을 중지합니다.
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
