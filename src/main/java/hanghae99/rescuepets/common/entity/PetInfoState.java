@@ -1,14 +1,26 @@
-package hanghae99.rescuepets.publicpet.dto;
+package hanghae99.rescuepets.common.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 @NoArgsConstructor
-public class PublicPetRequestDto {
+@AllArgsConstructor
+@Getter
+@Builder
+public class PetInfoState {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    //테스트로 유니크 주석 처리
+//    @Column(nullable = false, unique = true)
     private String desertionNo;
     private String filename;
     private String happenDt;
@@ -32,5 +44,4 @@ public class PublicPetRequestDto {
     private String chargeNm;
     private String officetel;
     private String state;
-
 }
