@@ -12,7 +12,7 @@ import hanghae99.rescuepets.memberpet.dto.PetPostMissingRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostMissingResponseDto;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
-import hanghae99.rescuepets.memberpet.repository.WishRepository;
+import hanghae99.rescuepets.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,7 +44,7 @@ public class PetPostMissingService {
 
         for (PetPostMissing petPostMissing : PetPostMissingList) {
             PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
-            dto.setWished(wishRepository.findByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
+            dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.success(dtoList);
@@ -60,7 +60,7 @@ public class PetPostMissingService {
 
         for (PetPostMissing petPostMissing : PetPostMissings) {
             PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
-            dto.setWished(wishRepository.findByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
+            dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.success(dtoList);
@@ -73,7 +73,7 @@ public class PetPostMissingService {
 //                new CustomException(ErrorCode.NotFoundPost)
         );
         PetPostMissingResponseDto responseDto = PetPostMissingResponseDto.of(petPostMissing);
-        responseDto.setWished(wishRepository.findByPetPostMissingIdAndMemberId(petPostMissingId, member.getId()).isPresent());
+        responseDto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissingId, member.getId()).isPresent());
         return ResponseDto.success(responseDto);
     }
 
