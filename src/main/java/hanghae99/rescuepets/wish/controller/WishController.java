@@ -18,18 +18,18 @@ public class WishController {
         return wishService.wishCatch(catchId, memberDetails.getMember());
     }
 
-//    @PostMapping("/wish/{missingId}")
-//    public String wishMissing(@PathVariable Long missingId, @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return wishService.wishMissing(missingId, memberDetails.getMember());
-//    }
+    @PostMapping("/wish/{missingId}")
+    public String wishMissing(@PathVariable Long missingId, @AuthenticationPrincipal MemberDetails memberDetails) {
+        return wishService.wishMissing(missingId, memberDetails.getMember());
+    }
 
     @DeleteMapping("/wish/{catchId}")
     public String deleteCatch(@PathVariable Long catchId, @AuthenticationPrincipal MemberDetails memberDetails) {
         return wishService.deleteCatch(catchId, memberDetails.getMember());
     }
 
-//    @DeleteMapping("/wish/{missingId}")
-//    public String deleteMissing(@PathVariable Long missingId, @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return wishService.deleteMissing(missingId, memberDetails.getMember());
-//    }
+    @DeleteMapping("/wish/{missingId}")
+    public String deleteMissing(@PathVariable Long missingId, @AuthenticationPrincipal MemberDetails memberDetails) {
+        return wishService.deleteMissing(missingId, memberDetails.getMember());
+    }
 }
