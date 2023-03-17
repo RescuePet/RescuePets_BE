@@ -23,6 +23,7 @@ public class CommentController {
 //    public ResponseDto<List<CommentResponseDto>> getCommentByUser(@AuthenticationPrincipal MemberDetails userDetails){
 //        return commentService.getCommentList(userDetails.getMember());
 //    }
+//
 
     @GetMapping("/pets/missing/comments/{petPostMissingId}")
     public ResponseDto<List<CommentResponseDto>> getCommentByPost(@PathVariable Long petPostMissingId) {
