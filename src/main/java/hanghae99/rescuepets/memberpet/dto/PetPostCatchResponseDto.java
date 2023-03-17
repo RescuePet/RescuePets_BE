@@ -12,9 +12,16 @@ import java.util.List;
 @Builder
 public class PetPostCatchResponseDto {
 
-    private String happenPlace;
-    private String popfile;
+    private String upkind;
     private String kindCd;
+    private String sexCd;
+    private String neuterYn;
+    private String age;
+    private String weight;
+    private String colorCd;
+    private String happenPlace;
+    private String happenDt;
+    private String happenHour;
     private String specialMark;
     private String content;
     private String nickname;
@@ -27,7 +34,6 @@ public class PetPostCatchResponseDto {
     public static PetPostCatchResponseDto of(PetPostCatch petPostCatch) {
         return PetPostCatchResponseDto.builder()
                 .happenPlace(petPostCatch.getHappenPlace())
-                .popfile(petPostCatch.getPopfile())
                 .kindCd(petPostCatch.getKindCd())
                 .specialMark(petPostCatch.getSpecialMark())
                 .content(petPostCatch.getContent())

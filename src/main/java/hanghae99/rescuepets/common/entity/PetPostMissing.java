@@ -20,13 +20,18 @@ public class PetPostMissing extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date postedDate;
-    private String happenPlace;
-    private String popfile;
+    private String upkind;
     private String kindCd;
+    private String sexCd;
+    private String neuterYn;
+    private String age;
+    private String weight;
+    private String colorCd;
+    private String happenPlace;
+    private String happenDt;
+    private String happenHour;
     private String specialMark;
     private String content;
-
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
@@ -38,9 +43,16 @@ public class PetPostMissing extends TimeStamped{
     private List<Wish> wishList = new ArrayList<>();
 
     public PetPostMissing(PetPostMissingRequestDto requestDto, Member member) {
-        this.happenPlace = requestDto.getHappenPlace();
-//        this.popfile = imageUrl;
+        this.upkind = requestDto.getUpkind();
         this.kindCd = requestDto.getKindCd();
+        this.sexCd = requestDto.getSexCd();
+        this.neuterYn = requestDto.getNeuterYn();
+        this.age = requestDto.getAge();
+        this.weight = requestDto.getWeight();
+        this.colorCd = requestDto.getColorCd();
+        this.happenPlace = requestDto.getHappenPlace();
+        this.happenDt = requestDto.getHappenDt();
+        this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
         this.member = member;
@@ -52,9 +64,16 @@ public class PetPostMissing extends TimeStamped{
         }
     }
     public void update(PetPostMissingRequestDto requestDto) {
-        this.happenPlace = requestDto.getHappenPlace();
-//        this.popfile = imageUrl;
+        this.upkind = requestDto.getUpkind();
         this.kindCd = requestDto.getKindCd();
+        this.sexCd = requestDto.getSexCd();
+        this.neuterYn = requestDto.getNeuterYn();
+        this.age = requestDto.getAge();
+        this.weight = requestDto.getWeight();
+        this.colorCd = requestDto.getColorCd();
+        this.happenPlace = requestDto.getHappenPlace();
+        this.happenDt = requestDto.getHappenDt();
+        this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
     }

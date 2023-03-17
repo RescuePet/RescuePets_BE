@@ -14,13 +14,19 @@ import javax.validation.constraints.Null;
 @Setter
 public class PetPostCatchRequestDto {
 
-    private String happenPlace;
+    private String upkind;
     private String kindCd;
+    private String sexCd;
+    private String neuterYn;
+    private String age;
+    private String weight;
+    private String colorCd;
+    private String happenPlace;
+    private String happenDt;
+    private String happenHour;
     private String specialMark;
     private String content;
     private Boolean openNickname;
-    @Nullable
-    private MultipartFile popfile;
     @Nullable
     private List<MultipartFile> postImages;
 }
