@@ -24,7 +24,7 @@ public class ChatController {
     private final SimpMessagingTemplate template;
 
     //채팅
-    @MessageMapping(value = "{roomId}")
+    @MessageMapping("/{roomId}")
     @SendTo("/sub/{roomId}")
     public void enter(@DestinationVariable String roomId, ChatRequestDto requestDto) {
         if (requestDto.getType().equals(ChatRequestDto.MessageType.ENTER)) {
