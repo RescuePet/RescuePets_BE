@@ -4,6 +4,7 @@ import hanghae99.rescuepets.chat.dto.ChatRequestDto;
 import hanghae99.rescuepets.chat.dto.ChatRoomResponseDto;
 import hanghae99.rescuepets.chat.service.ChatService;
 import hanghae99.rescuepets.common.security.MemberDetails;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -34,9 +35,9 @@ public class ChatController {
         template.convertAndSend("/sub/" + roomId, requestDto);
     }
 
-    //채팅 조회
     @GetMapping("/room/{roomId}")
     @ResponseBody
+    @Operation(summary = "채팅 조회")
     public ChatRoomResponseDto chat(@PathVariable String roomId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return chatService.getMessages(roomId, memberDetails.getMember());
     }
