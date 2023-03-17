@@ -1,6 +1,9 @@
 package hanghae99.rescuepets.memberpet.dto;
 
+import hanghae99.rescuepets.common.entity.NeuterEnum;
 import hanghae99.rescuepets.common.entity.PetPostCatch;
+import hanghae99.rescuepets.common.entity.SexEnum;
+import hanghae99.rescuepets.common.entity.UpkindEnum;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
@@ -12,10 +15,10 @@ import java.util.List;
 @Builder
 public class PetPostCatchResponseDto {
 
-    private String upkind;
+    private UpkindEnum upkind;
+    private SexEnum sexCd;
+    private NeuterEnum neuterYn;
     private String kindCd;
-    private String sexCd;
-    private String neuterYn;
     private String age;
     private String weight;
     private String colorCd;
@@ -24,6 +27,8 @@ public class PetPostCatchResponseDto {
     private String happenHour;
     private String specialMark;
     private String content;
+    private String gratuity;
+    private String contact;
     private String nickname;
     private String createdAt;
     private String modifiedAt;

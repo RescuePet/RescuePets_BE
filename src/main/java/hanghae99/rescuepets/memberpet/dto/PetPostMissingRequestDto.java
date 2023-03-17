@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import hanghae99.rescuepets.common.entity.NeuterEnum;
+import hanghae99.rescuepets.common.entity.SexEnum;
+import hanghae99.rescuepets.common.entity.UpkindEnum;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
@@ -14,10 +17,10 @@ import javax.validation.constraints.Null;
 @Getter
 @Builder
 public class PetPostMissingRequestDto {
-    private String upkind;
+    private UpkindEnum upkind;
+    private SexEnum sexCd;
+    private NeuterEnum neuterYn;
     private String kindCd;
-    private String sexCd;
-    private String neuterYn;
     private String age;
     private String weight;
     private String colorCd;
@@ -26,6 +29,8 @@ public class PetPostMissingRequestDto {
     private String happenHour;
     private String specialMark;
     private String content;
+    private String gratuity;
+    private String contact;
     @Nullable
     private List<MultipartFile> postImages;
 }

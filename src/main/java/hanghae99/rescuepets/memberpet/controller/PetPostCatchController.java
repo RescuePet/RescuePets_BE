@@ -40,7 +40,6 @@ public class PetPostCatchController {
                                                                   @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
-        //sortBy = postLikeCount,
         return petPostCatchService.getPetPostCatchListByMember(page-1, size, sortBy, member);
     }
 

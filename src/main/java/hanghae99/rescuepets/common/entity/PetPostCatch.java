@@ -19,10 +19,7 @@ public class PetPostCatch extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String upkind;
     private String kindCd;
-    private String sexCd;
-    private String neuterYn;
     private String age;
     private String weight;
     private String colorCd;
@@ -31,8 +28,18 @@ public class PetPostCatch extends TimeStamped{
     private String happenHour;
     private String specialMark;
     private String content;
+    private String gratuity;
+    private String contact;
     private Boolean openNickname;
-
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private SexEnum sexCd;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private NeuterEnum neuterYn;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UpkindEnum upkind;
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
@@ -57,6 +64,8 @@ public class PetPostCatch extends TimeStamped{
         this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
+        this.gratuity = requestDto.getGratuity();
+        this.contact = requestDto.getContact();
         this.member = member;
         this.openNickname = requestDto.getOpenNickname();
     }
@@ -79,6 +88,8 @@ public class PetPostCatch extends TimeStamped{
         this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
+        this.gratuity = requestDto.getGratuity();
+        this.contact = requestDto.getContact();
         this.openNickname = requestDto.getOpenNickname();
     }
 }

@@ -1,7 +1,6 @@
 package hanghae99.rescuepets.memberpet.dto;
 
-        import hanghae99.rescuepets.common.entity.PetPostCatch;
-        import hanghae99.rescuepets.common.entity.PetPostMissing;
+        import hanghae99.rescuepets.common.entity.*;
         import lombok.Builder;
         import lombok.Getter;
         import java.util.Date;
@@ -11,10 +10,10 @@ package hanghae99.rescuepets.memberpet.dto;
 @Builder
 public class PetPostMissingResponseDto {
 
-    private String upkind;
+    private UpkindEnum upkind;
+    private SexEnum sexCd;
+    private NeuterEnum neuterYn;
     private String kindCd;
-    private String sexCd;
-    private String neuterYn;
     private String age;
     private String weight;
     private String colorCd;
@@ -23,6 +22,8 @@ public class PetPostMissingResponseDto {
     private String happenHour;
     private String specialMark;
     private String content;
+    private String gratuity;
+    private String contact;
     private String nickname;
     private String createdAt;
     private String modifiedAt;
