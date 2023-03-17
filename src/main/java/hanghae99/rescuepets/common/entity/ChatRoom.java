@@ -31,33 +31,16 @@ public class ChatRoom {
     @ManyToOne(fetch = FetchType.LAZY)
     private PetPostMissing missingPost;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Member host;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private Member guest;
-
-//
-//    public static ChatRoom createRoom(PetPostCatch post) {
-//        return ChatRoom.builder()
-//                .roomId(UUID.randomUUID().toString())
-//                .roomName(post.getTitle)
-//                .catchPost(post)
-//                .build();
-//    }
-//
-//    public static ChatRoom createRoom(PetPostMissing post) {
-//        return ChatRoom.builder()
-//                .roomId(UUID.randomUUID().toString())
-//                .roomName(post.getTitle)
-//                .catchPost(post)
-//                .build();
-//    }
 
     public static ChatRoom of(PetPostCatch post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
-//                .roomName(post.getTitle())
+                .roomName(post.getMember().getNickname())
                 .catchPost(post)
                 .host(post.getMember())
                 .guest(member)
@@ -67,7 +50,7 @@ public class ChatRoom {
     public static ChatRoom of(PetPostMissing post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
-//                .roomName(post.getTitle())
+                .roomName(post.getMember().getNickname())
                 .missingPost(post)
                 .host(post.getMember())
                 .guest(member)

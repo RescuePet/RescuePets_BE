@@ -1,7 +1,6 @@
 package hanghae99.rescuepets.chat.dto;
 
 import hanghae99.rescuepets.common.entity.ChatRoom;
-import hanghae99.rescuepets.common.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,13 +11,11 @@ import java.util.List;
 @Getter
 public class ChatRoomResponseDto {
     private String title;
-    private String partner;
     List<ChatResponseDto> dto = new ArrayList<>();
 
-    public static ChatRoomResponseDto of(ChatRoom room, Member member) {
+    public static ChatRoomResponseDto of(ChatRoom room) {
         return ChatRoomResponseDto.builder()
-//                .title(room.getCatchPost().getTitle)
-                .partner(member.getNickname())
+                .title(room.getHost().getNickname())
                 .dto(room.getChatMessages().stream().map(ChatResponseDto::of).toList())
                 .build();
     }

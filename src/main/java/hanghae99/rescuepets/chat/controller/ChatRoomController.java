@@ -1,17 +1,11 @@
 package hanghae99.rescuepets.chat.controller;
 
-import hanghae99.rescuepets.chat.dto.ChatRequestDto;
 import hanghae99.rescuepets.chat.dto.ChatRoomListResponseDto;
-import hanghae99.rescuepets.chat.dto.ChatRoomResponseDto;
 import hanghae99.rescuepets.chat.service.ChatRoomService;
-import hanghae99.rescuepets.chat.service.ChatService;
-import hanghae99.rescuepets.common.entity.Chat;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;

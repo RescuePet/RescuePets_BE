@@ -34,9 +34,6 @@ public class ChatRoomService {
 
     public String createCatchRoom(Long postId, Member member) {
         PetPostCatch post = petPostCatchRepository.findById(postId).orElseThrow(NullPointerException::new);
-        if (member.getId().equals(postId)) {
-            throw new IllegalArgumentException("자신과 채팅 X");
-        }
         ChatRoom room = chatRoomRepository.findChatRoomByCatchPostIdAndGuestId(postId, member.getId()).orElse(
                 ChatRoom.of(post, member)
         );
@@ -46,9 +43,6 @@ public class ChatRoomService {
 
     public String createMissingRoom(Long postId, Member member) {
         PetPostMissing post = petPostMissingRepository.findById(postId).orElseThrow(NullPointerException::new);
-        if (member.getId().equals(postId)) {
-            throw new IllegalArgumentException("자신과 채팅 X");
-        }
         ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndGuestId(postId, member.getId()).orElse(
                 ChatRoom.of(post, member)
         );

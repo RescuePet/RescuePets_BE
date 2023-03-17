@@ -6,7 +6,6 @@ import hanghae99.rescuepets.chat.repository.ChatRepository;
 import hanghae99.rescuepets.chat.repository.ChatRoomRepository;
 import hanghae99.rescuepets.common.entity.Chat;
 import hanghae99.rescuepets.common.entity.ChatRoom;
-import hanghae99.rescuepets.common.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +23,8 @@ public class ChatService {
         chatRepository.save(message);
     }
 
-    public ChatRoomResponseDto getMessages(String roomId, Member member) {
+    public ChatRoomResponseDto getMessages(String roomId) {
         ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(NullPointerException::new);
-        return ChatRoomResponseDto.of(chatRoom, member);
+        return ChatRoomResponseDto.of(chatRoom);
     }
 }

@@ -26,7 +26,7 @@ public class Chat {
     public static Chat of(ChatRequestDto dto, ChatRoom room) {
         return Chat.builder()
                 .room(room)
-                .sender(dto.getSender())
+                .sender(room.getGuest().getNickname())
                 .message(dto.getMessage())
                 .build();
     }
