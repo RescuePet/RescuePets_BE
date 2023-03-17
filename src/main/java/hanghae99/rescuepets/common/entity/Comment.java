@@ -17,17 +17,22 @@ public class Comment extends TimeStamped{
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "petPostCatchId", nullable = false)
+    @JoinColumn(name = "petPostCatchId", nullable = true)
     private PetPostCatch petPostCatch;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "petPostMissingId", nullable = false)
+    @JoinColumn(name = "petPostMissingId", nullable = true)
     private PetPostMissing petPostMissing;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
 
+    public Comment(String content, PetPostCatch petPostCatch, Member member) {
+        this.content = content;
+        this.petPostCatch = petPostCatch;
+        this.member = member;
+    }
     public Comment(String content, PetPostMissing petPostMissing, Member member) {
         this.content = content;
         this.petPostMissing = petPostMissing;

@@ -3,6 +3,11 @@ package hanghae99.rescuepets.memberpet.dto;
 import hanghae99.rescuepets.common.entity.PetPostCatch;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.lang.Nullable;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 @Getter
 @Builder
 public class PetPostCatchResponseDto {
@@ -17,6 +22,7 @@ public class PetPostCatchResponseDto {
     private String modifiedAt;
     private Boolean openNickname;
     private Boolean isWished;
+    private List<PostImageResponseDto> postImages;
 
     public static PetPostCatchResponseDto of(PetPostCatch petPostCatch) {
         return PetPostCatchResponseDto.builder()
@@ -29,6 +35,7 @@ public class PetPostCatchResponseDto {
                 .createdAt(petPostCatch.getCreatedAt().toString())
                 .modifiedAt(petPostCatch.getModifiedAt().toString())
                 .openNickname(petPostCatch.getOpenNickname())
+                .postImages(petPostCatch.getPostImages().stream().map(PostImageResponseDto::of).toList())
                 .build();
     }
 

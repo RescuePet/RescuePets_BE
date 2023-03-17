@@ -39,7 +39,7 @@ public class S3Uploader {
             throw new IllegalArgumentException("이미지 업로드에 실페하였습니다");
         }
     }
-    public List<String> upload(List<MultipartFile> multipartFile) {
+    public List<String> uploadMulti(List<MultipartFile> multipartFile) {
         List<String> imgUrlList = new ArrayList<>();
 
         // forEach 구문을 통해 multipartFile로 넘어온 파일들 하나씩 fileNameList에 추가

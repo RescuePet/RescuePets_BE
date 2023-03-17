@@ -1,6 +1,8 @@
 package hanghae99.rescuepets.memberpet.dto;
 
 import java.util.Date;
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
@@ -19,4 +21,6 @@ public class PetPostCatchRequestDto {
     private Boolean openNickname;
     @Nullable
     private MultipartFile popfile;
+    @Nullable
+    private List<MultipartFile> postImages;
 }
