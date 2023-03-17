@@ -22,9 +22,9 @@ public class WishService {
 
     public String wishCatch(Long catchId, Member member) {
         PetPostCatch post = petPostCatchRepository.findById(catchId).orElseThrow(NullPointerException::new);
-        Optional<Wish> wish = wishRepository.findWishByCatchPostIdAndMemberId(catchId, member.getId());
+        Optional<Wish> wish = wishRepository.findWishByPetPostCatchIdAndMemberId(catchId, member.getId());
         if (wish.isPresent()) {
-            wishRepository.deleteWishByCatchPostIdAndMemberId(catchId, member.getId());
+            wishRepository.deleteWishByPetPostCatchIdAndMemberId(catchId, member.getId());
             throw new IllegalArgumentException("이미 등록되었습니다.");
         }
         wishRepository.save(new Wish(member, post));
@@ -34,9 +34,9 @@ public class WishService {
 
     public String wishMissing(Long missingId, Member member) {
         PetPostMissing post = petPostMissingRepository.findById(missingId).orElseThrow(NullPointerException::new);
-        Optional<Wish> wish = wishRepository.findWishByMissingPostIdAndMemberId(missingId, member.getId());
+        Optional<Wish> wish = wishRepository.findWishByPetPostMissingIdAndMemberId(missingId, member.getId());
         if (wish.isPresent()) {
-            wishRepository.deleteWishByMissingPostIdAndMemberId(missingId, member.getId());
+            wishRepository.deleteWishByPetPostMissingIdAndMemberId(missingId, member.getId());
             return missingId + "번 게시물 관심 취소";
         }
         wishRepository.save(new Wish(member, post));
@@ -45,21 +45,21 @@ public class WishService {
 
     public String deleteCatch(Long catchId, Member member) {
         PetPostCatch post = petPostCatchRepository.findById(catchId).orElseThrow(NullPointerException::new);
-        Optional<Wish> wish = wishRepository.findWishByCatchPostIdAndMemberId(catchId, member.getId());
+        Optional<Wish> wish = wishRepository.findWishByPetPostCatchIdAndMemberId(catchId, member.getId());
         if (wish.isEmpty()) {
             throw new IllegalArgumentException("관심 등록된 게시물이 아닙니다.");
         }
-        wishRepository.deleteWishByCatchPostIdAndMemberId(catchId, member.getId());
+        wishRepository.deleteWishByPetPostCatchIdAndMemberId(catchId, member.getId());
         return catchId + "번 게시글 관심 해제";
     }
 
     public String deleteMissing(Long missingId, Member member) {
         PetPostMissing post = petPostMissingRepository.findById(missingId).orElseThrow(NullPointerException::new);
-        Optional<Wish> wish = wishRepository.findWishByMissingPostIdAndMemberId(missingId, member.getId());
+        Optional<Wish> wish = wishRepository.findWishByPetPostMissingIdAndMemberId(missingId, member.getId());
         if (wish.isEmpty()) {
             throw new IllegalArgumentException("관심 등록된 게시물이 아닙니다.");
         }
-        wishRepository.deleteWishByMissingPostIdAndMemberId(missingId, member.getId());
+        wishRepository.deleteWishByPetPostMissingIdAndMemberId(missingId, member.getId());
         return missingId + "번 게시글 관심 해제";
     }
 }

@@ -9,7 +9,7 @@ import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
-import hanghae99.rescuepets.memberpet.repository.WishRepository;
+import hanghae99.rescuepets.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,7 +42,7 @@ public class PetPostCatchService {
 
         for (PetPostCatch petPostCatch : PetPostCatches) {
             PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
-            dto.setWished(wishRepository.findByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+            dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.success(dtoList);
@@ -58,7 +58,7 @@ public class PetPostCatchService {
 
         for (PetPostCatch petPostCatch : PetPostCatches) {
             PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
-            dto.setWished(wishRepository.findByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+            dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.success(dtoList);
@@ -70,7 +70,7 @@ public class PetPostCatchService {
 //                new CustomException(ErrorCode.NotFoundPost)
         );
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
-        responseDto.setWished(wishRepository.findByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
+        responseDto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
         return ResponseDto.success(responseDto);
     }
 
