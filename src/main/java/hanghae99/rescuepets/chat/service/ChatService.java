@@ -28,6 +28,3 @@ public class ChatService {
         return ChatRoomResponseDto.of(chatRoom);
     }
 }
-
-
-////

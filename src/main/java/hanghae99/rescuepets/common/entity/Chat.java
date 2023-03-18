@@ -10,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Chat {
+public class Chat extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Chat {
     public static Chat of(ChatRequestDto dto, ChatRoom room) {
         return Chat.builder()
                 .room(room)
-                .sender(room.getGuest().getNickname())
+                .sender(dto.getSender())
                 .message(dto.getMessage())
                 .build();
     }

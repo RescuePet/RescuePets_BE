@@ -19,8 +19,8 @@ public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String roomId;
-    private String roomName;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.REMOVE)
     List<Chat> chatMessages = new ArrayList<>();
@@ -40,7 +40,6 @@ public class ChatRoom {
     public static ChatRoom of(PetPostCatch post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
-                .roomName(post.getMember().getNickname())
                 .catchPost(post)
                 .host(post.getMember())
                 .guest(member)
@@ -50,7 +49,6 @@ public class ChatRoom {
     public static ChatRoom of(PetPostMissing post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
-                .roomName(post.getMember().getNickname())
                 .missingPost(post)
                 .host(post.getMember())
                 .guest(member)

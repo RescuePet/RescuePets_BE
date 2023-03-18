@@ -23,10 +23,22 @@ public class ChatRoomService {
     private final PetPostMissingRepository petPostMissingRepository;
 
     public List<ChatRoomListResponseDto> getRoomList(Member member) {
-        List<ChatRoom> rooms = chatRoomRepository.findAllByHostIdOrGuestIdOrderByRoomIdDesc(member.getId(), member.getId());
+//        List<ChatRoom> rooms = chatRoomRepository.findAllByHostIdOrGuestIdOrderByRoomIdDesc(member.getId(), member.getId());
+//        List<ChatRoomListResponseDto> dto = new ArrayList<>();
+//        for (ChatRoom room : rooms) {
+//            dto.add(ChatRoomListResponseDto.of(room));
+//        }
+//
+//        return dto;
+
+        List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByRoomIdDesc(member.getId(), member.getId());
+
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
-        for (ChatRoom room : rooms) {
-            dto.add(ChatRoomListResponseDto.of(room));
+
+        for (ChatRoom room : roomList) {
+            String roomName = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getNickname() : room.getHost().getNickname();
+
+            dto.add(ChatRoomListResponseDto.of(room, roomName));
         }
 
         return dto;
@@ -34,7 +46,7 @@ public class ChatRoomService {
 
     public String createCatchRoom(Long postId, Member member) {
         PetPostCatch post = petPostCatchRepository.findById(postId).orElseThrow(NullPointerException::new);
-        ChatRoom room = chatRoomRepository.findChatRoomByCatchPostIdAndGuestId(postId, member.getId()).orElse(
+        ChatRoom room = chatRoomRepository.findChatRoomByCatchPostIdAndHostIdOrGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(
                 ChatRoom.of(post, member)
         );
         chatRoomRepository.save(room);
@@ -43,7 +55,7 @@ public class ChatRoomService {
 
     public String createMissingRoom(Long postId, Member member) {
         PetPostMissing post = petPostMissingRepository.findById(postId).orElseThrow(NullPointerException::new);
-        ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndGuestId(postId, member.getId()).orElse(
+        ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(
                 ChatRoom.of(post, member)
         );
         chatRoomRepository.save(room);
