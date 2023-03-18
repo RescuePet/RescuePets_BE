@@ -21,26 +21,22 @@ public class Member {
     private String address;
     @Column
     private String password;
+
     @Column
-    private MemberRoleEnum role;
-
+    private Long kakaoId;
 
     @Builder
-    public Member(String email, String nickname , String password , MemberRoleEnum memberRoleEnum, Long id){
+    public Member(Long id, String email, String nickname , String password, String address, Long kakaoId){
         this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
-        this.role = memberRoleEnum;
-    }
-
-    @Builder
-    public Member(String email, String nickname , String password , MemberRoleEnum memberRoleEnum, Long id, String address){
-        this.id = id;
-        this.email = email;
-        this.nickname = nickname;
-        this.password = password;
-        this.role = memberRoleEnum;
         this.address = address;
+        this.kakaoId = kakaoId;
     }
+
+    public void setKakaoId(Long kakaoId) {
+        this.kakaoId = kakaoId;
+    }
+
 }

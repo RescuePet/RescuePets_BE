@@ -9,15 +9,19 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 public class Wish {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "petPostCatchId")
     private PetPostCatch petPostCatch;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "petPostMissingId")
     private PetPostMissing petPostMissing;
@@ -29,5 +33,10 @@ public class Wish {
     public Wish(Member member, PetPostMissing petPostMissing) {
         this.member = member;
         this.petPostMissing = petPostMissing;
+    }
+
+    public Wish(Member member, PetPostCatch petPostCatch) {
+        this.member = member;
+        this.petPostCatch = petPostCatch;
     }
 }

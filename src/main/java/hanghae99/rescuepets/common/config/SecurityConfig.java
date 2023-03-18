@@ -54,7 +54,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "api/pets/petinfobyapi/**", "api/pets/catch/**","api/pets/missing","api/pets/missing/comments/**").permitAll()
                 .antMatchers(HttpMethod.GET, "api/chat/catchroom/**","api/chat/missingroom/**","chat/rooms","chat/rooms/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/pets/info-list","/api/pets/details/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/pets/api-save/**","/api/pets/api-saves/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/pets/api-save/**","/api/pets/api-saves/**","/api/pets/api-new-save/**").permitAll()
                 .antMatchers("/api/**").authenticated()
 
 

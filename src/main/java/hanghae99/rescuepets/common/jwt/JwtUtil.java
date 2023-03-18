@@ -1,12 +1,15 @@
 package hanghae99.rescuepets.common.jwt;
 
-import hanghae99.rescuepets.common.entity.MemberRoleEnum;
+import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.security.MemberDetailServiceImpl;
+import hanghae99.rescuepets.member.dto.TokenDto;
+import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import io.jsonwebtoken.security.SecurityException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,21 +19,26 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class JwtUtil  {
-
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String AUTHORIZATION_KEY = "auth";
-    private static final String BEARER_PREFIX = "Bearer ";
-    private static final long TOKEN_TIME = 24 * 60 * 60 * 1000L;
+public class JwtUtil {
 
     private final MemberDetailServiceImpl memberDetailService;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    private static final long ACCESS_TIME = 1000L * 60 * 60 * 24;
+    private static final long REFRESH_TIME = 1000L * 60 * 60 * 24 * 7;
+    public static final String ACCESS_TOKEN = "Authorization";
+    public static final String REFRESH_TOKEN = "Refresh_Token";
+    public static final String BEARER_PREFIX = "Bearer ";
+
 
     @Value("${jwt.secret.key}")
     private String secretKey;
@@ -43,9 +51,10 @@ public class JwtUtil  {
         key = Keys.hmacShaKeyFor(bytes);
     }
 
-    // header 토큰을 가져오기
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+    // header 토큰을 가져오는 기능
+    public String resolveToken(HttpServletRequest request, String type) {
+        String bearerToken = type.equals("Access") ? request.getHeader(ACCESS_TOKEN) : request.getHeader(REFRESH_TOKEN);
+
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
             return bearerToken.substring(7);
         }
@@ -53,51 +62,85 @@ public class JwtUtil  {
     }
 
     // 토큰 생성
-    public String createToken(String email, MemberRoleEnum role) {
+    public TokenDto createAllToken(String email) {
+        return new TokenDto(createToken(email, "Access"), createToken(email, "Refresh"));
+    }
+
+    public String createToken(String email, String type) {
+
         Date date = new Date();
+
+        long time = type.equals("Access") ? ACCESS_TIME : REFRESH_TIME;
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(email)
-                        .claim(AUTHORIZATION_KEY, role)
-                        .setExpiration(new Date(date.getTime() + TOKEN_TIME))
-                        .setIssuedAt(date)
-                        .signWith(key, signatureAlgorithm)
-                        .compact();
+                .setSubject(email)
+                .setExpiration(new Date(date.getTime() + time))
+                .setIssuedAt(date)
+                .signWith(key, signatureAlgorithm)
+                .compact();
+
     }
 
     // 토큰 검증
-    public boolean validateToken(String token) {
+    public Boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+            log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
+            return false;
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT token, 만료된 JWT token 입니다.");
+            log.error("Expired JWT token, 만료된 JWT token 입니다.");
+            return false;
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+            log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
+            return false;
         } catch (IllegalArgumentException e) {
-            log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+            log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
+            return false;
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return false;
         }
-        return false;
     }
 
-    // 토큰에서 사용자 정보 가져오기
-    public Claims getUserInfoFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+    // refreshToken 토큰 검증
+    public Boolean refreshTokenValidation(String token) {
+
+        // 1차 토큰 검증
+        if (!validateToken(token)) {
+            return false;
+        }
+
+        // DB에 저장한 토큰 비교
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmail(getEmailFromToken(token));
+
+        return refreshToken.isPresent() && token.equals(refreshToken.get().getRefreshToken().substring(7));
     }
-
-
 
     // 인증 객체 생성
     public Authentication createAuthentication(String email) {
-        UserDetails userDetails = memberDetailService.loadUserByUsername(email);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        UserDetails memberDetails = memberDetailService.loadUserByUsername(email);
+        return new UsernamePasswordAuthenticationToken(memberDetails, null, memberDetails.getAuthorities());
+    }
+    // 토큰에서 email 가져오는 기능
+    public String getEmailFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public void createToken(HttpServletResponse response, Member member) {
+        TokenDto tokenDto = createAllToken(member.getEmail());
+
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmail(member.getEmail());
+        if (refreshToken.isPresent()) {
+            refreshTokenRepository.save(refreshToken.get().updateToken(tokenDto.getRefreshToken()));
+        } else {
+            RefreshToken newToken = new RefreshToken(tokenDto.getRefreshToken(), member.getEmail());
+            refreshTokenRepository.save(newToken);
+        }
+        response.addHeader(ACCESS_TOKEN, tokenDto.getAccessToken());
+        response.addHeader(REFRESH_TOKEN, tokenDto.getRefreshToken());
     }
 
 }

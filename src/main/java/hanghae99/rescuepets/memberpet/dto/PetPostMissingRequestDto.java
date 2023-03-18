@@ -6,14 +6,20 @@ import java.util.List;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.lang.Nullable;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.Null;
 
 @Getter
 @Builder
 public class PetPostMissingRequestDto {
-    private Date postedDate;
     private String happenPlace;
-    private String popfile;
     private String kindCd;
     private String specialMark;
     private String content;
+    @Nullable
+    private MultipartFile popfile;
+    @Nullable
+    private List<MultipartFile> postImages;
 }

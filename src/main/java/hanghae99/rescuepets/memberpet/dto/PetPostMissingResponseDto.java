@@ -18,17 +18,22 @@ public class PetPostMissingResponseDto {
     private String nickname;
     private String createdAt;
     private String modifiedAt;
+    private Boolean isWished;
 
-    public static PetPostCatchResponseDto of(PetPostCatch petPostCatch) {
-        return PetPostCatchResponseDto.builder()
-                .happenPlace(petPostCatch.getHappenPlace())
-                .popfile(petPostCatch.getPopfile())
-                .kindCd(petPostCatch.getKindCd())
-                .specialMark(petPostCatch.getSpecialMark())
-                .content(petPostCatch.getContent())
-                .nickname(petPostCatch.getMember().getNickname())
-                .createdAt(petPostCatch.getCreatedAt().toString())
-                .modifiedAt(petPostCatch.getModifiedAt().toString())
+    public static PetPostMissingResponseDto of(PetPostMissing petPostMissing) {
+        return PetPostMissingResponseDto.builder()
+                .happenPlace(petPostMissing.getHappenPlace())
+                .popfile(petPostMissing.getPopfile())
+                .kindCd(petPostMissing.getKindCd())
+                .specialMark(petPostMissing.getSpecialMark())
+                .content(petPostMissing.getContent())
+                .nickname(petPostMissing.getMember().getNickname())
+                .createdAt(petPostMissing.getCreatedAt().toString())
+                .modifiedAt(petPostMissing.getModifiedAt().toString())
                 .build();
+    }
+
+    public void setWished(boolean wished) {
+        isWished = wished;
     }
 }
