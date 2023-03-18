@@ -6,6 +6,7 @@ import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
 import hanghae99.rescuepets.memberpet.service.PetPostCatchService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -26,6 +27,7 @@ public class PetPostCatchController {
 
 //    @ApiOperation(value = "게시글 목록 조회", notes = "page, size, sortBy로 페이징 후 조회")
     @GetMapping("/")
+    @Operation(summary = "PostCatch 게시글 불러오기", description = "")
     public ResponseDto<List<PetPostCatchResponseDto>> getPetPostCatchList(@RequestParam int page,
                                                                   @RequestParam int size,
                                                                   @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
@@ -35,6 +37,7 @@ public class PetPostCatchController {
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
     }
     @GetMapping("/member")
+    @Operation(summary = "내가 작성한 PostCatch 게시글 불러오기", description = "")
     public ResponseDto<List<PetPostCatchResponseDto>> getPetPostCatchListByMember(@RequestParam int page,
                                                                   @RequestParam int size,
                                                                   @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
@@ -44,19 +47,21 @@ public class PetPostCatchController {
     }
 
     @GetMapping("/{petPostCatchId}")
+    @Operation(summary = "내가 작성한 특정 PostCatch 게시글 조회하기", description = "")
     public ResponseDto<PetPostCatchResponseDto> getPetPostCatch(@PathVariable Long petPostCatchId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
         return petPostCatchService.getPetPostCatch(petPostCatchId, member);
     }
 
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "PostCatch 게시글 작성하기", description = "")
     public ResponseDto<String> createPost(@ModelAttribute PetPostCatchRequestDto requestDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return petPostCatchService.create(requestDto, memberDetails.getMember());
     }
 
-
     @PutMapping(value = "/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "내가 작성한 특정 PostCatch 게시글 수정하기", description = "")
     public ResponseDto<String> updatePetPostCatch(@PathVariable Long petPostCatchId,
                                           @ModelAttribute PetPostCatchRequestDto requestDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
@@ -64,9 +69,8 @@ public class PetPostCatchController {
     }
 
     @DeleteMapping("/{petPostCatchId}")
+    @Operation(summary = "내가 작성한 특정 PostCatch 게시글 삭제하기", description = "")
     public ResponseDto<String> deletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
         return petPostCatchService.delete(petPostCatchId, userDetails.getMember());
     }
-
-
 }
