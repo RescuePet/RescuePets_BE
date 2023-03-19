@@ -11,14 +11,12 @@ public class ChatRoomListResponseDto {
     private String roomId;
     private String roomName;
     private String lastChat;
-    private String lastTime;
 
-    public static ChatRoomListResponseDto of(ChatRoom room, String roomName) {
+    public static ChatRoomListResponseDto of(ChatRoom room, String roomName, String lastChat) {
         return ChatRoomListResponseDto.builder()
                 .roomId(room.getRoomId())
                 .roomName(roomName)
-                .lastChat("마지막 채팅")
-                .lastTime("시간")
+                .lastChat(lastChat)
                 .build();
     }
 }

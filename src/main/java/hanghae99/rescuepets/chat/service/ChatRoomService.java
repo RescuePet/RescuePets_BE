@@ -2,10 +2,7 @@ package hanghae99.rescuepets.chat.service;
 
 import hanghae99.rescuepets.chat.dto.ChatRoomListResponseDto;
 import hanghae99.rescuepets.chat.repository.ChatRoomRepository;
-import hanghae99.rescuepets.common.entity.ChatRoom;
-import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.PetPostCatch;
-import hanghae99.rescuepets.common.entity.PetPostMissing;
+import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,22 +20,15 @@ public class ChatRoomService {
     private final PetPostMissingRepository petPostMissingRepository;
 
     public List<ChatRoomListResponseDto> getRoomList(Member member) {
-//        List<ChatRoom> rooms = chatRoomRepository.findAllByHostIdOrGuestIdOrderByRoomIdDesc(member.getId(), member.getId());
-//        List<ChatRoomListResponseDto> dto = new ArrayList<>();
-//        for (ChatRoom room : rooms) {
-//            dto.add(ChatRoomListResponseDto.of(room));
-//        }
-//
-//        return dto;
-
         List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByRoomIdDesc(member.getId(), member.getId());
 
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
 
         for (ChatRoom room : roomList) {
+            String lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1).getMessage();
             String roomName = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getNickname() : room.getHost().getNickname();
 
-            dto.add(ChatRoomListResponseDto.of(room, roomName));
+            dto.add(ChatRoomListResponseDto.of(room, roomName, lastChat));
         }
 
         return dto;
@@ -50,6 +40,7 @@ public class ChatRoomService {
                 ChatRoom.of(post, member)
         );
         chatRoomRepository.save(room);
+
         return room.getRoomId();
     }
 
@@ -59,6 +50,7 @@ public class ChatRoomService {
                 ChatRoom.of(post, member)
         );
         chatRoomRepository.save(room);
+
         return room.getRoomId();
     }
 }
