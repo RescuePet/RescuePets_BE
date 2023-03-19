@@ -1,6 +1,7 @@
 package hanghae99.rescuepets.common.handler;
 
 import hanghae99.rescuepets.common.dto.CustomException;
+import hanghae99.rescuepets.common.dto.CustomObjectException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -41,12 +42,11 @@ public class GrobalExceptionHandler {
         return ResponseDto.toAllExceptionResponseEntity(HttpStatus.BAD_REQUEST, ex.getMessage(), ex.toString());
     }
 
-    //CustomException에서 object를 사용할 경우
-    @ExceptionHandler({CustomException.class})
-    protected ResponseEntity<ResponseDto> handleCustomRollBackException(CustomException e) {
+//    CustomException에서 object를 사용할 경우
+    @ExceptionHandler({CustomObjectException.class})
+    protected ResponseEntity<ResponseDto> handleCustomRollBackException(CustomObjectException e) {
         log.error("handleCustomException throw CustomException Message: {}", e.getExceptionMessage());
         log.error("handleCustomException throw CustomException Object: {}", e.getObject());
         return ResponseDto.toAllExceptionResponseEntity(e.getExceptionMessage(), e.getObject());
     }
-
 }
