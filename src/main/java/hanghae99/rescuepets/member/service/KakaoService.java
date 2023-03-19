@@ -7,6 +7,7 @@ import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
+import hanghae99.rescuepets.member.dto.MemberResponseDto;
 import hanghae99.rescuepets.member.dto.TokenDto;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class KakaoService {
     private String kakaoApiKey;
 
     @Transactional
-    public String kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public MemberResponseDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         String message = "님 환영합니다.";
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -56,12 +57,7 @@ public class KakaoService {
 
         jwtUtil.createToken(response, kakaoMember);
 
-        return kakaoUserInfo.getNickname() + message + "(" + kakaoMember.getEmail() + ")";
-    }
-
-    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
-        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+        return new MemberResponseDto(kakaoMember.getId(), kakaoMember.getNickname(), kakaoMember.getEmail());
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {

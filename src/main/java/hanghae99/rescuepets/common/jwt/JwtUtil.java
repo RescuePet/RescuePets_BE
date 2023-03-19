@@ -83,25 +83,22 @@ public class JwtUtil {
     }
 
     // 토큰 검증
-    public Boolean validateToken(String token) {
+    public Integer validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
+            return 1;
         } catch (SecurityException | MalformedJwtException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-            return false;
+            return 0;
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token 입니다.");
-            return false;
+            return 2;
         } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-            return false;
+            return 0;
         } catch (IllegalArgumentException e) {
             log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-            return false;
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-            return false;
+            return 0;
         }
     }
 
@@ -109,7 +106,7 @@ public class JwtUtil {
     public Boolean refreshTokenValidation(String token) {
 
         // 1차 토큰 검증
-        if (!validateToken(token)) {
+        if (validateToken(token) != 1) {
             return false;
         }
 

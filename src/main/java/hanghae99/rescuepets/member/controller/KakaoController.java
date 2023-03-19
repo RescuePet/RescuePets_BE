@@ -1,6 +1,7 @@
 package hanghae99.rescuepets.member.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import hanghae99.rescuepets.member.dto.MemberResponseDto;
 import hanghae99.rescuepets.member.service.KakaoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class KakaoController {
     private final KakaoService kakaoService;
 
     @GetMapping("/kakao/callback")
-    public String kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
+    public MemberResponseDto kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         log.info("카카오 로그인");
         log.info("code : " + code);
 
