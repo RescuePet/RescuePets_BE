@@ -1,8 +1,12 @@
 package hanghae99.rescuepets.wish.controller;
 
+import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.wish.service.WishService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,23 +17,27 @@ public class WishController {
 
     private final WishService wishService;
 
-    @PostMapping("/wish/{catchId}")
-    public String wishCath(@PathVariable Long catchId, @AuthenticationPrincipal MemberDetails memberDetails) {
+    @Operation(summary = "발견 게시글 관심 등록")
+    @PostMapping("/wish/catch/{catchId}")
+    public ResponseEntity<ResponseDto> wishCath(@PathVariable Long catchId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return wishService.wishCatch(catchId, memberDetails.getMember());
     }
 
-    @PostMapping("/wish/{missingId}")
-    public String wishMissing(@PathVariable Long missingId, @AuthenticationPrincipal MemberDetails memberDetails) {
+    @Operation(summary = "실종 게시글 관심 등록")
+    @PostMapping("/wish/missing/{missingId}")
+    public ResponseEntity<ResponseDto> wishMissing(@PathVariable Long missingId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return wishService.wishMissing(missingId, memberDetails.getMember());
     }
 
-    @DeleteMapping("/wish/{catchId}")
-    public String deleteCatch(@PathVariable Long catchId, @AuthenticationPrincipal MemberDetails memberDetails) {
+    @Operation(summary = "발견 게시글 관심 해제")
+    @DeleteMapping("/wish/catch/{catchId}")
+    public ResponseEntity<ResponseDto> deleteCatch(@PathVariable Long catchId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return wishService.deleteCatch(catchId, memberDetails.getMember());
     }
 
-    @DeleteMapping("/wish/{missingId}")
-    public String deleteMissing(@PathVariable Long missingId, @AuthenticationPrincipal MemberDetails memberDetails) {
+    @Operation(summary = "실종 게시글 관심 해제")
+    @DeleteMapping("/wish/missing/{missingId}")
+    public ResponseEntity<ResponseDto> deleteMissing(@PathVariable Long missingId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return wishService.deleteMissing(missingId, memberDetails.getMember());
     }
 }
