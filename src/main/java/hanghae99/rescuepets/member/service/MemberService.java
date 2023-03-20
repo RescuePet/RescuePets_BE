@@ -1,13 +1,16 @@
 package hanghae99.rescuepets.member.service;
 
 import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
+import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
@@ -17,9 +20,15 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
 
+    private final RefreshTokenRepository refreshTokenRepository;
+
     public MemberResponseDto signup(SignupRequestDto signupRequestDto) {
-        if (memberRepository.findByEmailAndNickname(signupRequestDto.getEmail(), signupRequestDto.getNickname()).isPresent()) {
-            throw new IllegalArgumentException("중복입니다 한번더 확인 해 주세여 ~!");
+        if (memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("이메일 중복입니다 한번 더 확인 해 주세여");
+        }
+
+        if (memberRepository.findByNickname(signupRequestDto.getNickname()).isPresent()){
+            throw new IllegalArgumentException("닉네임 중복입니다 한번 더 확인해 주세여");
         }
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
@@ -86,5 +95,12 @@ public class MemberService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
         memberRepository.delete(member);
+    }
+
+    public void logout( Member member) {
+        RefreshToken refreshToken = refreshTokenRepository.findByMemberEmail(member.getEmail()).orElseThrow(
+                () -> new NullPointerException()
+        );
+        refreshTokenRepository.delete(refreshToken);
     }
 }
