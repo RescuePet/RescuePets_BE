@@ -115,7 +115,8 @@ public class KakaoService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-        return new KakaoUserInfoDto(id, nickname, email);
+        String profileImage = jsonNode.get("profile_image_url").asText();
+        return new KakaoUserInfoDto(id, nickname, email, profileImage);
     }
 
 
