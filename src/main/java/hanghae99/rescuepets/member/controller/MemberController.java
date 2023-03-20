@@ -1,12 +1,17 @@
 package hanghae99.rescuepets.member.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.dto.SuccessMessage;
+import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
-import hanghae99.rescuepets.member.dto.*;
+import hanghae99.rescuepets.member.dto.EmailRequestDto;
+import hanghae99.rescuepets.member.dto.LoginRequestDto;
+import hanghae99.rescuepets.member.dto.NicknameRequestDto;
+import hanghae99.rescuepets.member.dto.SignupRequestDto;
 import hanghae99.rescuepets.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -14,13 +19,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static hanghae99.rescuepets.common.dto.ResponseDto.toAllExceptionResponseEntity;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class MemberController {
+
     private final MemberService memberService;
+    private final JwtUtil jwtUtil;
 
     //회원가입
     @Operation(summary = "회원가입", description = "자세한 설명")
@@ -49,6 +54,13 @@ public class MemberController {
     @PostMapping("/member/login")
     public ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         return memberService.login(loginRequestDto, response);
+    }
+
+    @Operation(summary = "Access Token 재발급")
+    @GetMapping("/reissue")
+    public ResponseEntity<ResponseDto> reissue(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails, HttpServletResponse response) {
+        response.addHeader(JwtUtil.ACCESS_TOKEN, jwtUtil.createToken(memberDetails.getMember().getEmail(), "Access"));
+        return ResponseDto.toResponseEntity(SuccessMessage.REISSUE_ACCESS_TOKEN);
     }
 }
 //    @Operation(summary = "로그아웃", description = "자세한 설명")
