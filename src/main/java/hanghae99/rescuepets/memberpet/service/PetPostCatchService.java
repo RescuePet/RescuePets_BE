@@ -65,7 +65,7 @@ public class PetPostCatchService {
     }
 
     @Transactional
-    public ResponseDto<PetPostCatchResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
+    public ResponseDto<PetPostCatchResponseDto>  getPetPostCatch(Long petPostCatchId, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
 //                new CustomException(ErrorCode.NotFoundPost)
         );

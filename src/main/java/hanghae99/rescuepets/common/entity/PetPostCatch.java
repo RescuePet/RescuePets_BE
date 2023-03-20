@@ -19,13 +19,27 @@ public class PetPostCatch extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String happenPlace;
-    private String popfile;
     private String kindCd;
+    private String age;
+    private String weight;
+    private String colorCd;
+    private String happenPlace;
+    private String happenDt;
+    private String happenHour;
     private String specialMark;
     private String content;
+    private String gratuity;
+    private String contact;
     private Boolean openNickname;
-
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private SexEnum sexCd;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private NeuterEnum neuterYn;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UpkindEnum upkind;
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
@@ -38,11 +52,20 @@ public class PetPostCatch extends TimeStamped{
 
 
     public PetPostCatch(PetPostCatchRequestDto requestDto, Member member) {
-        this.happenPlace = requestDto.getHappenPlace();
-//        this.PostImages = imageUrl;
+        this.upkind = requestDto.getUpkind();
         this.kindCd = requestDto.getKindCd();
+        this.sexCd = requestDto.getSexCd();
+        this.neuterYn = requestDto.getNeuterYn();
+        this.age = requestDto.getAge();
+        this.weight = requestDto.getWeight();
+        this.colorCd = requestDto.getColorCd();
+        this.happenPlace = requestDto.getHappenPlace();
+        this.happenDt = requestDto.getHappenDt();
+        this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
+        this.gratuity = requestDto.getGratuity();
+        this.contact = requestDto.getContact();
         this.member = member;
         this.openNickname = requestDto.getOpenNickname();
     }
@@ -53,11 +76,20 @@ public class PetPostCatch extends TimeStamped{
         }
     }
     public void update(PetPostCatchRequestDto requestDto) {
-        this.happenPlace = requestDto.getHappenPlace();
-//        this.popfile = imageUrl;
+        this.upkind = requestDto.getUpkind();
         this.kindCd = requestDto.getKindCd();
+        this.sexCd = requestDto.getSexCd();
+        this.neuterYn = requestDto.getNeuterYn();
+        this.age = requestDto.getAge();
+        this.weight = requestDto.getWeight();
+        this.colorCd = requestDto.getColorCd();
+        this.happenPlace = requestDto.getHappenPlace();
+        this.happenDt = requestDto.getHappenDt();
+        this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();
         this.content = requestDto.getContent();
+        this.gratuity = requestDto.getGratuity();
+        this.contact = requestDto.getContact();
         this.openNickname = requestDto.getOpenNickname();
     }
 }
