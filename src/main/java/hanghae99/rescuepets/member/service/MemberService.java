@@ -68,20 +68,20 @@ public class MemberService {
         return ResponseDto.toResponseEntity(LOGIN_SUCCESS,new MemberResponseDto(member));
     }
 
-    public ResponseEntity<ResponseDto> checkEmail(String email) {
+    public ResponseEntity<ResponseDto> checkEmail(EmailRequestDto emailRequestDto) {
 
 
         // 중복 이메일 확인
-        if(memberRepository.findByEmail(email).isPresent()){
+        if(memberRepository.findByEmail(emailRequestDto.getEmail()).isPresent()){
             throw new CustomException(DUPLICATE_EMAIL);
         }
 
         return ResponseDto.toResponseEntity(ACOUNT_CHECK_SUCCESS);
     }
 
-    public ResponseEntity<ResponseDto> checkNickname(String nickName) {
+    public ResponseEntity<ResponseDto> checkNickname(NicknameRequestDto nicknameRequestDto) {
         // 중복 닉네임 확인
-        if(memberRepository.findByNickname(nickName).isPresent()){
+        if(memberRepository.findByNickname(nicknameRequestDto.getNickname()).isPresent()){
             throw new CustomException(DUPLICATE_EMAIL);
         }
 

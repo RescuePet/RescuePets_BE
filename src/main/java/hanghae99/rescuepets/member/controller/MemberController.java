@@ -25,7 +25,7 @@ public class MemberController {
     //회원가입
     @Operation(summary = "회원가입", description = "자세한 설명")
     @PostMapping("member/signup")
-    public ResponseEntity<ResponseDto> signup(@RequestBody @Validated SignupRequestDto signupRequestDto){
+    public ResponseEntity<ResponseDto> signup(@RequestBody @Validated SignupRequestDto signupRequestDto) {
         return memberService.signup(signupRequestDto);
 
     }
@@ -33,35 +33,35 @@ public class MemberController {
     // 이메일 중복 확인
     @Operation(summary = "이메일 중복 확인", description = "자세한 설명")
     @GetMapping("member/email-duplicate")
-    public ResponseEntity<ResponseDto> checkEmail(@RequestParam String email){
-       return memberService.checkEmail(email);
+    public ResponseEntity<ResponseDto> checkEmail(@RequestBody EmailRequestDto emailRequestDto) {
+        return memberService.checkEmail(emailRequestDto);
     }
 
     // 닉네임 중복 확인
     @Operation(summary = "닉네임 중복 확인", description = "자세한 설명")
-    @GetMapping("member/nickName-duplicate")
-    public ResponseEntity<ResponseDto> checkNickname(@RequestParam String nickName){
-         return memberService.checkNickname(nickName);
+    @PostMapping("member/nickName-duplicate")
+    public ResponseEntity<ResponseDto> checkNickname(@RequestBody NicknameRequestDto nicknameRequestDto) {
+        return memberService.checkNickname(nicknameRequestDto);
     }
 
     // 로그인 하기
-    @Operation(summary = "로그인",description = "자세한 설명")
+    @Operation(summary = "로그인", description = "자세한 설명")
     @PostMapping("/member/login")
-    public  ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
         return memberService.login(loginRequestDto, response);
     }
-
-    @Operation(summary = "로그아웃", description = "자세한 설명")
-    @GetMapping("member/logout")
-    public ResponseEntity<ResponseDto> logout(@AuthenticationPrincipal MemberDetails memberDetails){
-        return memberService.logout(memberDetails.getMember());
-    }
-    // 삭제 여기는 전역 Response 나오면 처리 하겠습니다 회원탈퇴
-    @Operation(summary = "회원탈퇴", description = "자세한 설명")
-    @PostMapping("/member/Withdrawal")
-        public ResponseEntity<ResponseDto> Withdrawal(@RequestBody WithDrawalRequestDto withDrawalRequestDto) {
-            return memberService.Withdrawal(withDrawalRequestDto);
-        }
-    }
+}
+//    @Operation(summary = "로그아웃", description = "자세한 설명")
+//    @GetMapping("member/logout")
+//    public ResponseEntity<ResponseDto> logout(@AuthenticationPrincipal MemberDetails memberDetails){
+//        return memberService.logout(memberDetails.getMember());
+//    }
+//    // 삭제 여기는 전역 Response 나오면 처리 하겠습니다 회원탈퇴
+//    @Operation(summary = "회원탈퇴", description = "자세한 설명")
+//    @PostMapping("/member/Withdrawal")
+//        public ResponseEntity<ResponseDto> Withdrawal(@RequestBody WithDrawalRequestDto withDrawalRequestDto) {
+//            return memberService.Withdrawal(withDrawalRequestDto);
+//        }
+//    }
 
 
