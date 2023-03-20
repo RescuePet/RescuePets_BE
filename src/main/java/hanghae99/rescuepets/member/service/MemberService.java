@@ -1,5 +1,7 @@
 package hanghae99.rescuepets.member.service;
 
+import hanghae99.rescuepets.common.dto.CustomException;
+import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
@@ -7,11 +9,15 @@ import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
+import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +28,13 @@ public class MemberService {
 
     private final RefreshTokenRepository refreshTokenRepository;
 
-    public MemberResponseDto signup(SignupRequestDto signupRequestDto) {
+    public ResponseEntity<ResponseDto> signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("이메일 중복입니다 한번 더 확인 해 주세여");
+            throw new CustomException(DUPLICATE_EMAIL);
         }
 
         if (memberRepository.findByNickname(signupRequestDto.getNickname()).isPresent()){
-            throw new IllegalArgumentException("닉네임 중복입니다 한번 더 확인해 주세여");
+            throw new CustomException(DUPLICATE_NICKNAME);
         }
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
@@ -39,68 +45,72 @@ public class MemberService {
                 .build();
 
         memberRepository.save(member);
-        return new MemberResponseDto(member);
+        return ResponseDto.toResponseEntity(SIGN_UP_SUCCESS,new MemberResponseDto(member)
+        );
+
     }
-    public MemberResponseDto login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<ResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
 
         // 사용자 확인
         Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new IllegalArgumentException("사용자가 없습니다")
+                () -> new CustomException(MEMBER_NOT_FOUND)
         );
 
         // 비밀번호 확인
         if(!passwordEncoder.matches(password, member.getPassword())){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+            throw new CustomException(MEMBER_NOT_FOUND);
         }
 
         jwtUtil.createToken(response, member);
 
-        return new MemberResponseDto(member);
+        return ResponseDto.toResponseEntity(LOGIN_SUCCESS,new MemberResponseDto(member));
     }
 
-    public EmailResponseDto checkEmail(String email) {
+    public ResponseEntity<ResponseDto> checkEmail(String email) {
 
 
         // 중복 이메일 확인
         if(memberRepository.findByEmail(email).isPresent()){
-            throw new IllegalArgumentException("이메일이 중복 됩니다");
+            throw new CustomException(DUPLICATE_EMAIL);
         }
 
-        return new EmailResponseDto(email);
+        return ResponseDto.toResponseEntity(ACOUNT_CHECK_SUCCESS);
     }
 
-    public NicknameResponseDto checkNickname(String nickName) {
+    public ResponseEntity<ResponseDto> checkNickname(String nickName) {
         // 중복 닉네임 확인
         if(memberRepository.findByNickname(nickName).isPresent()){
-            throw new IllegalArgumentException("이메일이 중복 됩니다");
+            throw new CustomException(DUPLICATE_EMAIL);
         }
 
-        return new NicknameResponseDto(nickName);
+        return ResponseDto.toResponseEntity(EMAIL_CHECK_SUCCESS);
     }
 
 
-    public void Withdrawal(WithDrawalRequestDto withDrawalRequestDto) {
+    public ResponseEntity<ResponseDto> Withdrawal(WithDrawalRequestDto withDrawalRequestDto) {
         String email = withDrawalRequestDto.getEmail();
         String password = withDrawalRequestDto.getPassword();
 
         // 사용자 확인
         Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new IllegalArgumentException("사용자가 없습니다")
+                () -> new CustomException(MEMBER_NOT_FOUND)
         );
 
         // 비밀번호 확인
         if(!passwordEncoder.matches(password, member.getPassword())){
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+            throw new CustomException(MEMBER_NOT_FOUND);
         }
         memberRepository.delete(member);
+        return ResponseDto.toResponseEntity(WITHDRAWAL_SUCCESS);
     }
 
-    public void logout( Member member) {
+    public ResponseEntity<ResponseDto> logout( Member member) {
         RefreshToken refreshToken = refreshTokenRepository.findByMemberEmail(member.getEmail()).orElseThrow(
                 () -> new NullPointerException()
         );
         refreshTokenRepository.delete(refreshToken);
+        return ResponseDto.toResponseEntity(LOGOUT_SUCCESS);
     }
 }
