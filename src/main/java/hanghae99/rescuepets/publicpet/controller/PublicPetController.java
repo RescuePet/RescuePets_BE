@@ -54,7 +54,7 @@ public class PublicPetController {
     @SecurityRequirements
     @GetMapping("/info-list")
     @Operation(summary = "유기동물 전체 정보 가져오기", description = "자세한 설명")
-    public PublicPetsResponsDto getPublicPet(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy", required = false, defaultValue = "happenDt") String sortBy) {
+    public ResponseEntity<ResponseDto> getPublicPet(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy", required = false, defaultValue = "happenDt") String sortBy) {
         log.info("전체 불러오기가 요청 되었습니다.");
         return publicPetService.getPublicPet(page - 1, size, sortBy);
     }

@@ -275,30 +275,28 @@ public class PublicPetService {
 
     //-----------테스트 공공API 호출 및 DB 저장 / 비교 로직
 
+    //전체 페이지
     @Transactional(readOnly = true)
-    public PublicPetsResponsDto getPublicPet(int page, int size, String sortBy) {
+    public ResponseEntity<ResponseDto> getPublicPet(int page, int size, String sortBy) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetInfoByAPI> postPage = publicPetRepository.findAll(pageable);
-
-        List<PetInfoByAPI> pets = postPage.getContent();
         List<PublicPetResponsDto> dtoList = new ArrayList<>();
 
-        for (PetInfoByAPI petInfoByAPI : pets) {
+        for (PetInfoByAPI petInfoByAPI : postPage) {
             PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI);
             dtoList.add(responseDto);
         }
         log.info("요청된 내용" + "page: " + page + "size: " + size +  "sortBy: " + sortBy);
         log.info("dtoList contents: {}", "내용 물:    1번: " + dtoList.get(0).getDesertionNo() + "    2번:" + dtoList.get(1).getDesertionNo() + "    3번: " + dtoList.get(2).getDesertionNo() + "    4번: " + dtoList.get(3).getDesertionNo() + "    5번: " + dtoList.get(4).getDesertionNo());
-    return new PublicPetsResponsDto(dtoList, postPage.isLast());
+        return ResponseDto.toResponseEntity(PET_INFO_GET_LIST_SUCCESS, PublicPetsResponsDto.of(dtoList, postPage.isLast()));
     }
-
-
+    //상세 페이지
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getPublicPetDetails(String desertionNo) {
         PetInfoByAPI petInfoByAPI = getPetInfo(desertionNo);
-        return ResponseDto.toResponseEntity(PET_INFO_WISH_SUCCESS, PublicPetResponsDto.of(petInfoByAPI));
+        return ResponseDto.toResponseEntity(PET_INFO_GET_DETAILS_SUCCESS, PublicPetResponsDto.of(petInfoByAPI));
     }
 
     //관심 유기동물 등록
