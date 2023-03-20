@@ -4,8 +4,10 @@ import hanghae99.rescuepets.chat.dto.ChatRequestDto;
 import hanghae99.rescuepets.chat.dto.ChatResponseDto;
 import hanghae99.rescuepets.chat.dto.ChatRoomResponseDto;
 import hanghae99.rescuepets.chat.service.ChatService;
+import hanghae99.rescuepets.common.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -37,7 +39,7 @@ public class ChatController {
     @GetMapping("/room/{roomId}")
     @ResponseBody
     @Operation(summary = "채팅 조회")
-    public ChatRoomResponseDto chat(@PathVariable String roomId) {
+    public ResponseEntity<ResponseDto> chat(@PathVariable String roomId) {
         return chatService.getMessages(roomId);
     }
 }

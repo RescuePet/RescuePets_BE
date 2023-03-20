@@ -10,12 +10,10 @@ import java.util.List;
 @Builder
 @Getter
 public class ChatRoomResponseDto {
-    private String title;
     List<ChatResponseDto> dto = new ArrayList<>();
 
     public static ChatRoomResponseDto of(ChatRoom room) {
         return ChatRoomResponseDto.builder()
-                .title(room.getHost().getNickname())
                 .dto(room.getChatMessages().stream().map(ChatResponseDto::of).toList())
                 .build();
     }

@@ -2,10 +2,12 @@ package hanghae99.rescuepets.chat.controller;
 
 import hanghae99.rescuepets.chat.dto.ChatRoomListResponseDto;
 import hanghae99.rescuepets.chat.service.ChatRoomService;
+import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,7 @@ public class ChatRoomController {
     @Operation(summary = "채팅방 조회")
     @GetMapping("/rooms")
     @ResponseBody
-    public List<ChatRoomListResponseDto> rooms(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseEntity<ResponseDto> rooms(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return chatRoomService.getRoomList(memberDetails.getMember());
     }
 
