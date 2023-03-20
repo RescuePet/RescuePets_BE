@@ -32,6 +32,7 @@ public enum SuccessMessage {
     PET_INFO_GET_DETAILS_SUCCESS(HttpStatus.OK, "유기동물 상세 페이지 불러오기 성공"),
     PET_INFO_GET_LIST_SUCCESS(HttpStatus.OK, "유기동물 전체 페이지 불러오기 성공"),
     PET_INFO_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
+    PUBLIC_PET_INFO_SAVE_SUCCESS(HttpStatus.CREATED, "유기동물 API 호출 및 DB 저장 성공."),
     POST_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
     DELETE_POST_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
     WITHDRAWAL_SUCCESS(HttpStatus.OK,"회원탈퇴에 성공하였습니다");

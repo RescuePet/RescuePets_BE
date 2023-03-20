@@ -1,4 +1,4 @@
-package hanghae99.rescuepets.publicpet.data;
+package hanghae99.rescuepets.publicpet.service;
 
 import hanghae99.rescuepets.common.entity.PetInfoByAPI;
 import hanghae99.rescuepets.publicpet.repository.PublicPetRepository;
@@ -7,8 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,14 +32,15 @@ public class ApiScheduler {
     //현재 실행 결과 소요시간 ={1차: 326434ms 2차:286378ms(업데이트만) 3차:278525ms(저장만)}
 //    @Scheduled(cron = "0 0/3 * * * *")
     @Transactional
-    public void testSchedule() throws IOException {
+    protected void testSchedule() throws IOException {
         long startTime = System.currentTimeMillis();//시작 시간
         String[] state = {"", "protect", "notice", "end"};
         int stateNo = 0;
         int pageNo = 0;
+        String size = "1000";
         while (stateNo < 3) {
             pageNo++;
-            String apiUrl = createApiUrlTest(String.valueOf(pageNo), state[stateNo]);
+            String apiUrl = createApiUrl(String.valueOf(pageNo), state[stateNo], size);
             JSONArray itemList = fetchDataFromApi(apiUrl);
             if (itemList == null || itemList.isEmpty()) {
                 log.info("State: " + state[stateNo] + ",  pageNo: " + pageNo + "을 API로부터 데이터를 받아오지 못했습니다.-------------------------------------------------------------------------");
@@ -49,14 +48,14 @@ public class ApiScheduler {
                 pageNo = 0;
                 continue;
             }
-            saveAndUpdateToDatabase(itemList, state[stateNo]);
+            saveOrUpdateFromApi(itemList, state[stateNo]);
         }
         long endTime = System.currentTimeMillis(); //종료 시간
         long executionTime = endTime - startTime; //소요 시간 계산
         log.info("Execution time: " + executionTime + "ms");
     }
 
-    private String createApiUrlTest(String pageNo, String state) throws UnsupportedEncodingException {
+    protected String createApiUrl(String pageNo, String state, String size) throws UnsupportedEncodingException {
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1543061/abandonmentPublicSrvc/abandonmentPublic");
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + publicApiKey);
         urlBuilder.append("&" + URLEncoder.encode("bgnde", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*유기날짜(검색 시작일) (YYYYMMDD)*/
@@ -76,13 +75,13 @@ public class ApiScheduler {
         }
 
         urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode(pageNo, "UTF-8"));
-        urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("1000", "UTF-8")); /*페이지당 보여줄 개수 (1,000 이하), 기본값 : 10*/
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode(size, "UTF-8")); /*페이지당 보여줄 개수 (1,000 이하), 기본값 : 10*/
         urlBuilder.append("&" + URLEncoder.encode("_type", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*xml(기본값) 또는 json*/
 
         return urlBuilder.toString();
     }
 
-    private JSONArray fetchDataFromApi(String apiUrl) throws IOException {
+    protected JSONArray fetchDataFromApi(String apiUrl) throws IOException {
         URL url = new URL(apiUrl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
@@ -102,7 +101,6 @@ public class ApiScheduler {
         }
         rd.close();
         conn.disconnect();
-
         // JSON 데이터 파싱 및 추출
         JSONObject jsonObject = new JSONObject(sb.toString());
         JSONObject response = jsonObject.getJSONObject("response");
@@ -115,26 +113,24 @@ public class ApiScheduler {
         return itemList;
     }
 
-    private void saveAndUpdateToDatabase(JSONArray itemList, String state) {
+    protected void saveOrUpdateFromApi(JSONArray itemList, String state) {
         for (int i = 0; i < itemList.length(); i++) {
             JSONObject itemObject = itemList.getJSONObject(i);
             Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetRepository.findByDesertionNo(itemObject.optString("desertionNo"));
             PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.orElse(null);
-            if (petInfoByAPIOptional.isEmpty()) {
-                log.info("saveAndUpdateToDatabase 메서드에서 if문 save 동작함");
-                PetInfoByAPI petInfo = buildPetInfoTest(itemObject, state);
+            if (petInfoByAPIOptional.isEmpty()){
+                log.info("saveAndUpdateToDatabase 메서드 save 동작");
+                PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
                 publicPetRepository.save(petInfo);
-            } else if (petInfoByAPI == null) { //이부분 조금 더 생각해볼 필요 있음. if문 진행 관련
-                log.info("saveAndUpdateToDatabase 메서드에서 if문 null 동작함");
             } else {
-                log.info("saveAndUpdateToDatabase 메서드에서 update 동작함");
-                PetInfoByAPI petInfo = buildPetInfoTest(itemObject, state);
-                petInfoByAPI.update(petInfo); //update 수정 고려
+                log.info("saveAndUpdateToDatabase 메서드 update 동작");
+                PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
+                petInfoByAPI.update(petInfo);
             }
         }
     }
 
-    private PetInfoByAPI buildPetInfoTest(JSONObject itemObject, String state) {
+    protected PetInfoByAPI buildPetInfo(JSONObject itemObject, String state) {
         return PetInfoByAPI.builder()
                 .desertionNo(itemObject.optString("desertionNo"))
                 .filename(itemObject.optString("filename"))
@@ -161,6 +157,4 @@ public class ApiScheduler {
                 .state(state)
                 .build();
     }
-
-
 }
