@@ -3,6 +3,8 @@ package hanghae99.rescuepets.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
@@ -40,8 +42,7 @@ public class KakaoService {
     private String kakaoApiKey;
 
     @Transactional
-    public MemberResponseDto kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
-        String message = "님 환영합니다.";
+    public ResponseEntity<ResponseDto> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
@@ -57,7 +58,7 @@ public class KakaoService {
 
         jwtUtil.createToken(response, kakaoMember);
 
-        return new MemberResponseDto(kakaoMember.getId(), kakaoMember.getNickname(), kakaoMember.getEmail());
+        return ResponseDto.toResponseEntity(SuccessMessage.LOGIN_SUCCESS, new MemberResponseDto(kakaoMember.getId(), kakaoMember.getNickname(), kakaoMember.getEmail()));
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
