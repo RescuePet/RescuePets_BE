@@ -1,5 +1,7 @@
 package hanghae99.rescuepets.publicpet.service;
 
+import hanghae99.rescuepets.common.dto.CustomException;
+import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetInfoByAPI;
 import hanghae99.rescuepets.common.entity.PetInfoLike;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,9 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
+import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -290,35 +296,35 @@ public class PublicPetService {
 
 
     @Transactional(readOnly = true)
-    public PublicPetResponsDto getPublicPetDetails(String desertionNo) {
+    public ResponseEntity<ResponseDto> getPublicPetDetails(String desertionNo) {
         PetInfoByAPI petInfoByAPI = getPetInfo(desertionNo);
-        return PublicPetResponsDto.of(petInfoByAPI);
+        return ResponseDto.toResponseEntity(PET_INFO_WISH_SUCCESS, PublicPetResponsDto.of(petInfoByAPI));
     }
 
     //관심 유기동물 등록
     @Transactional
-    public String petInfoLike(String desertionNo, Member member) {
+    public ResponseEntity<ResponseDto> petInfoLike(String desertionNo, Member member) {
         getPetInfo(desertionNo);
         if (petInfoLikeRepository.findByMemberIdAndDesertionNo(member.getId(),desertionNo).isPresent()){
-            throw new RuntimeException("이미 관심 등록되어 있습니다.");
+            throw new CustomException(DUPLICATE_RESOURCE_PET_INFO);
         }
         petInfoLikeRepository.save(new PetInfoLike(member, desertionNo));
-        return "성공";
+        return  ResponseDto.toResponseEntity(PET_INFO_WISH_SUCCESS);
     }
 
     //관심 유기동물 삭제
     @Transactional
-    public String deletePetInfoLike(Long PetInfoLikeId, Member member) {
+    public ResponseEntity<ResponseDto> deletePetInfoLike(Long PetInfoLikeId, Member member) {
         if (petInfoLikeRepository.findByMemberIdAndId(member.getId(), PetInfoLikeId).isEmpty()){
-            throw new NullPointerException("요청하신 유저는 해당 관심 유기 동물이 등록되어 있지 않습니다.");
+            throw new CustomException(NOT_FOUND_PET_INFO_MEMBER);
         }
         petInfoLikeRepository.deleteByMemberIdAndId(member.getId(), PetInfoLikeId);
-        return "성공";
+        return  ResponseDto.toResponseEntity(PET_INFO_WISH_DELETE_SUCCESS);
     }
 
     private PetInfoByAPI getPetInfo(String desertionNo) {
         return publicPetRepository.findByDesertionNo(desertionNo).orElseThrow(
-                () -> new NullPointerException("해당 유기동물 정보가 없습니다.")
+                () -> new CustomException(NOT_FOUND_PET_INFO)
         );
     }
 }

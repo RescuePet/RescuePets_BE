@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.publicpet.controller;
 
+import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
 import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,20 +62,20 @@ public class PublicPetController {
     @SecurityRequirements
     @GetMapping("/details/{desertionNo}")
     @Operation(summary = "유기동물 상세 정보 가져오기", description = "자세한 설명")
-    public PublicPetResponsDto getPublicPetDetails(@PathVariable(value = "desertionNo") String desertionNo) {
+    public ResponseEntity<ResponseDto> getPublicPetDetails(@PathVariable(value = "desertionNo") String desertionNo) {
         return publicPetService.getPublicPetDetails(desertionNo);
     }
 
     //마이페이지에 PetinfoLike 연관관계로 풀어보면 될듯, 관심 등록한 유기동물은 desertionNo로 상세페이지 API를 통해 이동하면 될듯함
     @PostMapping("/likes/{desertionNo}")
     @Operation(summary = "유기동물 관심 등록", description = "자세한 설명")
-    public String petInfoLike(@PathVariable(value = "desertionNo") String desertionNo,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseEntity<ResponseDto> petInfoLike(@PathVariable(value = "desertionNo") String desertionNo, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.petInfoLike(desertionNo, memberDetails.getMember());
     }
 
     @DeleteMapping("/likes/{PetInfoLikeId}")
     @Operation(summary = "유기동물 관심 삭제", description = "자세한 설명")
-    public String deletePetInfoLike(@PathVariable(value = "PetInfoLikeId") Long PetInfoLikeId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseEntity<ResponseDto> deletePetInfoLike(@PathVariable(value = "PetInfoLikeId") Long PetInfoLikeId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.deletePetInfoLike(PetInfoLikeId, memberDetails.getMember());
     }
 }
