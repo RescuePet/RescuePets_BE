@@ -10,6 +10,13 @@ public class ChatResponseDto {
     private String sender;
     private String message;
 
+    public static ChatResponseDto of(ChatRequestDto dto) {
+        return ChatResponseDto.builder()
+                .sender(dto.getSender())
+                .message(dto.getMessage())
+                .build();
+    }
+
     public static ChatResponseDto of(Chat message) {
         return ChatResponseDto.builder()
                 .sender(message.getSender())

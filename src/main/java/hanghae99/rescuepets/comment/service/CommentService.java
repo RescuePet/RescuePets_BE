@@ -5,7 +5,9 @@ import hanghae99.rescuepets.comment.dto.CommentRequestDto;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Comment;
 import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.PetPostCatch;
 import hanghae99.rescuepets.common.entity.PetPostMissing;
+import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
 import hanghae99.rescuepets.comment.dto.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PetPostMissingRepository petPostMissingRepository;
+    private final PetPostCatchRepository petPostCatchRepository;
 
     @Transactional
     public ResponseDto<List<CommentResponseDto>> getCommentList(Member member) {
@@ -31,16 +34,34 @@ public class CommentService {
         return ResponseDto.success(comments);
     }
     @Transactional
-    public ResponseDto<List<CommentResponseDto>> getCommentCurrentList(Long petPostMissingId) {
-        List<Comment> commentList = commentRepository.findAllByPetPostMissingId(petPostMissingId);
+    public ResponseDto<List<CommentResponseDto>> getCommentCatchList(PetPostCatch petPostCatch) {
+        List<Comment> commentList = commentRepository.findAllByPetPostCatchId(petPostCatch.getId());
         List<CommentResponseDto> comments = new ArrayList<>();
         for (Comment comment : commentList) {
-            comments.add(new CommentResponseDto(comment));
+            comments.add(new CommentResponseDto(comment, petPostCatch));
         }
         return ResponseDto.success(comments);
     }
     @Transactional
-    public ResponseDto<String> create(Long petPostMissingId, CommentRequestDto requestDto, Member member) {
+    public ResponseDto<List<CommentResponseDto>> getCommentMissingList(PetPostMissing petPostMissing) {
+        List<Comment> commentList = commentRepository.findAllByPetPostMissingId(petPostMissing.getId());
+        List<CommentResponseDto> comments = new ArrayList<>();
+        for (Comment comment : commentList) {
+            comments.add(new CommentResponseDto(comment, petPostMissing));
+        }
+        return ResponseDto.success(comments);
+    }
+
+    @Transactional
+    public ResponseDto<String> createCommentCatch(Long petPostCatchId, CommentRequestDto requestDto, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
+//                CustomException(ErrorCode.NotFoundPost)
+        );
+        commentRepository.save(new Comment(requestDto.getContent(), petPostCatch, member));
+        return ResponseDto.success("댓글 등록 성공");
+    }
+    @Transactional
+    public ResponseDto<String> createCommentMissing(Long petPostMissingId, CommentRequestDto requestDto, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
 //                CustomException(ErrorCode.NotFoundPost)
         );

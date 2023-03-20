@@ -21,7 +21,6 @@ public class Member {
     private String address;
     @Column
     private String password;
-
     @Column
     private Long kakaoId;
 
