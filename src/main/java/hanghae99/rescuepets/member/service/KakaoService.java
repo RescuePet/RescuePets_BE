@@ -3,10 +3,13 @@ package hanghae99.rescuepets.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
+import hanghae99.rescuepets.member.dto.MemberResponseDto;
 import hanghae99.rescuepets.member.dto.TokenDto;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,8 +42,7 @@ public class KakaoService {
     private String kakaoApiKey;
 
     @Transactional
-    public String kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
-        String message = "님 환영합니다.";
+    public ResponseEntity<ResponseDto> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
@@ -56,12 +58,7 @@ public class KakaoService {
 
         jwtUtil.createToken(response, kakaoMember);
 
-        return kakaoUserInfo.getNickname() + message + "(" + kakaoMember.getEmail() + ")";
-    }
-
-    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
-        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+        return ResponseDto.toResponseEntity(SuccessMessage.LOGIN_SUCCESS, new MemberResponseDto(kakaoMember.getId(), kakaoMember.getNickname(), kakaoMember.getEmail()));
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
