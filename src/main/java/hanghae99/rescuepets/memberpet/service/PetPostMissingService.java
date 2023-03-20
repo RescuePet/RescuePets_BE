@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.memberpet.service;
 
+import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetPostCatch;
@@ -18,12 +19,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.UNAUTHORIZED_UPDATE_OR_DELETE;
+import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +39,7 @@ public class PetPostMissingService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public ResponseDto<List<PetPostMissingResponseDto>> getPetPostMissingList(int page, int size, String sortBy, Member member) {
+    public ResponseEntity<ResponseDto> getPetPostMissingList(int page, int size, String sortBy, Member member) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -47,10 +53,10 @@ public class PetPostMissingService {
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
-        return ResponseDto.success(dtoList);
+        return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
     @Transactional
-    public ResponseDto<List<PetPostMissingResponseDto>> getPetPostMissingListByMember(int page, int size, String sortBy, Member member) {
+    public ResponseEntity<ResponseDto> getPetPostMissingListByMember(int page, int size, String sortBy, Member member) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -63,22 +69,21 @@ public class PetPostMissingService {
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
-        return ResponseDto.success(dtoList);
+        return ResponseDto.toResponseEntity(MY_POST_READING_SUCCESS, dtoList);
     }
 
 
     @Transactional
-    public ResponseDto<PetPostMissingResponseDto> getPetPostMissing(Long petPostMissingId, Member member) {
-        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
-//                new CustomException(ErrorCode.NotFoundPost)
-        );
+    public ResponseEntity<ResponseDto> getPetPostMissing(Long petPostMissingId, Member member) {
+        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         PetPostMissingResponseDto responseDto = PetPostMissingResponseDto.of(petPostMissing);
         responseDto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissingId, member.getId()).isPresent());
-        return ResponseDto.success(responseDto);
+
+        return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
     }
 
     @Transactional
-    public ResponseDto<String> create(PetPostMissingRequestDto requestDto, Member member) {
+    public ResponseEntity<ResponseDto> create(PetPostMissingRequestDto requestDto, Member member) {
         List<String> postImageURLs = new ArrayList<>();
         if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
             postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
@@ -88,15 +93,13 @@ public class PetPostMissingService {
             petPostMissing.addPostImage(new PostImage(petPostMissing, postImageURL));
         }
         petPostMissingRepository.save(petPostMissing);
-        return ResponseDto.success("게시물 등록 성공");
+        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
     }
 
 
     @Transactional
-    public ResponseDto<String> update(Long petPostMissingId, PetPostMissingRequestDto requestDto, Member member) {
-        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
-//                CustomException(ErrorCode.NotFoundPost)
-        );
+    public ResponseEntity<ResponseDto> update(Long petPostMissingId, PetPostMissingRequestDto requestDto, Member member) {
+        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (member.getNickname().equals(petPostMissing.getMember().getNickname())) {
             List<String> postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
             petPostMissing.getPostImages().clear();
@@ -104,26 +107,20 @@ public class PetPostMissingService {
                 petPostMissing.addPostImage(new PostImage(petPostMissing, postImageURL));
             }
             petPostMissing.update(requestDto);
-            return ResponseDto.success("게시물 수정 성공");
+            return ResponseDto.toResponseEntity(POST_MODIFYING_SUCCESS);
         } else {
-            throw new NullPointerException("수정권한이 없는데용")
-//                    CustomException(ErrorCode.NoModifyPermission)
-                    ;
+            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
 
     @Transactional
-    public ResponseDto<String> delete(Long petPostMissingId, Member member) {
-        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
-//                CustomException(ErrorCode.NotFoundPost)
-        );
+    public ResponseEntity<ResponseDto> delete(Long petPostMissingId, Member member) {
+        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (member.getNickname().equals(petPostMissing.getMember().getNickname())) {
             petPostMissingRepository.deleteById(petPostMissingId);
-            return ResponseDto.success("게시물 삭제 성공");
+            return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
         } else {
-            throw new NullPointerException("삭제권한이 없는데용")
-//                    CustomException(ErrorCode.NoDeletePermission)
-                    ;
+            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
 
