@@ -34,8 +34,6 @@ public enum SuccessMessage {
     PET_INFO_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
     POST_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
     DELETE_POST_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
-
-    GOODS_DETAIL_SUCCESS(HttpStatus.OK, "상품 정보 불러오기 성공"),
     WITHDRAWAL_SUCCESS(HttpStatus.OK,"회원탈퇴에 성공하였습니다");
     private final HttpStatus httpStatus;
     private final String detail;
