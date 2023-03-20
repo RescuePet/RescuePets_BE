@@ -23,6 +23,8 @@ public class PetPostCatchResponseDto {
     private String weight;
     private String colorCd;
     private String happenPlace;
+    private String happenLongitude;
+    private String happenLatitude;
     private String happenDt;
     private String happenHour;
     private String specialMark;

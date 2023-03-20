@@ -24,6 +24,8 @@ public class PetPostCatch extends TimeStamped{
     private String weight;
     private String colorCd;
     private String happenPlace;
+    private String happenLongitude;
+    private String happenLatitude;
     private String happenDt;
     private String happenHour;
     private String specialMark;
@@ -60,6 +62,8 @@ public class PetPostCatch extends TimeStamped{
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
         this.happenPlace = requestDto.getHappenPlace();
+        this.happenLongitude = requestDto.getHappenLongitude();
+        this.happenLatitude = requestDto.getHappenLatitude();
         this.happenDt = requestDto.getHappenDt();
         this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();
@@ -84,6 +88,8 @@ public class PetPostCatch extends TimeStamped{
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
         this.happenPlace = requestDto.getHappenPlace();
+        this.happenLongitude = requestDto.getHappenLongitude();
+        this.happenLatitude = requestDto.getHappenLatitude();
         this.happenDt = requestDto.getHappenDt();
         this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();
