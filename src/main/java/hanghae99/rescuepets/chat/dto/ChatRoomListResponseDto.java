@@ -10,13 +10,13 @@ public class ChatRoomListResponseDto {
 
     private String roomId;
     private String roomName;
-    private String partner;
+    private String lastChat;
 
-    public static ChatRoomListResponseDto of(ChatRoom room) {
+    public static ChatRoomListResponseDto of(ChatRoom room, String roomName, String lastChat) {
         return ChatRoomListResponseDto.builder()
                 .roomId(room.getRoomId())
-                .roomName(room.getRoomName())
-                .partner(room.getGuest().getNickname())
+                .roomName(roomName)
+                .lastChat(lastChat)
                 .build();
     }
 }

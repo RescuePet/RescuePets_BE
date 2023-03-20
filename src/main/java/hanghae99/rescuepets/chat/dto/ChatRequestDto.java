@@ -1,6 +1,5 @@
 package hanghae99.rescuepets.chat.dto;
 
-import hanghae99.rescuepets.common.entity.Chat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,8 +16,8 @@ public class ChatRequestDto {
 
     private MessageType type;
     private String roomId;
-    private String sender;
     private String message;
+    private String sender;
 
     public void setMessage(String message) {
         this.message = message;
