@@ -8,6 +8,7 @@ import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
 import hanghae99.rescuepets.memberpet.service.PetPostCatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
-
+@Tag(name = "유기견 의심 발견 신고 API")
 @RequestMapping("/api/pets/catch")
 @RequiredArgsConstructor
 @RestController
