@@ -1,6 +1,7 @@
 package hanghae99.rescuepets.memberpet.service;
 
 
+import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetPostCatch;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,6 +24,10 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.UNAUTHORIZED_UPDATE_OR_DELETE;
+import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +37,7 @@ public class PetPostCatchService {
     private final S3Uploader s3Uploader;
 
     @Transactional
-    public ResponseDto<List<PetPostCatchResponseDto>> getPetPostCatchList(int page, int size, String sortBy, Member member) {
-
+    public ResponseEntity<ResponseDto> getPetPostCatchList(int page, int size, String sortBy, Member member) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findAll(pageable);
@@ -45,10 +50,10 @@ public class PetPostCatchService {
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
-        return ResponseDto.success(dtoList);
+        return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
     @Transactional
-    public ResponseDto<List<PetPostCatchResponseDto>> getPetPostCatchListByMember(int page, int size, String sortBy, Member member) {
+    public ResponseEntity<ResponseDto> getPetPostCatchListByMember(int page, int size, String sortBy, Member member) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -61,21 +66,19 @@ public class PetPostCatchService {
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
-        return ResponseDto.success(dtoList);
+        return ResponseDto.toResponseEntity(MY_POST_READING_SUCCESS, dtoList);
     }
 
     @Transactional
-    public ResponseDto<PetPostCatchResponseDto>  getPetPostCatch(Long petPostCatchId, Member member) {
-        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
-//                new CustomException(ErrorCode.NotFoundPost)
-        );
+    public ResponseEntity<ResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
         responseDto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
-        return ResponseDto.success(responseDto);
+        return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
     }
 
     @Transactional
-    public ResponseDto<String> create(PetPostCatchRequestDto requestDto, Member member) {
+    public ResponseEntity<ResponseDto> create(PetPostCatchRequestDto requestDto, Member member) {
         List<String> postImageURLs = new ArrayList<>();
         if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
             postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
@@ -85,15 +88,13 @@ public class PetPostCatchService {
             petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
         }
         petPostCatchRepository.save(petPostCatch);
-        return ResponseDto.success("게시물 등록 성공");
+        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
     }
 
 
     @Transactional
-    public ResponseDto<String> update(Long petPostCatchId, PetPostCatchRequestDto requestDto, Member member) {
-        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
-//                CustomException(ErrorCode.NotFoundPost)
-        );
+    public ResponseEntity<ResponseDto> update(Long petPostCatchId, PetPostCatchRequestDto requestDto, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (member.getNickname().equals(petPostCatch.getMember().getNickname())) {
             List<String> postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
             petPostCatch.getPostImages().clear();
@@ -101,26 +102,21 @@ public class PetPostCatchService {
                 petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
             }
             petPostCatch.update(requestDto);
-            return ResponseDto.success("게시물 수정 성공");
+            return ResponseDto.toResponseEntity(POST_MODIFYING_SUCCESS);
         } else {
-            throw new NullPointerException("수정권한이 없는데용")
-//                    CustomException(ErrorCode.NoModifyPermission)
-                    ;
+            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
 
     @Transactional
-    public ResponseDto<String> delete(Long petPostCatchId, Member member) {
-        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("게시글이 없는데용")
-//                CustomException(ErrorCode.NotFoundPost)
+    public ResponseEntity<ResponseDto> delete(Long petPostCatchId, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND)
         );
         if (member.getNickname().equals(petPostCatch.getMember().getNickname())) {
             petPostCatchRepository.deleteById(petPostCatchId);
-            return ResponseDto.success("게시물 삭제 성공");
+            return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
         } else {
-            throw new NullPointerException("삭제권한이 없는데용")
-//                    CustomException(ErrorCode.NoDeletePermission)
-                    ;
+            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
 

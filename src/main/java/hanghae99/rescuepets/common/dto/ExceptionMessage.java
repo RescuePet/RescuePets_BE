@@ -10,8 +10,8 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public enum ExceptionMessage {
     /* 400 BAD_REQUEST : 잘못된 요청 */
-    MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다"),
-    INVALID_TOKEN(BAD_REQUEST, "Invalid JWT signature, 유효하지 않는 JWT 서명 입니다"),
+    MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다."),
+    INVALID_TOKEN(BAD_REQUEST, "Invalid JWT signature, 유효하지 않는 JWT 서명 입니다."),
     ILLEAGAL_TOKEN(BAD_REQUEST, "JWT claims is empty, 잘못된 JWT 토큰 입니다."),
 
     NICKNAME_WITH_SPACES(BAD_REQUEST,"공백이 포함된 닉네임입니다."),
@@ -19,7 +19,7 @@ public enum ExceptionMessage {
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
-    UNAUTHORIZED_MEMBER(UNAUTHORIZED, "현재 내 계정 정보가 존재하지 않습니다"),
+    UNAUTHORIZED_MEMBER(UNAUTHORIZED, "현재 내 계정 정보가 존재하지 않습니다."),
     UNAUTHORIZED_ADMIN(UNAUTHORIZED, "관리자가 아닙니다."),
     UNAUTHORIZED_UPDATE_OR_DELETE(UNAUTHORIZED,"작성자만 수정/삭제할 수 있습니다."),
 
@@ -28,11 +28,12 @@ public enum ExceptionMessage {
     CART_GOODS_DELETE_FORBIDDEN(FORBIDDEN,"해당 장바구니의 삭제 권한이 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
+    POST_NOT_FOUND(NOT_FOUND, "대상 게시글을 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(NOT_FOUND, "대상 댓글을 찾을 수 없습니다."),
     MEMBER_NOT_FOUND(NOT_FOUND, "아이디,비밀번호를 확인해주세요"),
     GOODS_NOT_FOUND(NOT_FOUND, "해당 상품을 찾을 수 없습니다"),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
     CHATROOM_NOT_FOUND(NOT_FOUND, "채팅방이 존재하지 않습니다."),
-    POST_NOT_FOUND(NOT_FOUND, "게시글이 존재하지 않습니다."),
     NOT_FOUND_PET_INFO(NOT_FOUND,"해당 유기동물 정보가 없습니다."),
     NOT_FOUND_PET_INFO_MEMBER(NOT_FOUND,"요청하신 유저는 해당 관심 유기 동물이 등록되어 있지 않습니다."),
     NOT_FOUND_WISH(NOT_FOUND,"관심 등록되어 있지 않습니다."),
