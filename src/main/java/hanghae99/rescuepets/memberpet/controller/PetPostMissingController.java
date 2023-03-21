@@ -11,6 +11,7 @@ import hanghae99.rescuepets.memberpet.service.PetPostCatchService;
 import hanghae99.rescuepets.memberpet.service.PetPostMissingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 //import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.MediaType;
@@ -22,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-
+@Tag(name = "유기견 발생 신고 API")
 @RequestMapping("/api/pets/missing")
 @RequiredArgsConstructor
 @RestController

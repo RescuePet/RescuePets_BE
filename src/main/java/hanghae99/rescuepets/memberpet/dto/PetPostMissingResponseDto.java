@@ -10,6 +10,7 @@ package hanghae99.rescuepets.memberpet.dto;
 @Builder
 public class PetPostMissingResponseDto {
 
+    private Long id;
     private UpkindEnum upkind;
     private SexEnum sexCd;
     private NeuterEnum neuterYn;

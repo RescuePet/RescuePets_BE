@@ -15,6 +15,7 @@ import java.util.List;
 @Builder
 public class PetPostCatchResponseDto {
 
+    private Long id;
     private UpkindEnum upkind;
     private SexEnum sexCd;
     private NeuterEnum neuterYn;
