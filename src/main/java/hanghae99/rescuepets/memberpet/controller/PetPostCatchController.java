@@ -27,7 +27,6 @@ import java.util.List;
 public class PetPostCatchController {
     private final PetPostCatchService petPostCatchService;
 
-//    @ApiOperation(value = "게시글 목록 조회", notes = "page, size, sortBy로 페이징 후 조회")
     @GetMapping("/")
     @Operation(summary = "PostCatch 전체 게시글 불러오기", description = "PostCatch 전체 게시글을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPetPostCatchList(@RequestParam int page,
@@ -36,6 +35,13 @@ public class PetPostCatchController {
                                                                              @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
+    }
+    @GetMapping("/all")
+    @Operation(summary = "PostCatch 게시글 전체(페이징없이) 불러오기", description = "PostCatch 전체 게시글을 페이징없이 불러옵니다")
+    public ResponseEntity<ResponseDto> getPetPostCatchAll(@RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        Member member = memberDetails.getMember();
+        return petPostCatchService.getPetPostCatchAll(sortBy, member);
     }
     @GetMapping("/member")
     @Operation(summary = "내가 작성한 PostCatch 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")

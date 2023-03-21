@@ -5,10 +5,12 @@ import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetPostCatch;
+import hanghae99.rescuepets.common.entity.PetPostMissing;
 import hanghae99.rescuepets.common.entity.PostImage;
 import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
+import hanghae99.rescuepets.memberpet.dto.PetPostMissingResponseDto;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
@@ -53,15 +55,26 @@ public class PetPostCatchService {
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
     @Transactional
+    public ResponseEntity<ResponseDto> getPetPostCatchAll(String sortBy, Member member) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        List<PetPostCatch> PetPostCatchList = petPostCatchRepository.findAll(sort);
+        List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
+        for (PetPostCatch petPostCatch : PetPostCatchList) {
+            PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
+            dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+            dtoList.add(dto);
+        }
+        return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
+    }
+    @Transactional
     public ResponseEntity<ResponseDto> getPetPostCatchListByMember(int page, int size, String sortBy, Member member) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findByMemberId(member.getId(), pageable);
-        List<PetPostCatch> PetPostCatches = PetPostCatchPage.getContent();
         List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
-
-        for (PetPostCatch petPostCatch : PetPostCatches) {
+        for (PetPostCatch petPostCatch : PetPostCatchPage) {
             PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
