@@ -149,8 +149,6 @@ public class ApiScheduler {
             JSONObject itemObject = itemList.getJSONObject(i);
             Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetRepository.findByDesertionNo(itemObject.optString("desertionNo"));
             PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.orElse(null);
-            String test1 = itemObject.optString("desertionNo");
-            String test2 = petInfoByAPIOptional.get().getDesertionNo();
             if (petInfoByAPIOptional.isEmpty()) {
 //                log.info("saveAndUpdateToDatabase 메서드 save 동작");
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
