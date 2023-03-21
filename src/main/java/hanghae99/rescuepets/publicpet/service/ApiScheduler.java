@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -278,6 +279,7 @@ public class ApiScheduler {
                     PetInfoState entityPetInfo = buildPetInfoEntity(petInfoByAPI, state, compareDataKey);
                     petInfoStateRepository.save(petInfo);
                     petInfoStateRepository.save(entityPetInfo);
+                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey);
                 }
                 //list가 비었을 경우 변동 사항이 없으므로 추가 되지 않음
             }
