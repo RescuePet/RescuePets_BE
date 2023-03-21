@@ -62,7 +62,7 @@ public class ApiScheduler {
         log.info("-------------------------Execution time: " + executionTime + "ms");
     }
 
-    @Scheduled(cron = "0 0/10 * * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
     protected void ApiScheduleTest() throws IOException {
         long startTime = System.currentTimeMillis();//시작 시간
@@ -81,7 +81,7 @@ public class ApiScheduler {
                 continue;
             }
             compareData(itemList, state[stateNo]);
-            log.info(state[stateNo].toString() + ", pageNo: "+pageNo +  "  완료");
+//            log.info(state[stateNo].toString() + "/ pageNo: "+pageNo +  "  완료");
         }
         long endTime = System.currentTimeMillis(); //종료 시간
         long executionTime = endTime - startTime; //소요 시간 계산
@@ -289,7 +289,7 @@ public class ApiScheduler {
                     petInfoByAPI.update(petInfo);
                     petInfoStateRepository.save(petInfoEntity);
                     petInfoStateRepository.save(entityPetInfo);
-                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
+//                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
                 }
                 //list가 비었을 경우 변동 사항이 없으므로 업데이트 동작하지 않음
             }
