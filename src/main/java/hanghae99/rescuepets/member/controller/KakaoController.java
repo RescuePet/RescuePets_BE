@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 public class KakaoController {
     private final KakaoService kakaoService;
 
-    @Operation(summary = "카카오 콜백함수")
+    @Operation(summary = "카카오 콜백함수 (카카오 서버)")
     @GetMapping("/kakao/callback")
     public ResponseEntity<ResponseDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         log.info("카카오 로그인");
