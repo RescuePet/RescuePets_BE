@@ -44,10 +44,22 @@ public class PetPostMissingService {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostMissing> PetPostMissingPage = petPostMissingRepository.findAll(pageable);
-
-        List<PetPostMissing> PetPostMissingList = PetPostMissingPage.getContent();
         List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
 
+        for (PetPostMissing petPostMissing : PetPostMissingPage) {
+            PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
+            dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
+            dtoList.add(dto);
+        }
+        return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> getPetPostMissingAll(String sortBy, Member member) {
+
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        List<PetPostMissing> PetPostMissingList = petPostMissingRepository.findAll(sort);
+        List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
         for (PetPostMissing petPostMissing : PetPostMissingList) {
             PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
@@ -55,16 +67,15 @@ public class PetPostMissingService {
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
+
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostMissingListByMember(int page, int size, String sortBy, Member member) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostMissing> PetPostMissingPage = petPostMissingRepository.findByMemberId(member.getId(), pageable);
-        List<PetPostMissing> PetPostMissings = PetPostMissingPage.getContent();
         List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
-
-        for (PetPostMissing petPostMissing : PetPostMissings) {
+        for (PetPostMissing petPostMissing : PetPostMissingPage) {
             PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
