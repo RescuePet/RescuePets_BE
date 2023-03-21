@@ -120,4 +120,21 @@ public class PetPostCatchService {
         }
     }
 
+//    @Transactional
+//    public ResponseEntity<ResponseDto> createLink(Long PostLinkAId, Long PostLinkBId, Member member) {
+//        List<String> postImageURLs = new ArrayList<>();
+//        if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
+//            postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
+//        }
+//        PetPostCatch petPostCatch = new PetPostCatch(requestDto, member);
+//        for (String postImageURL : postImageURLs) {
+//            petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
+//        }
+//        petPostCatchRepository.save(petPostCatch);
+//        PostLink postLink = new PostLink(PostLinkAId, PostLinkBId, member);
+//        postLikeRepository.save(postlike);
+//
+//        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
+//    }
+
 }

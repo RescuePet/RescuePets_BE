@@ -37,6 +37,7 @@ public class PetPostCatchController {
         Member member = memberDetails.getMember();
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
     }
+
     @GetMapping("/member")
     @Operation(summary = "내가 작성한 PostCatch 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPetPostCatchListByMember(@RequestParam int page,
@@ -74,4 +75,12 @@ public class PetPostCatchController {
     public ResponseEntity<ResponseDto> deletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
         return petPostCatchService.delete(petPostCatchId, userDetails.getMember());
     }
+
+//    @PostMapping(value = "/links", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+//    @Operation(summary = "PostCatch 게시글에서 링크걸기", description = "두개의 Post를 연결조회하는 링크를 만듧니다.")
+//    public ResponseEntity<ResponseDto> createPetPostCatchLink(@ModelAttribute Long postLinkAId,
+//                                                              @ModelAttribute Long postLinkBId,
+//                                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+//        return petPostCatchService.createLink(postLinkAId, postLinkBId, memberDetails.getMember());
+//    }
 }
