@@ -63,7 +63,7 @@ public class PetPostCatchResponseDto {
                 .nickname(petPostCatch.getMember().getNickname())
                 .createdAt(petPostCatch.getCreatedAt().toString())
                 .modifiedAt(petPostCatch.getModifiedAt().toString())
-                .postLink(petPostCatch.getPostLink())
+//                .postLink(petPostCatch.getPostLink())
                 .postImages(petPostCatch.getPostImages().stream().map(PostImageResponseDto::of).toList())
                 .build();
     }
