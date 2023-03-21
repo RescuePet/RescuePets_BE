@@ -1,9 +1,6 @@
 package hanghae99.rescuepets.common.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,13 +11,12 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 @Builder
 public class PetInfoState {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //테스트로 유니크 주석 처리
-//    @Column(nullable = false, unique = true)
     private String desertionNo;
     private String filename;
     private String happenDt;
@@ -44,4 +40,7 @@ public class PetInfoState {
     private String chargeNm;
     private String officetel;
     private String state;
+    private String objectType;
+    private String compareDataKey;
+
 }
