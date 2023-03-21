@@ -21,7 +21,7 @@ import java.io.IOException;
 @Slf4j
 @Tag(name = "유기동물 공공 API")
 @RestController
-@RequestMapping("/api/pets")
+    @RequestMapping("/api/pets")
 @RequiredArgsConstructor
 public class PublicPetController {
     private final PublicPetService publicPetService;
@@ -34,6 +34,14 @@ public class PublicPetController {
     public ResponseEntity<ResponseDto> apiNewSave(@PathVariable(value = "pageNo") String pageNo,
                            @RequestParam(value = "state") String state, @RequestParam(value = "size") String size) throws IOException {
         return apiDataService.apiDataSave(pageNo, state, size);
+    }
+
+    @SecurityRequirements
+    @PostMapping("api-compare-data/{pageNo}")
+    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화", description = "자세한 설명")
+    public ResponseEntity<ResponseDto> apiCompareData(@PathVariable(value = "pageNo") String pageNo,
+                                                  @RequestParam(value = "state") String state, @RequestParam(value = "size") String size) throws IOException {
+        return apiDataService.apiCompareData(pageNo, state, size);
     }
 
 //    @SecurityRequirements
