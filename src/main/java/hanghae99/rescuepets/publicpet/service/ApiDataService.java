@@ -39,4 +39,15 @@ public class ApiDataService {
         }
         return ResponseDto.toResponseEntity(PUBLIC_PET_INFO_SAVE_SUCCESS);
     }
+    @Transactional
+    public ResponseEntity<ResponseDto> apiCompareData(String pageNo, String state, String size) throws IOException {
+        String apiUrl = apiScheduler.createApiUrl(pageNo, state, size);
+        JSONArray itemList = apiScheduler.fetchDataFromApi(apiUrl);
+        if (itemList != null) {
+            apiScheduler.compareData(itemList, state);
+        } else {
+            log.info("API로부터 데이터를 받아오지 못했습니다.");
+        }
+        return ResponseDto.toResponseEntity(PUBLIC_PET_INFO_SAVE_SUCCESS);
+    }
 }
