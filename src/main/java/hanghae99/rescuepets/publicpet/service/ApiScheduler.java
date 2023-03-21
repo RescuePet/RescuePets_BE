@@ -62,7 +62,7 @@ public class ApiScheduler {
         log.info("-------------------------Execution time: " + executionTime + "ms");
     }
 
-    @Scheduled(cron = "0 0/20 * * * *")
+    @Scheduled(cron = "0 0/10 * * * *")
     @Transactional
     protected void ApiScheduleTest() throws IOException {
         long startTime = System.currentTimeMillis();//시작 시간
@@ -81,6 +81,7 @@ public class ApiScheduler {
                 continue;
             }
             compareData(itemList, state[stateNo]);
+            log.info(state[stateNo].toString() + ", pageNo: "+pageNo +  "  완료");
         }
         long endTime = System.currentTimeMillis(); //종료 시간
         long executionTime = endTime - startTime; //소요 시간 계산
@@ -118,7 +119,7 @@ public class ApiScheduler {
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
-        log.info("Response code: " + conn.getResponseCode());
+//        log.info("Response code: " + conn.getResponseCode());
         BufferedReader rd;
         if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -270,19 +271,29 @@ public class ApiScheduler {
                 if (!petInfoByAPI.getOfficetel().equals(itemObject.optString("officetel"))){
                     compareDataList.add("officetel");
                 }
-                if (!state.equals(petInfoByAPI.getState())){
-                    compareDataList.add("state");
+                if (!petInfoByAPI.getState().equals(state)){ //state가 다를 경우 true
+                    if (state.equals("")&&itemObject.optString("getProcessState").contains("종료")){ //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
+                        compareDataList.add("state");
+//                        log.info("수정 동작 --- state == null");
+                    }
+                    if ((state.equals("protect")||state.equals("notice")) && !itemObject.optString("getProcessState").contains("보호")){
+                        compareDataList.add("state");
+//                        log.info("수정 동작 --- state == protect/notice");
+                    }
                 }
                 if (!compareDataList.isEmpty()){
                     String compareDataKey = String.join(", ", compareDataList);
-                    PetInfoState petInfo = buildPetInfoApi(itemObject, state, compareDataKey);
+                    PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
+                    PetInfoState petInfoEntity = buildPetInfoApi(itemObject, state, compareDataKey);
                     PetInfoState entityPetInfo = buildPetInfoEntity(petInfoByAPI, state, compareDataKey);
-                    petInfoStateRepository.save(petInfo);
+                    petInfoByAPI.update(petInfo);
+                    petInfoStateRepository.save(petInfoEntity);
                     petInfoStateRepository.save(entityPetInfo);
-                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey);
+                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
                 }
-                //list가 비었을 경우 변동 사항이 없으므로 추가 되지 않음
+                //list가 비었을 경우 변동 사항이 없으므로 업데이트 동작하지 않음
             }
+//            log.info("compareDataList 비었는지 체크 true(null),false(값이 있음):" + compareDataList.isEmpty() + "");
         }
     }
     protected PetInfoState buildPetInfoApi(JSONObject itemObject, String state, String compareDataKey) {
@@ -338,7 +349,7 @@ public class ApiScheduler {
                 .orgNm(petInfoByAPI.getOrgNm())
                 .chargeNm(petInfoByAPI.getChargeNm())
                 .officetel(petInfoByAPI.getOfficetel())
-                .state(state)
+                .state(petInfoByAPI.getState())
                 .objectType("Entity")
                 .compareDataKey(compareDataKey)
                 .build();
