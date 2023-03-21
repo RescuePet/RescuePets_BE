@@ -8,6 +8,7 @@ import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
 import hanghae99.rescuepets.memberpet.service.PetPostCatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +20,13 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
-
+@Tag(name = "유기견 의심 발견 신고 API")
 @RequestMapping("/api/pets/catch")
 @RequiredArgsConstructor
 @RestController
 public class PetPostCatchController {
     private final PetPostCatchService petPostCatchService;
 
-//    @ApiOperation(value = "게시글 목록 조회", notes = "page, size, sortBy로 페이징 후 조회")
     @GetMapping("/")
     @Operation(summary = "PostCatch 전체 게시글 불러오기", description = "PostCatch 전체 게시글을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPetPostCatchList(@RequestParam int page,
@@ -35,6 +35,13 @@ public class PetPostCatchController {
                                                                              @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
+    }
+    @GetMapping("/all")
+    @Operation(summary = "PostCatch 게시글 전체(페이징없이) 불러오기", description = "PostCatch 전체 게시글을 페이징없이 불러옵니다")
+    public ResponseEntity<ResponseDto> getPetPostCatchAll(@RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        Member member = memberDetails.getMember();
+        return petPostCatchService.getPetPostCatchAll(sortBy, member);
     }
     @GetMapping("/member")
     @Operation(summary = "내가 작성한 PostCatch 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")
