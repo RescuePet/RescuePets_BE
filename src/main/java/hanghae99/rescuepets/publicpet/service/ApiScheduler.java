@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +29,11 @@ public class ApiScheduler {
     private final PublicPetRepository publicPetRepository;
 
 
-    //3분 마다 실행
+    //30분 마다 실행
     //현재 실행 결과 소요시간 ={1차: 326434ms 2차:286378ms(업데이트만) 3차:278525ms(저장만)}
-//    @Scheduled(cron = "0 0/3 * * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
-    protected void testSchedule() throws IOException {
+    protected void ApiSchedule() throws IOException {
         long startTime = System.currentTimeMillis();//시작 시간
         String[] state = {"", "protect", "notice", "end"};
         int stateNo = 0;
@@ -52,7 +53,32 @@ public class ApiScheduler {
         }
         long endTime = System.currentTimeMillis(); //종료 시간
         long executionTime = endTime - startTime; //소요 시간 계산
-        log.info("Execution time: " + executionTime + "ms");
+        log.info("-------------------------Execution time: " + executionTime + "ms");
+    }
+
+    @Scheduled(cron = "0 0/30 * * * *")
+    @Transactional
+    protected void ApiScheduleTest() throws IOException {
+        long startTime = System.currentTimeMillis();//시작 시간
+        String[] state = {"", "protect", "notice", "end"};
+        int stateNo = 0;
+        int pageNo = 0;
+        String size = "1000";
+        while (stateNo < 3) {
+            pageNo++;
+            String apiUrl = createApiUrl(String.valueOf(pageNo), state[stateNo], size);
+            JSONArray itemList = fetchDataFromApi(apiUrl);
+            if (itemList == null || itemList.isEmpty()) {
+                log.info("State: " + state[stateNo] + ",  pageNo: " + pageNo + "을 API로부터 데이터를 받아오지 못했습니다.-------------------------------------------------------------------------");
+                stateNo++;
+                pageNo = 0;
+                continue;
+            }
+            saveOrUpdateFromApi(itemList, state[stateNo]);
+        }
+        long endTime = System.currentTimeMillis(); //종료 시간
+        long executionTime = endTime - startTime; //소요 시간 계산
+        log.info("-------------------------Execution time: " + executionTime + "ms");
     }
 
     protected String createApiUrl(String pageNo, String state, String size) throws UnsupportedEncodingException {
@@ -65,7 +91,7 @@ public class ApiScheduler {
         urlBuilder.append("&" + URLEncoder.encode("upr_cd", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*시도코드 (시도 조회 OPEN API 참조)*/
         urlBuilder.append("&" + URLEncoder.encode("org_cd", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*시군구코드 (시군구 조회 OPEN API 참조)*/
         urlBuilder.append("&" + URLEncoder.encode("care_reg_no", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*보호소번호 (보호소 조회 OPEN API 참조)*/
-
+        //인증키를 제외하고 url윗 부분 생략 가능.
         if (state.equals("protect")) {
             urlBuilder.append("&" + URLEncoder.encode("state", "UTF-8") + "=" + URLEncoder.encode("protect", "UTF-8"));
         } else if (state.equals("notice")) {
@@ -118,12 +144,12 @@ public class ApiScheduler {
             JSONObject itemObject = itemList.getJSONObject(i);
             Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetRepository.findByDesertionNo(itemObject.optString("desertionNo"));
             PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.orElse(null);
-            if (petInfoByAPIOptional.isEmpty()){
-                log.info("saveAndUpdateToDatabase 메서드 save 동작");
+            if (petInfoByAPIOptional.isEmpty()) {
+//                log.info("saveAndUpdateToDatabase 메서드 save 동작");
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
                 publicPetRepository.save(petInfo);
             } else {
-                log.info("saveAndUpdateToDatabase 메서드 update 동작");
+//                log.info("saveAndUpdateToDatabase 메서드 update 동작");
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
                 petInfoByAPI.update(petInfo);
             }
