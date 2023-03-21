@@ -56,7 +56,7 @@ public class ApiScheduler {
         log.info("-------------------------Execution time: " + executionTime + "ms");
     }
 
-    @Scheduled(cron = "0 0/30 * * * *")
+//    @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
     protected void ApiScheduleTest() throws IOException {
         long startTime = System.currentTimeMillis();//시작 시간
