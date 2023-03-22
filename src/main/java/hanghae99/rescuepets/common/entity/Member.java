@@ -38,8 +38,9 @@ public class Member {
         this.profileImage = profileImage;
     }
 
-    public void setKakaoId(Long kakaoId) {
+    public void setKakao(Long kakaoId, String profileImage) {
         this.kakaoId = kakaoId;
+        this.profileImage = profileImage;
     }
 
 }

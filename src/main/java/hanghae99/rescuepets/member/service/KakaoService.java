@@ -71,7 +71,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoApiKey); //Rest API 키
-        body.add("redirect_uri", "http://3.38.193.45/member/kakao/callback");
+        body.add("redirect_uri", "http://15.164.169.193/member/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -134,7 +134,7 @@ public class KakaoService {
             if (sameEmailUser != null) {
                 kakaoUser = sameEmailUser;
                 // 기존 회원정보에 카카오 Id 추가
-                kakaoUser.setKakaoId(kakaoId);
+                kakaoUser.setKakao(kakaoId, kakaoUserInfo.getProfileImage());
             } else {
                 // 신규 회원가입
                 // username: kakao nickname
