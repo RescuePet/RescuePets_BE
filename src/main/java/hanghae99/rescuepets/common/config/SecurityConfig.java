@@ -5,6 +5,7 @@ import hanghae99.rescuepets.common.jwt.JwtAuthFilter;
 import hanghae99.rescuepets.common.security.JwtAccessDeniedHandler;
 import hanghae99.rescuepets.common.security.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -38,7 +39,9 @@ public class SecurityConfig {
                 .mvcMatchers("/version")
                 .mvcMatchers("/swagger-ui/**")
                 .mvcMatchers("/h2-console/**")
+                .requestMatchers(PathRequest.toH2Console())
                 .mvcMatchers("/public");
+
     }
 
     @Bean

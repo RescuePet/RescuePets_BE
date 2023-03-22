@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -23,6 +24,8 @@ public class Member {
     private String password;
     @Column
     private Long kakaoId;
+    @Column
+    private LocalDate suspendedUntil;
 
     @Builder
     public Member(Long id, String email, String nickname , String password, String address, Long kakaoId){
@@ -38,4 +41,9 @@ public class Member {
         this.kakaoId = kakaoId;
     }
 
+
+
+    public void setSuspendedUntil(LocalDate plusDays) {
+        this.suspendedUntil = plusDays;
+    }
 }

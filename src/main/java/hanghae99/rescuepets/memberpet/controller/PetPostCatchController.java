@@ -73,4 +73,5 @@ public class PetPostCatchController {
     public ResponseEntity<ResponseDto> deletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
         return petPostCatchService.delete(petPostCatchId, userDetails.getMember());
     }
+
 }

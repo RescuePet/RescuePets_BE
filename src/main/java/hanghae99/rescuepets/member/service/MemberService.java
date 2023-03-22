@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.member.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.time.LocalDate;
+
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 
@@ -27,6 +30,9 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     private final RefreshTokenRepository refreshTokenRepository;
+
+
+
 
     public ResponseEntity<ResponseDto> signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {
