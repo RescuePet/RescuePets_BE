@@ -2,7 +2,6 @@ package hanghae99.rescuepets.chat.controller;
 
 import hanghae99.rescuepets.chat.dto.ChatRequestDto;
 import hanghae99.rescuepets.chat.dto.ChatResponseDto;
-import hanghae99.rescuepets.chat.dto.ChatRoomResponseDto;
 import hanghae99.rescuepets.chat.service.ChatService;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,12 +11,11 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class ChatController {
 
@@ -37,7 +35,6 @@ public class ChatController {
     }
 
     @GetMapping("/room/{roomId}")
-    @ResponseBody
     @Operation(summary = "채팅 조회")
     public ResponseEntity<ResponseDto> chat(@PathVariable String roomId) {
         return chatService.getMessages(roomId);

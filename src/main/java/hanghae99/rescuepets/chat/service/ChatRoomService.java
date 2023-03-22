@@ -26,16 +26,15 @@ public class ChatRoomService {
 
     public ResponseEntity<ResponseDto> getRoomList(Member member) {
         List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByRoomIdDesc(member.getId(), member.getId());
-
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
-
         for (ChatRoom room : roomList) {
             String lastChat = "";
             if (room.getChatMessages().size() > 0) {
                 lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1).getMessage();
             }
             String roomName = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getNickname() : room.getHost().getNickname();
-            dto.add(ChatRoomListResponseDto.of(room, roomName, lastChat));
+            String profileImage = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getProfileImage() : room.getHost().getProfileImage();
+            dto.add(ChatRoomListResponseDto.of(room, roomName, lastChat, profileImage));
         }
 
         return ResponseDto.toResponseEntity(SuccessMessage.Chat_Room_List_SUCCESS, dto);
@@ -44,8 +43,7 @@ public class ChatRoomService {
     public String createCatchRoom(Long postId, Member member) {
         PetPostCatch post = petPostCatchRepository.findById(postId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
         ChatRoom room = chatRoomRepository.findChatRoomByCatchPostIdAndHostIdOrGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(
-                ChatRoom.of(post, member)
-        );
+                ChatRoom.of(post, member));
         chatRoomRepository.save(room);
 
         return room.getRoomId();
@@ -54,8 +52,7 @@ public class ChatRoomService {
     public String createMissingRoom(Long postId, Member member) {
         PetPostMissing post = petPostMissingRepository.findById(postId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
         ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(
-                ChatRoom.of(post, member)
-        );
+                ChatRoom.of(post, member));
         chatRoomRepository.save(room);
 
         return room.getRoomId();

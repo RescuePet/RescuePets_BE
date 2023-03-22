@@ -24,14 +24,18 @@ public class Member {
     @Column
     private Long kakaoId;
 
+    @Column
+    private String profileImage;
+
     @Builder
-    public Member(Long id, String email, String nickname , String password, String address, Long kakaoId){
+    public Member(Long id, String email, String nickname , String password, String address, Long kakaoId, String profileImage){
         this.id = id;
         this.email = email;
         this.nickname = nickname;
         this.password = password;
         this.address = address;
         this.kakaoId = kakaoId;
+        this.profileImage = profileImage;
     }
 
     public void setKakaoId(Long kakaoId) {
