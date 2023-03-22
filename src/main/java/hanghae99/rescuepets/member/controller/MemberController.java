@@ -62,12 +62,14 @@ public class MemberController {
         response.addHeader(JwtUtil.ACCESS_TOKEN, jwtUtil.createToken(memberDetails.getMember().getEmail(), "Access"));
         return ResponseDto.toResponseEntity(SuccessMessage.REISSUE_ACCESS_TOKEN);
     }
+
+    @Operation(summary = "로그아웃", description = "자세한 설명")
+    @GetMapping("member/logout")
+    public ResponseEntity<ResponseDto> logout(@AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.logout(memberDetails.getMember());
+    }
 }
-//    @Operation(summary = "로그아웃", description = "자세한 설명")
-//    @GetMapping("member/logout")
-//    public ResponseEntity<ResponseDto> logout(@AuthenticationPrincipal MemberDetails memberDetails){
-//        return memberService.logout(memberDetails.getMember());
-//    }
+
 //    // 삭제 여기는 전역 Response 나오면 처리 하겠습니다 회원탈퇴
 //    @Operation(summary = "회원탈퇴", description = "자세한 설명")
 //    @PostMapping("/member/Withdrawal")
