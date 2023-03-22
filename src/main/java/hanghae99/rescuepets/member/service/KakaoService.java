@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
@@ -30,7 +29,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -73,7 +71,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoApiKey); //Rest API 키
-        body.add("redirect_uri", "http://3.38.193.45/member/kakao/callback");
+        body.add("redirect_uri", "http://localhost:8080/member/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -118,7 +116,8 @@ public class KakaoService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-        String profileImage = jsonNode.get("profile_image_url").asText();
+        String profileImage = jsonNode.get("kakao_account")
+                .get("profile").get("profile_image_url").asText();
         return new KakaoUserInfoDto(id, nickname, email, profileImage);
     }
 
