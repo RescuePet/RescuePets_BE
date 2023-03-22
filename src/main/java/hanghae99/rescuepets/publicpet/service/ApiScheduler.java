@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -66,7 +67,7 @@ public class ApiScheduler {
     @Transactional
     protected void ApiScheduleTest() throws IOException {
         long startTime = System.currentTimeMillis();//시작 시간
-        String[] state = {"protect", "notice", "", "end"};
+        String[] state = {"notice","protect", "", "end"};
         int stateNo = 0;
         int pageNo = 0;
         String size = "1000";
@@ -201,12 +202,12 @@ public class ApiScheduler {
             Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetRepository.findByDesertionNo(itemObject.optString("desertionNo"));
             List<String> compareDataList = new ArrayList<>();
             if (petInfoByAPIOptional.isEmpty()) {
-//                log.info("saveAndUpdateToDatabase 메서드 save 동작");
+                log.info("saveAndUpdateToDatabase 메서드 save 동작");
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
                 publicPetRepository.save(petInfo);
             } else {
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.orElse(null);
-//                log.info("saveAndUpdateToDatabase 메서드 update 동작");
+                log.info("saveAndUpdateToDatabase 메서드 update 동작");
                 if (!petInfoByAPI.getFilename().equals(itemObject.optString("filename"))) {
                     compareDataList.add("filename");
                 }
@@ -282,12 +283,14 @@ public class ApiScheduler {
                 }
                 if (!compareDataList.isEmpty()) {
                     String compareDataKey = String.join(", ", compareDataList);
-                    PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
+                    PetInfoByAPI petInfo = petInfoByAPIOptional.orElse(null);
+                    PetInfoByAPI petInfoByUpdate = buildPetInfo(itemObject, state);
                     PetInfoState petInfoEntity = buildPetInfoApi(itemObject, state, compareDataKey);
                     PetInfoState entityPetInfo = buildPetInfoEntity(petInfoByAPI, state, compareDataKey);
-                    petInfoByAPI.update(petInfo);
                     petInfoStateRepository.save(petInfoEntity);
                     petInfoStateRepository.save(entityPetInfo);
+                    petInfo.update(petInfoByUpdate);
+//                    publicPetRepository.saveAndFlush(petInfo);
 //                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
                 }
                 //list가 비었을 경우 변동 사항이 없으므로 업데이트 동작하지 않음
