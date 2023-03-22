@@ -1,19 +1,21 @@
 package hanghae99.rescuepets.common.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class PostImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String imageURL;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "petPostCatchId", nullable = true)

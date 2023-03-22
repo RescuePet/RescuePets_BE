@@ -13,10 +13,13 @@ public class MemberResponseDto {
 
     private String email;
 
+    private String profileImage;
+
     public MemberResponseDto(Member member){
         this.id = member.getId();
         this.nickname = member.getNickname();
         this.email = member.getEmail();
+        this.profileImage = member.getProfileImage();
     }
 
 }

@@ -2,14 +2,12 @@ package hanghae99.rescuepets.common.entity;
 
 //import hanghae99.rescuepets.memberpet.dto.MemberPetRequestDto;
 //import hanghae99.rescuepets.memberpet.dto.PetPostMissingRequestDto;
-import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostMissingRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity(name = "petPostMissing")
@@ -32,7 +30,6 @@ public class PetPostMissing extends TimeStamped{
     private String content;
     private String gratuity;
     private String contact;
-
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private SexEnum sexCd;
@@ -54,9 +51,9 @@ public class PetPostMissing extends TimeStamped{
 
     public PetPostMissing(PetPostMissingRequestDto requestDto, Member member) {
         this.upkind = requestDto.getUpkind();
-        this.kindCd = requestDto.getKindCd();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
+        this.kindCd = requestDto.getKindCd();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
@@ -79,9 +76,9 @@ public class PetPostMissing extends TimeStamped{
     }
     public void update(PetPostMissingRequestDto requestDto) {
         this.upkind = requestDto.getUpkind();
-        this.kindCd = requestDto.getKindCd();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
+        this.kindCd = requestDto.getKindCd();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
