@@ -11,6 +11,7 @@ import hanghae99.rescuepets.memberpet.service.PetPostCatchService;
 import hanghae99.rescuepets.memberpet.service.PetPostMissingService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 //import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.MediaType;
@@ -22,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-
+@Tag(name = "유기견 발생 신고 API")
 @RequestMapping("/api/pets/missing")
 @RequiredArgsConstructor
 @RestController
@@ -39,6 +40,13 @@ public class PetPostMissingController {
         Member member = memberDetails.getMember();
         //sortBy = postLikeCount,
         return petPostMissingService.getPetPostMissingList(page-1, size, sortBy, member);
+    }
+    @GetMapping("/all")
+    @Operation(summary = "PostMissing 게시글 전체(페이징없이) 불러오기", description = "PostMissing 전체 게시글을 페이징없이 불러옵니다.")
+    public ResponseEntity<ResponseDto> getPetPostMissingAll(@RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        Member member = memberDetails.getMember();
+        return petPostMissingService.getPetPostMissingAll(sortBy, member);
     }
     @GetMapping("/member")
     @Operation(summary = "내가 작성한 PostMissing 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostMissing 게시글들을 페이징하여 불러옵니다")

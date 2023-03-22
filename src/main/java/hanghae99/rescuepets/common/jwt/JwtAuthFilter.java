@@ -30,11 +30,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String refreshToken = jwtUtil.resolveToken(request, "Refresh");
 
         if (accessToken != null) {
-            if (!jwtUtil.validateToken(accessToken)) {
+            if (jwtUtil.validateToken(accessToken) == 1) {
+                setAuthentication(jwtUtil.getEmailFromToken(accessToken));
+            } else if (jwtUtil.validateToken(accessToken) == 2) {
+                jwtExceptionHandler(response, HttpStatus.SEE_OTHER.value());
+            } else {
                 jwtExceptionHandler(response, HttpStatus.BAD_REQUEST.value());
                 return;
             }
-            setAuthentication(jwtUtil.getEmailFromToken(accessToken));
         } else if (refreshToken != null) {
             if (!jwtUtil.refreshTokenValidation(refreshToken)) {
                 jwtExceptionHandler(response, HttpStatus.BAD_REQUEST.value());

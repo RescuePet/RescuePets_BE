@@ -28,18 +28,19 @@ public enum SuccessMessage {
     COMMENT_DELETE_SUCCESS(HttpStatus.OK,"댓글 삭제를 완료했습니다."),
     Chat_List_SUCCESS(HttpStatus.OK, "채팅 내역 불러오기 성공"),
     Chat_Room_List_SUCCESS(HttpStatus.OK, "채팅방 불러오기 성공"),
-    PET_INFO_WISH_DELETE_SUCCESS(HttpStatus.OK, "관심 유기동물 등록이 완료되었습니다."),
+    PET_INFO_WISH_DELETE_SUCCESS(HttpStatus.OK, "관심 유기동물 삭제 완료되었습니다."),
     PET_INFO_GET_DETAILS_SUCCESS(HttpStatus.OK, "유기동물 상세 페이지 불러오기 성공"),
     PET_INFO_GET_LIST_SUCCESS(HttpStatus.OK, "유기동물 전체 페이지 불러오기 성공"),
     PET_INFO_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
+    PUBLIC_PET_INFO_SAVE_SUCCESS(HttpStatus.CREATED, "유기동물 API 호출 및 DB 저장 성공."),
     POST_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
     DELETE_POST_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
     WITHDRAWAL_SUCCESS(HttpStatus.OK,"회원탈퇴에 성공하였습니다"),
     DECLARE_PUT_SUCCESS(HttpStatus.OK,"신고수정이 완료되었습니다"),
     DECLARE_DELETE_SUCCESS(HttpStatus.OK,"신고수정이 완료되었습니다"),
-    DECLARE_SUCCESS(HttpStatus.OK,"신고가 완료되었습니다");
+    DECLARE_SUCCESS(HttpStatus.OK,"신고가 완료되었습니다"),
 
-
+    REISSUE_ACCESS_TOKEN(HttpStatus.OK, "Access 토큰 재발급 완료");
     private final HttpStatus httpStatus;
     private final String detail;
 }

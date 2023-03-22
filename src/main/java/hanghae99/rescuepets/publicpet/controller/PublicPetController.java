@@ -4,6 +4,7 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
 import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
+import hanghae99.rescuepets.publicpet.service.ApiDataService;
 import hanghae99.rescuepets.publicpet.service.PublicPetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,18 +21,27 @@ import java.io.IOException;
 @Slf4j
 @Tag(name = "유기동물 공공 API")
 @RestController
-@RequestMapping("/api/pets")
+    @RequestMapping("/api/pets")
 @RequiredArgsConstructor
 public class PublicPetController {
     private final PublicPetService publicPetService;
+    private final ApiDataService apiDataService;
 
-    //DB Update
+    //DB SaveOrUpdate
     @SecurityRequirements
     @PostMapping("api-new-save/{pageNo}")
-    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화 진행", description = "자세한 설명")
-    public String apiNewSave(@PathVariable(value = "pageNo") String pageNo,
+    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화", description = "자세한 설명")
+    public ResponseEntity<ResponseDto> apiNewSave(@PathVariable(value = "pageNo") String pageNo,
                            @RequestParam(value = "state") String state, @RequestParam(value = "size") String size) throws IOException {
-        return publicPetService.dataComparison(pageNo, state, size);
+        return apiDataService.apiDataSave(pageNo, state, size);
+    }
+
+    @SecurityRequirements
+    @PostMapping("api-compare-data/{pageNo}")
+    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화", description = "자세한 설명")
+    public ResponseEntity<ResponseDto> apiCompareData(@PathVariable(value = "pageNo") String pageNo,
+                                                  @RequestParam(value = "state") String state, @RequestParam(value = "size") String size) throws IOException {
+        return apiDataService.apiCompareData(pageNo, state, size);
     }
 
 //    @SecurityRequirements
@@ -42,13 +52,13 @@ public class PublicPetController {
 //        return publicPetService.apiSave(pageNo, state);
 //    }
 
-    @SecurityRequirements
-    @PostMapping("/api-save/{pageNo}")
-    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 저장 진행", description = "자세한 설명")
-    public String apiSaves(@PathVariable(value = "pageNo") String pageNo,
-                           @RequestParam(value = "state") String state) throws IOException {
-        return publicPetService.apiSaves(pageNo, state);
-    }
+//    @SecurityRequirements
+//    @PostMapping("/api-save/{pageNo}")
+//    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 저장 진행", description = "자세한 설명")
+//    public String apiSaves(@PathVariable(value = "pageNo") String pageNo,
+//                           @RequestParam(value = "state") String state) throws IOException {
+//        return publicPetService.apiSaves(pageNo, state);
+//    }
 
 
     @SecurityRequirements

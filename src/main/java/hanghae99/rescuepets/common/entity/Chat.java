@@ -19,14 +19,15 @@ public class Chat extends TimeStamped {
     @ManyToOne
     private ChatRoom room;
 
-    private String sender;
+    @ManyToOne
+    private Member sender;
 
     private String message;
 
-    public static Chat of(ChatRequestDto dto, ChatRoom room) {
+    public static Chat of(ChatRequestDto dto, ChatRoom room, Member sender) {
         return Chat.builder()
                 .room(room)
-                .sender(dto.getSender())
+                .sender(sender)
                 .message(dto.getMessage())
                 .build();
     }

@@ -19,27 +19,49 @@ public class PetInfoByAPI extends TimeStamped{
     private Long id;
     @Column(nullable = false, unique = true)
     private String desertionNo;
+    @Column
     private String filename;
+    @Column
     private String happenDt;
+    @Column
     private String happenPlace;
+    @Column
     private String kindCd;
+    @Column
     private String colorCd;
+    @Column
     private String age;
+    @Column
     private String weight;
+    @Column
     private String noticeNo;
+    @Column
     private String noticeSdt;
+    @Column
     private String noticeEdt;
+    @Column
     private String popfile;
+    @Column
     private String processState;
+    @Column
     private String sexCd;
+    @Column
     private String neuterYn;
+    @Column
     private String specialMark;
+    @Column
     private String careNm;
+    @Column
     private String careTel;
+    @Column
     private String careAddr;
+    @Column
     private String orgNm;
+    @Column
     private String chargeNm;
+    @Column
     private String officetel;
+    @Column
     private String state;
 
     public void update(PetInfoByAPI petInfo) {

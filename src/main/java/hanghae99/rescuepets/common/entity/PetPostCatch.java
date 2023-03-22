@@ -24,6 +24,8 @@ public class PetPostCatch extends TimeStamped{
     private String weight;
     private String colorCd;
     private String happenPlace;
+    private String happenLongitude;
+    private String happenLatitude;
     private String happenDt;
     private String happenHour;
     private String specialMark;
@@ -31,15 +33,17 @@ public class PetPostCatch extends TimeStamped{
     private String gratuity;
     private String contact;
     private Boolean openNickname;
+    @ElementCollection
+    private List<String> postLink = new ArrayList<>();
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UpkindEnum upkind;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private SexEnum sexCd;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private NeuterEnum neuterYn;
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UpkindEnum upkind;
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
@@ -53,13 +57,15 @@ public class PetPostCatch extends TimeStamped{
 
     public PetPostCatch(PetPostCatchRequestDto requestDto, Member member) {
         this.upkind = requestDto.getUpkind();
-        this.kindCd = requestDto.getKindCd();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
+        this.kindCd = requestDto.getKindCd();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
         this.happenPlace = requestDto.getHappenPlace();
+        this.happenLongitude = requestDto.getHappenLongitude();
+        this.happenLatitude = requestDto.getHappenLatitude();
         this.happenDt = requestDto.getHappenDt();
         this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();
@@ -77,13 +83,15 @@ public class PetPostCatch extends TimeStamped{
     }
     public void update(PetPostCatchRequestDto requestDto) {
         this.upkind = requestDto.getUpkind();
-        this.kindCd = requestDto.getKindCd();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
+        this.kindCd = requestDto.getKindCd();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
         this.happenPlace = requestDto.getHappenPlace();
+        this.happenLongitude = requestDto.getHappenLongitude();
+        this.happenLatitude = requestDto.getHappenLatitude();
         this.happenDt = requestDto.getHappenDt();
         this.happenHour = requestDto.getHappenHour();
         this.specialMark = requestDto.getSpecialMark();

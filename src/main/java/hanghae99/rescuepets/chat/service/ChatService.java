@@ -10,6 +10,8 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Chat;
 import hanghae99.rescuepets.common.entity.ChatRoom;
+import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,11 +22,12 @@ public class ChatService {
 
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final MemberRepository memberRepository;
 
     public void createChat(String roomId, ChatRequestDto dto) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.CHATROOM_NOT_FOUND));
-
-        Chat message = Chat.of(dto, room);
+        Member sender = memberRepository.findByNickname(dto.getSender()).orElseThrow(() -> new CustomException(ExceptionMessage.UNAUTHORIZED_MEMBER));
+        Chat message = Chat.of(dto, room, sender);
         chatRepository.save(message);
     }
 

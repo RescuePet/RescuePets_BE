@@ -3,12 +3,15 @@ package hanghae99.rescuepets.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
-import hanghae99.rescuepets.member.dto.TokenDto;
+import hanghae99.rescuepets.member.dto.MemberResponseDto;
 import hanghae99.rescuepets.member.repository.MemberRepository;
+import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -37,10 +40,10 @@ public class KakaoService {
 
     @Value("${kakao.api.key}")
     private String kakaoApiKey;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public String kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
-        String message = "님 환영합니다.";
+    public ResponseEntity<ResponseDto> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
@@ -56,12 +59,7 @@ public class KakaoService {
 
         jwtUtil.createToken(response, kakaoMember);
 
-        return kakaoUserInfo.getNickname() + message + "(" + kakaoMember.getEmail() + ")";
-    }
-
-    private void setHeader(HttpServletResponse response, TokenDto tokenDto) {
-        response.addHeader(JwtUtil.ACCESS_TOKEN, tokenDto.getAccessToken());
-        response.addHeader(JwtUtil.REFRESH_TOKEN, tokenDto.getRefreshToken());
+        return ResponseDto.toResponseEntity(SuccessMessage.LOGIN_SUCCESS, new MemberResponseDto(kakaoMember.getId(), kakaoMember.getNickname(), kakaoMember.getEmail(), kakaoMember.getProfileImage()));
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -73,7 +71,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoApiKey); //Rest API 키
-        body.add("redirect_uri", "http://3.38.193.45/member/kakao/callback");
+        body.add("redirect_uri", "http://15.164.169.193/member/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -118,7 +116,9 @@ public class KakaoService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-        return new KakaoUserInfoDto(id, nickname, email);
+        String profileImage = jsonNode.get("kakao_account")
+                .get("profile").get("profile_image_url").asText();
+        return new KakaoUserInfoDto(id, nickname, email, profileImage);
     }
 
 
@@ -134,11 +134,13 @@ public class KakaoService {
             if (sameEmailUser != null) {
                 kakaoUser = sameEmailUser;
                 // 기존 회원정보에 카카오 Id 추가
-                kakaoUser.setKakaoId(kakaoId);
+                kakaoUser.setKakao(kakaoId, kakaoUserInfo.getProfileImage());
             } else {
                 // 신규 회원가입
                 // username: kakao nickname
                 String nickname = kakaoUserInfo.getNickname();
+                int i = memberRepository.countByNickname(nickname);
+                nickname = i == 0 ? nickname : nickname + "(" + i + ")";
 
                 // password: random UUID
                 String password = UUID.randomUUID().toString();
@@ -147,11 +149,15 @@ public class KakaoService {
                 // email: kakao email
                 String email = kakaoUserInfo.getEmail();
 
+                // profile image: kakao profile image
+                String profileImage = kakaoUserInfo.getProfileImage();
+
                 kakaoUser = Member.builder()
                         .nickname(nickname)
                         .password(encodedPassword)
                         .email(email)
                         .kakaoId(kakaoId)
+                        .profileImage(profileImage)
                         .build();
             }
 
