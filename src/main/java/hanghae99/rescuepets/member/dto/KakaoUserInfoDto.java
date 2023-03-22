@@ -19,4 +19,6 @@ public class KakaoUserInfoDto {
     @NotBlank
     private String email;
 
+    private String profileImage;
+
 }

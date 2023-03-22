@@ -2,6 +2,7 @@ package hanghae99.rescuepets.member.service;
 
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
@@ -107,10 +110,11 @@ public class MemberService {
     }
 
     public ResponseEntity<ResponseDto> logout( Member member) {
-        RefreshToken refreshToken = refreshTokenRepository.findByMemberEmail(member.getEmail()).orElseThrow(
-                () -> new NullPointerException()
-        );
-        refreshTokenRepository.delete(refreshToken);
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findById((member.getId()));
+        if (refreshToken.isPresent()) {
+            refreshTokenRepository.deleteById(member.getId());
+        }
+
         return ResponseDto.toResponseEntity(LOGOUT_SUCCESS);
     }
 }

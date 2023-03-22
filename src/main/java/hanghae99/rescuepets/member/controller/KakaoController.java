@@ -2,16 +2,15 @@ package hanghae99.rescuepets.member.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.member.dto.MemberResponseDto;
+import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.service.KakaoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
