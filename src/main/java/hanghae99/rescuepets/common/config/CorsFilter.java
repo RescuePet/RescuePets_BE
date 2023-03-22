@@ -21,11 +21,9 @@ public class CorsFilter implements Filter {
         // 요청 메서드를 허용합니다.
         response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
         // 요청 헤더를 허용합니다.
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        response.setHeader("Access-Control-Allow-Headers", "*");
         // Access-Control-Expose-Headers 헤더 설정
-        response.setHeader("Access-Control-Expose-Headers", "Authorization");
-
-        response.setHeader("Access-Control-Expose-Headers", "Refresh");
+        response.setHeader("Access-Control-Expose-Headers", "*");
 
         response.setHeader("Access-Control-Allow-Credentials", "true");
 
