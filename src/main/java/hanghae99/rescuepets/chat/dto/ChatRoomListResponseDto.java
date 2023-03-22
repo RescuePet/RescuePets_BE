@@ -11,12 +11,14 @@ public class ChatRoomListResponseDto {
     private String roomId;
     private String roomName;
     private String lastChat;
+    private String profileImage;
 
-    public static ChatRoomListResponseDto of(ChatRoom room, String roomName, String lastChat) {
+    public static ChatRoomListResponseDto of(ChatRoom room, String roomName, String lastChat, String profileImage) {
         return ChatRoomListResponseDto.builder()
                 .roomId(room.getRoomId())
                 .roomName(roomName)
                 .lastChat(lastChat)
+                .profileImage(profileImage)
                 .build();
     }
 }

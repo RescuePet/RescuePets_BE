@@ -9,6 +9,7 @@ import lombok.Getter;
 public class ChatResponseDto {
     private String sender;
     private String message;
+    private String profileImage;
 
     public static ChatResponseDto of(ChatRequestDto dto) {
         return ChatResponseDto.builder()
@@ -19,8 +20,9 @@ public class ChatResponseDto {
 
     public static ChatResponseDto of(Chat message) {
         return ChatResponseDto.builder()
-                .sender(message.getSender())
+                .sender(message.getSender().getNickname())
                 .message(message.getMessage())
+                .profileImage(message.getSender().getProfileImage())
                 .build();
     }
 }

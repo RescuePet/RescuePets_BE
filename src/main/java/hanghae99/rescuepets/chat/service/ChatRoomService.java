@@ -33,7 +33,8 @@ public class ChatRoomService {
                 lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1).getMessage();
             }
             String roomName = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getNickname() : room.getHost().getNickname();
-            dto.add(ChatRoomListResponseDto.of(room, roomName, lastChat));
+            String profileImage = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getProfileImage() : room.getHost().getProfileImage();
+            dto.add(ChatRoomListResponseDto.of(room, roomName, lastChat, profileImage));
         }
 
         return ResponseDto.toResponseEntity(SuccessMessage.Chat_Room_List_SUCCESS, dto);
