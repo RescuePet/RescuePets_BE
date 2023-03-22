@@ -76,7 +76,7 @@ public class ApiScheduler {
             String apiUrl = createApiUrl(String.valueOf(pageNo), state[stateNo], size);
             JSONArray itemList = fetchDataFromApi(apiUrl);
             if (itemList == null || itemList.isEmpty()) {
-                log.info("State: " + state[stateNo] + ",  pageNo: " + pageNo + "을 API로부터 데이터를 받아오지 못했습니다.-------------------------------------------------------------------------");
+//                log.info("State: " + state[stateNo] + ",  pageNo: " + pageNo + "을 API로부터 데이터를 받아오지 못했습니다.-------------------------------------------------------------------------");
                 stateNo++;
                 pageNo = 0;
                 continue;
@@ -86,7 +86,7 @@ public class ApiScheduler {
         }
         long endTime = System.currentTimeMillis(); //종료 시간
         long executionTime = endTime - startTime; //소요 시간 계산
-        log.info("-------------------------Execution time: " + executionTime + "ms");
+//        log.info("-------------------------Execution time: " + executionTime + "ms");
     }
 
     protected String createApiUrl(String pageNo, String state, String size) throws UnsupportedEncodingException {
@@ -291,7 +291,7 @@ public class ApiScheduler {
                     PetInfoState entityPetInfo = buildPetInfoEntity(petInfoByAPI, state, compareDataKey);
                     petInfoStateRepository.save(entityPetInfo);
 //                    publicPetRepository.saveAndFlush(petInfo);
-                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
+//                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
                 }
                 //list가 비었을 경우 변동 사항이 없으므로 업데이트 동작하지 않음
             }
