@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
@@ -30,7 +29,6 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -118,7 +116,8 @@ public class KakaoService {
                 .get("nickname").asText();
         String email = jsonNode.get("kakao_account")
                 .get("email").asText();
-        String profileImage = jsonNode.get("profile_image_url").asText();
+        String profileImage = jsonNode.get("kakao_account")
+                .get("profile").get("profile_image_url").asText();
         return new KakaoUserInfoDto(id, nickname, email, profileImage);
     }
 
