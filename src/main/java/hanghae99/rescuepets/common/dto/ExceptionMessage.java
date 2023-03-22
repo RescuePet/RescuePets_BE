@@ -41,6 +41,8 @@ public enum ExceptionMessage {
     NOT_FOUND_WISH(NOT_FOUND,"관심 등록되어 있지 않습니다."),
     NOT_FOUND_DECLARE(NOT_FOUND,"신고가 등록되어 있지 않습니다."),
 
+    NOT_FOUND_HUMAN(NOT_FOUND,"해당 고객이 존재하지 않습니다"),
+
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
     DUPLICATE_RESOURCE_PET_INFO(CONFLICT, "데이터가 이미 존재합니다"),
@@ -49,7 +51,7 @@ public enum ExceptionMessage {
     DUPLICATE_NICKNAME(CONFLICT,"중복된 닉네임이 존재합니다."),
     DUPLICATE_EMAIL(CONFLICT,"중복된 이메일이 존재합니다."),
     ALREADY_WISH(CONFLICT, "이미 관심 등록되었습니다."),
-    ALREADY_DECLARE(CONFLICT, "이미 관심 등록되었습니다.");
+    ALREADY_DECLARE(CONFLICT, "이미 신고가 등록되었습니다.");
 
 
 

@@ -76,6 +76,16 @@ public class ReportController {
         return reportService.reportMember(reportMemberRequestDto,userDetails.getMember());
     }
 
+    @PutMapping(value = "/member",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> reporMemberPut(@ModelAttribute ReportMemberRequestDto reportMemberRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails){
+        return reportService.reporMemberPut(reportMemberRequestDto, userDetails.getMember());
+    }
+
+    @DeleteMapping(value = "/member",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> reportMemberDelete(@ModelAttribute ReportMemberRequestDto reportMemberRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails){
+        return reportService.reportMemberDelete(reportMemberRequestDto, userDetails.getMember());
+    }
+
 
 
 

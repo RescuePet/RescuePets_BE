@@ -9,6 +9,7 @@ import hanghae99.rescuepets.declare.dto.ReportIdRequestDto;
 import hanghae99.rescuepets.declare.dto.ReportMemberRequestDto;
 import hanghae99.rescuepets.declare.dto.ReportRequestDto;
 import hanghae99.rescuepets.declare.repository.CommentReportRepository;
+import hanghae99.rescuepets.declare.repository.MemberReportRepository;
 import hanghae99.rescuepets.declare.repository.PostCatchReportRepository;
 import hanghae99.rescuepets.declare.repository.PostMissingReportRepository;
 import hanghae99.rescuepets.member.repository.MemberRepository;
@@ -31,9 +32,9 @@ public class ReportService {
     private final PostMissingReportRepository postMissingReportRepository;
     private final PetPostCatchRepository petPostCatchRepository;
     private final PostCatchReportRepository postCatchReportRepository;
-
     private final CommentRepository commentRepository;
     private final CommentReportRepository commentReportRepository;
+    private final MemberReportRepository memberReportRepository;
 
     @Transactional
     public ResponseEntity<ResponseDto> reportMissing(ReportRequestDto reportRequestDto, Member member) {
@@ -138,7 +139,7 @@ public class ReportService {
         commentReportRepository.save(reportComment);
         return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
     }
-
+    @Transactional
     public ResponseEntity<ResponseDto> reportCommentPut(ReportRequestDto reportRequestDto, Member member) {
         ReportComment reportComment = commentReportRepository.findByMember_IdAndComment_Id(member.getId(), reportRequestDto.getCommentId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_DECLARE)
@@ -150,15 +151,49 @@ public class ReportService {
 
 
     public ResponseEntity<ResponseDto> reportCommentDelete(ReportIdRequestDto reportIdRequestDto, Member member) {
-        ReportComment reportComment = commentReportRepository.findByMember_IdAndComment_Id(member.getId(),reportIdRequestDto.getCommentId()).orElseThrow(
-            () -> new CustomException(NOT_FOUND_DECLARE)
+        ReportComment reportComment = commentReportRepository.findByMember_IdAndComment_Id(member.getId(), reportIdRequestDto.getCommentId()).orElseThrow(
+                () -> new CustomException(NOT_FOUND_DECLARE)
         );
         commentReportRepository.deleteById(reportComment.getId());
 
         return ResponseDto.toResponseEntity(DECLARE_DELETE_SUCCESS);
     }
+    @Transactional
+    public ResponseEntity<ResponseDto> reportMember(ReportMemberRequestDto reportMemberRequestDto, Member respondent) {
+        Member informant = memberRepository.findById(reportMemberRequestDto.getInformantId()).orElseThrow(
+                () -> new CustomException(NOT_FOUND_HUMAN)
+        );
+        if (memberReportRepository.findByInformant_IdAndRespondent_Id(reportMemberRequestDto.getInformantId(), respondent.getId()).isPresent()) {
+            throw new CustomException(ALREADY_DECLARE);
+        }
+        ReportMember reportMember = ReportMember.builder()
+                .informant(informant)
+                .respondent(respondent)
+                .content(reportMemberRequestDto.getContent())
+                .reportcode(reportMemberRequestDto.getReportCode().getValue())
+                .build();
+        memberReportRepository.save(reportMember);
 
-    public ResponseEntity<ResponseDto> reportMember(ReportMemberRequestDto reportMemberRequestDto, Member member) {
+        return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
+    }
+    @Transactional
+    public ResponseEntity<ResponseDto> reporMemberPut(ReportMemberRequestDto reportMemberRequestDto, Member member) {
+        ReportMember reportMember = memberReportRepository.findByInformant_IdAndRespondent_Id(reportMemberRequestDto.getInformantId(),member.getId()).orElseThrow(
+                () -> new CustomException(NOT_FOUND_DECLARE)
+        );
+        reportMember.report(reportMemberRequestDto);
 
+        return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
+    }
+
+
+    public ResponseEntity<ResponseDto> reportMemberDelete(ReportMemberRequestDto reportMemberRequestDto, Member member) {
+        ReportMember reportMember = memberReportRepository.findByInformant_IdAndRespondent_Id(reportMemberRequestDto.getInformantId(),member.getId()).orElseThrow(
+                () -> new CustomException(NOT_FOUND_DECLARE)
+        );
+        memberReportRepository.deleteById(reportMember.getId());
+
+        return ResponseDto.toResponseEntity(DECLARE_DELETE_SUCCESS);
     }
 }
+
