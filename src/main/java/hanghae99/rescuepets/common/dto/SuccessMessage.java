@@ -11,6 +11,7 @@ public enum SuccessMessage {
     SIGN_UP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료 되었습니다."),
     POST_WRITING_SUCCESS(HttpStatus.CREATED, "게시물 작성이 완료 되었습니다."),
     COMMENT_WRITING_SUCCESS(HttpStatus.CREATED, "댓글 작성이 완료 되었습니다."),
+    POST_LINKING_SUCCESS(HttpStatus.CREATED, "링크 생성이 완료 되었습니다."),
     POST_MODIFYING_SUCCESS(HttpStatus.CREATED, "게시글 수정이 완료 되었습니다."),
     COMMENT_MODIFYING_SUCCESS(HttpStatus.CREATED, "댓글 수정이 완료 되었습니다."),
     LOGIN_SUCCESS(HttpStatus.OK,"로그인이 완료 되었습니다."),

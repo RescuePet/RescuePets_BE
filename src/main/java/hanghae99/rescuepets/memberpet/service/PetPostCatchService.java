@@ -3,15 +3,12 @@ package hanghae99.rescuepets.memberpet.service;
 
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.PetPostCatch;
-import hanghae99.rescuepets.common.entity.PetPostMissing;
-import hanghae99.rescuepets.common.entity.PostImage;
+import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.common.s3.S3Uploader;
-import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
-import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
-import hanghae99.rescuepets.memberpet.dto.PetPostMissingResponseDto;
+import hanghae99.rescuepets.memberpet.dto.*;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
+import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
+import hanghae99.rescuepets.memberpet.repository.PostLinkRepository;
 import hanghae99.rescuepets.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +23,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.UNAUTHORIZED_UPDATE_OR_DELETE;
@@ -35,7 +33,9 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 @RequiredArgsConstructor
 public class PetPostCatchService {
     private final PetPostCatchRepository petPostCatchRepository;
+    private final PetPostMissingRepository petPostMissingRepository;
     private final WishRepository wishRepository;
+    private final PostLinkRepository postLinkRepository;
     private final S3Uploader s3Uploader;
 
     @Transactional
@@ -133,21 +133,44 @@ public class PetPostCatchService {
         }
     }
 
-//    @Transactional
-//    public ResponseEntity<ResponseDto> createLink(Long PostLinkAId, Long PostLinkBId, Member member) {
-//        List<String> postImageURLs = new ArrayList<>();
-//        if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
-//            postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
-//        }
-//        PetPostCatch petPostCatch = new PetPostCatch(requestDto, member);
-//        for (String postImageURL : postImageURLs) {
-//            petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
-//        }
-//        petPostCatchRepository.save(petPostCatch);
-//        PostLink postLink = new PostLink(PostLinkAId, PostLinkBId, member);
-//        postLikeRepository.save(postlike);
-//
-//        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
-//    }
+    @Transactional
+    public ResponseEntity<ResponseDto> createLinkCatchToCatch(PostLinkCTCRequestDto requestDto, Member member) {
+        PetPostCatch petPostCatchSlotA = petPostCatchRepository.findById(requestDto.getPetPostCatchSlotAId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        PetPostCatch petPostCatchSlotB = petPostCatchRepository.findById(requestDto.getPetPostCatchSlotBId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        PostLink postLink = new PostLink(petPostCatchSlotA, petPostCatchSlotB, member);
+        postLinkRepository.save(postLink);
+        return ResponseDto.toResponseEntity(POST_LINKING_SUCCESS);
+    }
+    @Transactional
+    public ResponseEntity<ResponseDto> createLinkCatchToMissing(PostLinkCTMRequestDto requestDto, Member member) {
+        PetPostCatch petPostCatchSlotA = petPostCatchRepository.findById(requestDto.getPetPostCatchSlotAId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        PetPostMissing petPostMissingSlotB = petPostMissingRepository.findById(requestDto.getPetPostMissingSlotBId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        PostLink postLink = new PostLink(petPostCatchSlotA, petPostMissingSlotB, member);
+        postLinkRepository.save(postLink);
+        postLink = new PostLink(petPostMissingSlotB, petPostCatchSlotA, member);
+        postLinkRepository.save(postLink);
+        return ResponseDto.toResponseEntity(POST_LINKING_SUCCESS);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> getLink(Long petPostCatchId, Member member){
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        postLinkRepository.findAllByPetPostCatchSlotA(petPostCatch).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+//        List<PostLink> postLink = postLinkRepository.findAllByPetPostCatchSlotB(petPostCatch).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
+        List<String> PostCatchLinkList = petPostCatch.getPostCatchLink();
+        for (String postImageURL : PostCatchLinkList) {
+            petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
+        }
+        Optional<PostLink> postLinkList = Optional.ofNullable(postLinkRepository.findAllByPetPostCatchSlotA(petPostCatch).orElseThrow(() -> new CustomException(POST_NOT_FOUND)));
+        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
+    }
+    @Transactional
+    public ResponseEntity<ResponseDto> deleteLink(Long petPostCatchId, Member member){
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        postLinkRepository.deleteByPetPostCatchSlotAAndMemberId(petPostCatch, member);
+        postLinkRepository.deleteByPetPostCatchSlotBAndMemberId(petPostCatch, member);
+        return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
+    }
 
 }

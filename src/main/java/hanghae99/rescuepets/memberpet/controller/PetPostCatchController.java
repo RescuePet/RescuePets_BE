@@ -5,6 +5,8 @@ import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
+import hanghae99.rescuepets.memberpet.dto.PostLinkCTCRequestDto;
+import hanghae99.rescuepets.memberpet.dto.PostLinkCTMRequestDto;
 import hanghae99.rescuepets.memberpet.service.PetPostCatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,7 +40,7 @@ public class PetPostCatchController {
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
     }
     @GetMapping("/all")
-    @Operation(summary = "PostMissing 게시글 불러오기", description = "PostMissing 전체 게시글을 페이징하여 불러옵니다")
+    @Operation(summary = "PostMissing 전체 게시글 페이징없이 불러오기", description = "PostMissing 전체 게시글을 페이징없이 불러옵니다")
     public ResponseEntity<ResponseDto> getPetPostCatchAll(@RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
@@ -82,11 +84,17 @@ public class PetPostCatchController {
         return petPostCatchService.delete(petPostCatchId, userDetails.getMember());
     }
 
-//    @PostMapping(value = "/links", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-//    @Operation(summary = "PostCatch 게시글에서 링크걸기", description = "두개의 Post를 연결조회하는 링크를 만듧니다.")
-//    public ResponseEntity<ResponseDto> createPetPostCatchLink(@ModelAttribute Long postLinkAId,
-//                                                              @ModelAttribute Long postLinkBId,
-//                                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return petPostCatchService.createLink(postLinkAId, postLinkBId, memberDetails.getMember());
-//    }
+    @PostMapping(value = "/links", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "PostCatch 게시글에서 PostCatch로 링크걸기", description = "사용자가 연결짓고 싶은 게시물 간의 링크를 생성합니다")
+    public ResponseEntity<ResponseDto> createLinkCatchToCatch(@ModelAttribute PostLinkCTCRequestDto requestDto,
+                                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return petPostCatchService.createLinkCatchToCatch(requestDto, memberDetails.getMember());
+    }
+    @PostMapping(value = "/links", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "PostCatch 게시글에서 PostMissing으로 링크걸기", description = "사용자가 연결짓고 싶은 게시물 간의 링크를 생성합니다")
+    public ResponseEntity<ResponseDto> createLinkCatchToMissing(@ModelAttribute PostLinkCTMRequestDto requestDto,
+                                                              @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return petPostCatchService.createLinkCatchToMissing(requestDto, memberDetails.getMember());
+    }
+
 }

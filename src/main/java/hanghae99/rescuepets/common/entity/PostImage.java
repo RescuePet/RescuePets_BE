@@ -1,12 +1,10 @@
 package hanghae99.rescuepets.common.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
@@ -24,16 +22,6 @@ public class PostImage {
     @JoinColumn(name = "petPostMissingId", nullable = true)
     private PetPostMissing petPostMissing;
 
-//    @Builder
-//    public PostImage(PetPostCatch petPostCatch, String imageURL) {
-//        this.petPostCatch = petPostCatch;
-//        this.imageURL = imageURL;
-//    }
-//    @Builder
-//    public PostImage(PetPostMissing petPostMissing, String imageURL) {
-//        this.petPostMissing = petPostMissing;
-//        this.imageURL = imageURL;
-//    }
     public PostImage(PetPostCatch petPostCatch, String imageURL) {
         this.petPostCatch = petPostCatch;
         this.imageURL = imageURL;
