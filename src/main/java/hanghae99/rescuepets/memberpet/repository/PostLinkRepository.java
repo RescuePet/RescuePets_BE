@@ -10,14 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostLinkRepository extends JpaRepository<PostLink, Long> {
-    Optional<PostLink> findAllByPetPostCatchSlotA(PetPostCatch petPostCatchSlotA);
-    Optional<PostLink> findAllByPetPostMissingSlotA(PetPostMissing petPostMissingSlotA);
-    Optional<PostLink> findAllByPetPostCatchSlotB(PetPostCatch petPostCatchSlotB);
-    Optional<PostLink> findAllByPetPostMissingSlotB(PetPostMissing petPostMissingSlotB);
-    Optional<PostLink> findAllByPetPostCatchSlotAAndMemberId(PetPostCatch petPostCatchSlotA, Member member);
-    Optional<PostLink> findAllByPetPostMissingSlotAAndMemberId(PetPostMissing petPostMissingSlotA, Member member);
-    Optional<PostLink> findAllByPetPostCatchSlotBAndMemberId(PetPostCatch petPostCatchSlotB, Member member);
-    Optional<PostLink> findAllByPetPostMissingSlotBAndMemberId(PetPostMissing petPostMissingSlotB, Member member);
+    List<PostLink> findAllByPetPostCatchSlotA(PetPostCatch petPostCatchSlotA);
+    List<PostLink> findAllByPetPostMissingSlotA(PetPostMissing petPostMissingSlotA);
+    List<PostLink> findAllByPetPostCatchSlotB(PetPostCatch petPostCatchSlotB);
+    List<PostLink> findAllByPetPostMissingSlotB(PetPostMissing petPostMissingSlotB);
+    List<PostLink> findAllByPetPostCatchSlotAAndMemberId(PetPostCatch petPostCatchSlotA, Member member);
+    List<PostLink> findAllByPetPostMissingSlotAAndMemberId(PetPostMissing petPostMissingSlotA, Member member);
+    List<PostLink> findAllByPetPostCatchSlotBAndMemberId(PetPostCatch petPostCatchSlotB, Member member);
+    List<PostLink> findAllByPetPostMissingSlotBAndMemberId(PetPostMissing petPostMissingSlotB, Member member);
     void deleteByPetPostCatchSlotAAndMemberId(PetPostCatch petPostCatchSlotA, Member member);
     void deleteByPetPostMissingSlotAAndMemberId(PetPostCatch petPostMissingSlotA, Member member);
     void deleteByPetPostCatchSlotBAndMemberId(PetPostCatch petPostCatchSlotB, Member member);
