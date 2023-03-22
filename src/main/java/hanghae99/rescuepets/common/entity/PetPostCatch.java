@@ -49,10 +49,8 @@ public class PetPostCatch extends TimeStamped{
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
-    @OneToMany(mappedBy = "petPostCatchSlotA", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostLink> postLinkA = new ArrayList<>();
-    @OneToMany(mappedBy = "petPostCatchSlotB", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostLink> postLinkB = new ArrayList<>();
+    @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostLink> postLinkList = new ArrayList<>();
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.REMOVE)

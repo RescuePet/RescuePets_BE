@@ -3,8 +3,7 @@ package hanghae99.rescuepets.memberpet.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.PostLink;
+import hanghae99.rescuepets.common.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,24 +12,24 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class PostLinkResponseDto {
-    private String nickName;
-    private Long petPostCatchSlotAId;
-    private Long petPostMissingSlotAId;
-    private Long petPostCatchSlotBId;
-    private Long petPostMissingSlotBId;
-    private boolean isLinked = false;
+    private Member member;
+    private Long petPostCatchId;
+    private Long petPostMissingId;
+    private PostTypeEnum postType;
+    private Long linkedPostId;
+    private boolean isLinkedByMe = false;
 
     public static PostLinkResponseDto of (PostLink postLink, Member member) {
         return PostLinkResponseDto.builder()
-                .nickName(member.getNickname())
-                .petPostCatchSlotAId(postLink.getPetPostCatchSlotA().getId())
-                .petPostMissingSlotAId(postLink.getPetPostMissingSlotA().getId())
-                .petPostCatchSlotBId(postLink.getPetPostCatchSlotB().getId())
-                .petPostMissingSlotBId(postLink.getPetPostMissingSlotB().getId())
+                .petPostCatchId(postLink.getPetPostCatch().getId())
+                .petPostMissingId(postLink.getPetPostMissing().getId())
+                .postType(postLink.getPostType())
+                .linkedPostId(postLink.getLinkedPostId())
+                .member(member)
                 .build();
     }
 
-    public void setLinked(boolean isLinked) {
-        this.isLinked = isLinked;
+    public void setLinkedByMe(boolean isLinkedByMe) {
+        this.isLinkedByMe = isLinkedByMe;
     }
 }

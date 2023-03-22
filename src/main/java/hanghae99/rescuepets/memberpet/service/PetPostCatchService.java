@@ -28,6 +28,8 @@ import java.util.Optional;
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.UNAUTHORIZED_UPDATE_OR_DELETE;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
+import static hanghae99.rescuepets.common.entity.PostTypeEnum.CATCH;
+import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
 
 @Service
 @RequiredArgsConstructor
@@ -86,6 +88,10 @@ public class PetPostCatchService {
     public ResponseEntity<ResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
+        List<PostLink> postLinkList = postLinkRepository.findAllByPetPostCatch(petPostCatch);
+        if(postLinkList.size() != 0){
+            responseDto.setLinked(true);
+        }
         responseDto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
         return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
     }
@@ -134,44 +140,58 @@ public class PetPostCatchService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> createLinkCatchToCatch(PostLinkCTCRequestDto requestDto, Member member) {
-        PetPostCatch petPostCatchSlotA = petPostCatchRepository.findById(requestDto.getPetPostCatchSlotAId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        PetPostCatch petPostCatchSlotB = petPostCatchRepository.findById(requestDto.getPetPostCatchSlotBId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        PostLink postLink = new PostLink(petPostCatchSlotA, petPostCatchSlotB, member);
+    public ResponseEntity<ResponseDto> createLink(PostLinkRequestDto requestDto, Member member) {
+        PostLink postLink = new PostLink(requestDto, member);
         postLinkRepository.save(postLink);
-        return ResponseDto.toResponseEntity(POST_LINKING_SUCCESS);
-    }
-    @Transactional
-    public ResponseEntity<ResponseDto> createLinkCatchToMissing(PostLinkCTMRequestDto requestDto, Member member) {
-        PetPostCatch petPostCatchSlotA = petPostCatchRepository.findById(requestDto.getPetPostCatchSlotAId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        PetPostMissing petPostMissingSlotB = petPostMissingRepository.findById(requestDto.getPetPostMissingSlotBId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        PostLink postLink = new PostLink(petPostCatchSlotA, petPostMissingSlotB, member);
-        postLinkRepository.save(postLink);
-        postLink = new PostLink(petPostMissingSlotB, petPostCatchSlotA, member);
-        postLinkRepository.save(postLink);
+        PetPostCatch petPostCatchTemp = new PetPostCatch();
+        PetPostMissing petPostMissingTemp = new PetPostMissing();
+        if(postLink.getPetPostMissing() == null){
+            if(postLink.getPostType() == CATCH){
+                petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+            }else{
+                petPostMissingTemp = petPostMissingRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+            }
+        }else if(postLink.getPetPostCatch() == null){
+            if(postLink.getPostType() == CATCH){
+                petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+            }else{
+                petPostMissingTemp = petPostMissingRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+            }
+        }
+        PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(petPostCatchTemp, petPostMissingTemp, CATCH, requestDto.getLinkedPostId(), member);
+        postLinkRepository.save(new PostLink(requestDtoTemp, member));
         return ResponseDto.toResponseEntity(POST_LINKING_SUCCESS);
     }
 
     @Transactional
     public ResponseEntity<ResponseDto> getLink(Long petPostCatchId, Member member){
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        List<PostLink> postLinkListA = postLinkRepository.findAllByPetPostCatchSlotA(petPostCatch);
-        List<PostLink> postLinkListB = postLinkRepository.findAllByPetPostCatchSlotB(petPostCatch);
+        List<PostLink> postLinkList = postLinkRepository.findAllByPetPostCatch(petPostCatch);
         petPostCatch.getPostCatchLink().clear();
-        for (PostLink postLink : postLinkListA) {
-                if(member.getNickname().equals(postLink.getMember().getNickname())){
-
-                }
-                    petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
+        List<PostLinkResponseDto> dtoList = new ArrayList<>();
+        for (PostLink postLink : postLinkList) {
+            PostLinkResponseDto responseDto = PostLinkResponseDto.of(postLink, member);
+            if(member.getNickname().equals(postLink.getMember().getNickname())){
+                responseDto.setLinkedByMe(true);
             }
-
-            return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
+            dtoList.add(responseDto);
+        }
+        return ResponseDto.toResponseEntity(POSTLINK_READING_SUCCESS, dtoList);
     }
     @Transactional
     public ResponseEntity<ResponseDto> deleteLink(Long petPostCatchId, Member member){
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        postLinkRepository.deleteByPetPostCatchSlotAAndMemberId(petPostCatch, member);
-        postLinkRepository.deleteByPetPostCatchSlotBAndMemberId(petPostCatch, member);
+        List<PostLink> postLinkList = postLinkRepository.findAllByPetPostCatchAndMemberId(petPostCatch, member.getId());
+        for (PostLink postLink : postLinkList) {
+            if(postLink.getPostType() == CATCH){
+                PetPostCatch petPostCatchInverse = petPostCatchRepository.findById(postLink.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+                postLinkRepository.deleteByPetPostCatchAndMemberIdAndPostTypeAndLinkedPostId(petPostCatchInverse, member.getId(), CATCH, petPostCatchId);
+            }else if(postLink.getPostType() == MISSING){
+                PetPostMissing petPostMissingInverse = petPostMissingRepository.findById(postLink.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+                postLinkRepository.deleteByPetPostMissingAndMemberIdAndPostTypeAndLinkedPostId(petPostMissingInverse, member.getId(), CATCH, petPostCatchId);
+            }
+        }
+        postLinkRepository.deleteByPetPostCatchAndMemberId(petPostCatch, member.getId());
         return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
     }
 

@@ -6,16 +6,12 @@ import hanghae99.rescuepets.common.entity.SexEnum;
 import hanghae99.rescuepets.common.entity.UpkindEnum;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.lang.Nullable;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Builder
 public class PetPostCatchResponseDto {
-
     private Long id;
     private UpkindEnum upkind;
     private SexEnum sexCd;
@@ -38,8 +34,8 @@ public class PetPostCatchResponseDto {
     private String modifiedAt;
     private Boolean openNickname;
     private Boolean isWished;
-    private List<String> postLink;
     private List<PostImageResponseDto> postImages;
+    private boolean isLinked = false;
 
     public static PetPostCatchResponseDto of(PetPostCatch petPostCatch) {
         return PetPostCatchResponseDto.builder()
@@ -63,12 +59,13 @@ public class PetPostCatchResponseDto {
                 .nickname(petPostCatch.getMember().getNickname())
                 .createdAt(petPostCatch.getCreatedAt().toString())
                 .modifiedAt(petPostCatch.getModifiedAt().toString())
-//                .postLink(petPostCatch.getPostLink())
                 .postImages(petPostCatch.getPostImages().stream().map(PostImageResponseDto::of).toList())
                 .build();
     }
-
     public void setWished(boolean wished) {
         isWished = wished;
+    }
+    public void setLinked(boolean isLinked) {
+        this.isLinked = isLinked;
     }
 }

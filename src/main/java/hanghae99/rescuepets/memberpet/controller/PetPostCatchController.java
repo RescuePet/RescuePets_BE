@@ -4,9 +4,7 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
-import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
-import hanghae99.rescuepets.memberpet.dto.PostLinkCTCRequestDto;
-import hanghae99.rescuepets.memberpet.dto.PostLinkCTMRequestDto;
+import hanghae99.rescuepets.memberpet.dto.PostLinkRequestDto;
 import hanghae99.rescuepets.memberpet.service.PetPostCatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,11 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.List;
 
 @Tag(name = "유기견 의심 발견 신고 API")
 @RequestMapping("/api/pets/catch")
@@ -85,16 +78,22 @@ public class PetPostCatchController {
     }
 
     @PostMapping(value = "/links", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "PostCatch 게시글에서 PostCatch로 링크걸기", description = "사용자가 연결짓고 싶은 게시물 간의 링크를 생성합니다")
-    public ResponseEntity<ResponseDto> createLinkCatchToCatch(@ModelAttribute PostLinkCTCRequestDto requestDto,
-                                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return petPostCatchService.createLinkCatchToCatch(requestDto, memberDetails.getMember());
+    @Operation(summary = "PostCatch 게시글에서 다른 게시글로 링크걸기", description = "사용자가 연결짓고 싶은 게시물 간의 링크를 생성합니다. PostType에 대상 게시물이 CATCH인지 MISSING인지 입력해주어야합니다.")
+    public ResponseEntity<ResponseDto> createLink(@ModelAttribute PostLinkRequestDto requestDto,
+                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return petPostCatchService.createLink(requestDto, memberDetails.getMember());
     }
-    @PostMapping(value = "/links", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "PostCatch 게시글에서 PostMissing으로 링크걸기", description = "사용자가 연결짓고 싶은 게시물 간의 링크를 생성합니다")
-    public ResponseEntity<ResponseDto> createLinkCatchToMissing(@ModelAttribute PostLinkCTMRequestDto requestDto,
-                                                              @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return petPostCatchService.createLinkCatchToMissing(requestDto, memberDetails.getMember());
+    @GetMapping(value = "/links/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "PostCatch 게시글에서 생성된 링크들을 조회합니다", description = "해당 게시글에서 생성된 링크들을 조회합니다. 게시글에서 생성된 링크가 전혀 없는지, 하나라도 있는지 사용자에게 표시해줍니다.")
+    public ResponseEntity<ResponseDto> getLink(@PathVariable Long petPostCatchId,
+                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return petPostCatchService.getLink(petPostCatchId, memberDetails.getMember());
+    }
+    @DeleteMapping(value = "/links/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "PostCatch 게시글에서 내가 만든 링크를 삭제합니다", description = "해당 게시글에서 생성된 링크 중, 내가 생성한 링크를 일괄 삭제합니다. 연결한 반대편 게시글에서도 링크가 같이 삭제됩니다.")
+    public ResponseEntity<ResponseDto> deleteLink(@PathVariable Long petPostCatchId,
+                                               @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return petPostCatchService.deleteLink(petPostCatchId, memberDetails.getMember());
     }
 
 }
