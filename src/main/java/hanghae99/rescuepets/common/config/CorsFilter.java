@@ -25,8 +25,6 @@ public class CorsFilter implements Filter {
         // Access-Control-Expose-Headers 헤더 설정
         response.setHeader("Access-Control-Expose-Headers", "Authorization");
 
-        response.setHeader("Access-Control-Allow-Headers", "Content-Type, Refresh");
-
         response.setHeader("Access-Control-Expose-Headers", "Refresh");
 
         response.setHeader("Access-Control-Allow-Credentials", "true");
