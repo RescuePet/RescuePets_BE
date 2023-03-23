@@ -13,7 +13,6 @@ import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
 import hanghae99.rescuepets.member.dto.MemberResponseDto;
 import hanghae99.rescuepets.member.repository.MemberRepository;
-import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
