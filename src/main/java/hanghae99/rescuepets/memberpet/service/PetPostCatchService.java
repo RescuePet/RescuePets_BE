@@ -17,13 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.UNAUTHORIZED_UPDATE_OR_DELETE;
@@ -137,12 +134,12 @@ public class PetPostCatchService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> createLink(PostLinkRequestDto requestDto, Member member) {
-        PetPostCatch petPostCatch = petPostCatchRepository.findById(requestDto.getPetPostCatchId()).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
+    public ResponseEntity<ResponseDto> createLink(Long petPostCatchId, PostLinkRequestDto requestDto, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
         PostLink postLink = new PostLink(petPostCatch,requestDto,member);
         postLinkRepository.save(postLink);
-        PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(CATCH, requestDto.getPetPostCatchId());
-        if(postLink.getPostType() == CATCH){
+        PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(CATCH, petPostCatchId);
+        if(requestDto.getPostType() == CATCH){
             PetPostCatch petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("3단계에서 막힘ㅋ"));
             postLinkRepository.save(new PostLink(petPostCatchTemp,requestDtoTemp,member));
         }else{
@@ -158,7 +155,7 @@ public class PetPostCatchService {
         List<PostLink> postLinkList = postLinkRepository.findAllByPetPostCatch(petPostCatch);
         List<PostLinkResponseDto> dtoList = new ArrayList<>();
         for (PostLink postLink : postLinkList) {
-            PostLinkResponseDto responseDto = PostLinkResponseDto.of(postLink, member);
+            PostLinkResponseDto responseDto = PostLinkResponseDto.of(postLink);
             if(member.getNickname().equals(postLink.getMember().getNickname())){
                 responseDto.setLinkedByMe(true);
             }
@@ -176,6 +173,8 @@ public class PetPostCatchService {
                 postLinkRepository.deleteByPetPostCatchAndMemberIdAndPostTypeAndLinkedPostId(petPostCatchInverse, member.getId(), CATCH, petPostCatchId);
             }else if(postLink.getPostType() == MISSING){
                 PetPostMissing petPostMissingInverse = petPostMissingRepository.findById(postLink.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+//                왜 이렇게 복잡하게 조건을 걸어서 삭제하나요? 아래와 같이 삭제하면 해당 게시물에 걸려있는 모든 링크가 삭제되기 때문입니다.
+//                현재 사용자가 삭제하려는 게시물쪽으로 걸린 링크 하나만 반대편에서 삭제해야하기 때문에 다음과 같이 삭제합니다.
                 postLinkRepository.deleteByPetPostMissingAndMemberIdAndPostTypeAndLinkedPostId(petPostMissingInverse, member.getId(), CATCH, petPostCatchId);
             }
         }

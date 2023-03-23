@@ -35,7 +35,7 @@ public class PetPostCatchResponseDto {
     private Boolean openNickname;
     private Boolean isWished;
     private List<PostImageResponseDto> postImages;
-    private boolean isLinked = false;
+    private Boolean isLinked = false;
 
     public static PetPostCatchResponseDto of(PetPostCatch petPostCatch) {
         return PetPostCatchResponseDto.builder()
@@ -62,8 +62,8 @@ public class PetPostCatchResponseDto {
                 .postImages(petPostCatch.getPostImages().stream().map(PostImageResponseDto::of).toList())
                 .build();
     }
-    public void setWished(boolean wished) {
-        isWished = wished;
+    public void setWished(boolean isWished) {
+        this.isWished = isWished;
     }
     public void setLinked(boolean isLinked) {
         this.isLinked = isLinked;

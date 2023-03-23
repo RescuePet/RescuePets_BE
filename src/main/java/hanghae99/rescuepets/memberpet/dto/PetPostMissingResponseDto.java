@@ -31,6 +31,7 @@ public class PetPostMissingResponseDto {
     private String modifiedAt;
     private Boolean isWished;
     private List<PostImageResponseDto> postImages;
+    private Boolean isLinked = false;
 
     public static PetPostMissingResponseDto of(PetPostMissing petPostMissing) {
         return PetPostMissingResponseDto.builder()
@@ -57,8 +58,10 @@ public class PetPostMissingResponseDto {
                 .postImages(petPostMissing.getPostImages().stream().map(PostImageResponseDto::of).toList())
                 .build();
     }
-
-    public void setWished(boolean wished) {
-        isWished = wished;
+    public void setWished(boolean isWished) {
+        this.isWished = isWished;
+    }
+    public void setLinked(boolean isLinked) {
+        this.isLinked = isLinked;
     }
 }
