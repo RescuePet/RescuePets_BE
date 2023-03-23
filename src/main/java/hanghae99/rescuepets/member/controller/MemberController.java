@@ -65,17 +65,13 @@ public class MemberController {
 
     @Operation(summary = "로그아웃", description = "자세한 설명")
     @GetMapping("member/logout")
-    public ResponseEntity<ResponseDto> logout(@AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseEntity<ResponseDto> logout(@Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.logout(memberDetails.getMember());
     }
+
+    @Operation(summary = "회원탈퇴", description = "자세한 설명")
+    @PostMapping("/member/Withdrawal")
+    public ResponseEntity<ResponseDto> Withdrawal(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.Withdrawal(memberDetails.getMember());
+    }
 }
-
-//    // 삭제 여기는 전역 Response 나오면 처리 하겠습니다 회원탈퇴
-//    @Operation(summary = "회원탈퇴", description = "자세한 설명")
-//    @PostMapping("/member/Withdrawal")
-//        public ResponseEntity<ResponseDto> Withdrawal(@RequestBody WithDrawalRequestDto withDrawalRequestDto) {
-//            return memberService.Withdrawal(withDrawalRequestDto);
-//        }
-//    }
-
-

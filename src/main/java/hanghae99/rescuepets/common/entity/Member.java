@@ -43,4 +43,11 @@ public class Member {
         this.profileImage = profileImage;
     }
 
+    public void withdrawal() {
+        this.nickname = "탈퇴한 회원";
+        this.email = "탈퇴한 회원";
+        this.address = "탈퇴한 회원";
+        this.kakaoId = null;
+        this.profileImage = null;
+    }
 }
