@@ -32,10 +32,6 @@ public class PetPostCatch extends TimeStamped{
     private String content;
     private String gratuity;
     private String contact;
-    @ElementCollection
-    private List<String> postCatchLink = new ArrayList<>();
-    @ElementCollection
-    private List<String> postMissingLink = new ArrayList<>();
     private Boolean openNickname;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)

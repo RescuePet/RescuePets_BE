@@ -141,25 +141,17 @@ public class PetPostCatchService {
 
     @Transactional
     public ResponseEntity<ResponseDto> createLink(PostLinkRequestDto requestDto, Member member) {
-        PostLink postLink = new PostLink(requestDto, member);
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(requestDto.getPetPostCatchId()).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
+        PostLink postLink = new PostLink(petPostCatch,requestDto,member);
         postLinkRepository.save(postLink);
-        PetPostCatch petPostCatchTemp = new PetPostCatch();
-        PetPostMissing petPostMissingTemp = new PetPostMissing();
-        if(postLink.getPetPostMissing() == null){
-            if(postLink.getPostType() == CATCH){
-                petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-            }else{
-                petPostMissingTemp = petPostMissingRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-            }
-        }else if(postLink.getPetPostCatch() == null){
-            if(postLink.getPostType() == CATCH){
-                petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-            }else{
-                petPostMissingTemp = petPostMissingRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-            }
+        PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(CATCH, requestDto.getLinkedPostId());
+        if(postLink.getPostType() == CATCH){
+            PetPostCatch petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("3단계에서 막힘ㅋ"));
+            postLinkRepository.save(new PostLink(petPostCatchTemp,requestDtoTemp,member));
+        }else{
+            PetPostMissing petPostMissingTemp = petPostMissingRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("4단계에서 막힘ㅋ"));
+            postLinkRepository.save(new PostLink(petPostMissingTemp,requestDtoTemp,member));
         }
-        PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(petPostCatchTemp, petPostMissingTemp, CATCH, requestDto.getLinkedPostId(), member);
-        postLinkRepository.save(new PostLink(requestDtoTemp, member));
         return ResponseDto.toResponseEntity(POST_LINKING_SUCCESS);
     }
 
@@ -167,7 +159,6 @@ public class PetPostCatchService {
     public ResponseEntity<ResponseDto> getLink(Long petPostCatchId, Member member){
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         List<PostLink> postLinkList = postLinkRepository.findAllByPetPostCatch(petPostCatch);
-        petPostCatch.getPostCatchLink().clear();
         List<PostLinkResponseDto> dtoList = new ArrayList<>();
         for (PostLink postLink : postLinkList) {
             PostLinkResponseDto responseDto = PostLinkResponseDto.of(postLink, member);
@@ -176,7 +167,7 @@ public class PetPostCatchService {
             }
             dtoList.add(responseDto);
         }
-        return ResponseDto.toResponseEntity(POSTLINK_READING_SUCCESS, dtoList);
+        return ResponseDto.toResponseEntity(POST_LINK_READING_SUCCESS, dtoList);
     }
     @Transactional
     public ResponseEntity<ResponseDto> deleteLink(Long petPostCatchId, Member member){
@@ -192,7 +183,7 @@ public class PetPostCatchService {
             }
         }
         postLinkRepository.deleteByPetPostCatchAndMemberId(petPostCatch, member.getId());
-        return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
+        return ResponseDto.toResponseEntity(POST_LINK_DELETE_SUCCESS);
     }
 
 }

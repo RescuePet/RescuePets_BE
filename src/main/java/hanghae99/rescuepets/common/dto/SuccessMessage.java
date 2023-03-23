@@ -20,7 +20,7 @@ public enum SuccessMessage {
     EMAIL_CHECK_SUCCESS(HttpStatus.OK,"사용 가능한 이메일입니다."),
     POST_READING_SUCCESS(HttpStatus.OK,"게시글 조회를 완료했습니다"),
     COMMENT_READING_SUCCESS(HttpStatus.OK,"댓글 조회를 완료했습니다"),
-    POSTLINK_READING_SUCCESS(HttpStatus.OK,"게시글 링크 조회를 완료했습니다"),
+    POST_LINK_READING_SUCCESS(HttpStatus.OK,"게시글 링크 조회를 완료했습니다"),
     POST_LIST_READING_SUCCESS(HttpStatus.OK,"게시글 목록 조회를 완료했습니다"),
     MY_POST_READING_SUCCESS(HttpStatus.OK,"내가 작성한 게시글 조회를 완료했습니다"),
     MY_COMMENT_READING_SUCCESS(HttpStatus.OK,"내가 작성한 댓글 조회를 완료했습니다"),

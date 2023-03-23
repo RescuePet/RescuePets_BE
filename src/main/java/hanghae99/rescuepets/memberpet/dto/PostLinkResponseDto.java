@@ -12,23 +12,18 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class PostLinkResponseDto {
-    private Member member;
-    private Long petPostCatchId;
-    private Long petPostMissingId;
+    private Long memberId;
     private PostTypeEnum postType;
     private Long linkedPostId;
     private boolean isLinkedByMe = false;
 
     public static PostLinkResponseDto of (PostLink postLink, Member member) {
         return PostLinkResponseDto.builder()
-                .petPostCatchId(postLink.getPetPostCatch().getId())
-                .petPostMissingId(postLink.getPetPostMissing().getId())
                 .postType(postLink.getPostType())
                 .linkedPostId(postLink.getLinkedPostId())
-                .member(member)
+                .memberId(member.getId())
                 .build();
     }
-
     public void setLinkedByMe(boolean isLinkedByMe) {
         this.isLinkedByMe = isLinkedByMe;
     }

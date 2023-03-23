@@ -3,20 +3,20 @@ package hanghae99.rescuepets.memberpet.dto;
 import hanghae99.rescuepets.common.entity.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
+
 @Getter
 @Setter
 public class PostLinkRequestDto {
-    private PetPostCatch petPostCatch;
-    private PetPostMissing petPostMissing;
+    @Nullable
+    private Long petPostCatchId;
+    @Nullable
+    private Long petPostMissingId;
     private PostTypeEnum postType;
     private Long linkedPostId;
-    private Member member;
 
-    public PostLinkRequestDto(PetPostCatch petPostCatch, PetPostMissing petPostMissing, PostTypeEnum postType, Long linkedPostId, Member member){
-        this.petPostCatch = petPostCatch;
-        this.petPostMissing = petPostMissing;
+    public PostLinkRequestDto(PostTypeEnum postType, Long linkedPostId){
         this.postType = postType;
         this.linkedPostId = linkedPostId;
-        this.member = member;
     }
 }
