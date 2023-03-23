@@ -21,6 +21,7 @@ public class PetPostMissingRequestDto {
     private SexEnum sexCd;
     private NeuterEnum neuterYn;
     private String kindCd;
+    private String petName;
     private String age;
     private String weight;
     private String colorCd;

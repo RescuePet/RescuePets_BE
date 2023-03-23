@@ -18,6 +18,7 @@ public class PetPostMissing extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String kindCd;
+    private String petName;
     private String age;
     private String weight;
     private String colorCd;
@@ -56,6 +57,7 @@ public class PetPostMissing extends TimeStamped{
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
         this.kindCd = requestDto.getKindCd();
+        this.petName = requestDto.getPetName();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
@@ -81,6 +83,7 @@ public class PetPostMissing extends TimeStamped{
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
         this.kindCd = requestDto.getKindCd();
+        this.petName = requestDto.getPetName();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
