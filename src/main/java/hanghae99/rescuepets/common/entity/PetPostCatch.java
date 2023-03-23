@@ -33,8 +33,6 @@ public class PetPostCatch extends TimeStamped{
     private String gratuity;
     private String contact;
     private Boolean openNickname;
-    @ElementCollection
-    private List<String> postLink = new ArrayList<>();
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UpkindEnum upkind;
@@ -47,6 +45,8 @@ public class PetPostCatch extends TimeStamped{
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
+    @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostLink> postLinkList = new ArrayList<>();
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.REMOVE)

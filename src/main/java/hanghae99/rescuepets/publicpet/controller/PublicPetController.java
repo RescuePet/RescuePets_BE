@@ -5,6 +5,7 @@ import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
 import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
 import hanghae99.rescuepets.publicpet.service.ApiDataService;
+import hanghae99.rescuepets.publicpet.service.ApiScheduler;
 import hanghae99.rescuepets.publicpet.service.PublicPetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,6 +27,7 @@ import java.io.IOException;
 public class PublicPetController {
     private final PublicPetService publicPetService;
     private final ApiDataService apiDataService;
+    private final ApiScheduler apiScheduler;
 
     //DB SaveOrUpdate
     @SecurityRequirements
@@ -38,10 +40,17 @@ public class PublicPetController {
 
     @SecurityRequirements
     @PostMapping("api-compare-data/{pageNo}")
-    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화", description = "자세한 설명")
+    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 비교 최신화", description = "자세한 설명")
     public ResponseEntity<ResponseDto> apiCompareData(@PathVariable(value = "pageNo") String pageNo,
                                                   @RequestParam(value = "state") String state, @RequestParam(value = "size") String size) throws IOException {
         return apiDataService.apiCompareData(pageNo, state, size);
+    }
+    @SecurityRequirements
+    @PostMapping("api-compare-data/auto")
+    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화 Auto 버전", description = "자세한 설명")
+    public String apiCompareDataAuto() throws IOException {
+        apiScheduler.apiCompareDataSchedule();
+        return "자동 비교 완료";
     }
 
 //    @SecurityRequirements

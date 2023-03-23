@@ -4,7 +4,7 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
-import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
+import hanghae99.rescuepets.memberpet.dto.PostLinkRequestDto;
 import hanghae99.rescuepets.memberpet.service.PetPostCatchService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -14,11 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.List;
 
 @Tag(name = "유기견 의심 발견 신고 API")
 @RequestMapping("/api/pets/catch")
@@ -27,6 +22,7 @@ import java.util.List;
 public class PetPostCatchController {
     private final PetPostCatchService petPostCatchService;
 
+//    @ApiOperation(value = "게시글 목록 조회", notes = "page, size, sortBy로 페이징 후 조회")
     @GetMapping("/")
     @Operation(summary = "PostCatch 전체 게시글 불러오기", description = "PostCatch 전체 게시글을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPetPostCatchList(@RequestParam int page,
@@ -37,7 +33,7 @@ public class PetPostCatchController {
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
     }
     @GetMapping("/all")
-    @Operation(summary = "PostCatch 게시글 전체(페이징없이) 불러오기", description = "PostCatch 전체 게시글을 페이징없이 불러옵니다")
+    @Operation(summary = "PostMissing 전체 게시글 페이징없이 불러오기", description = "PostMissing 전체 게시글을 페이징없이 불러옵니다")
     public ResponseEntity<ResponseDto> getPetPostCatchAll(@RequestParam(required = false, defaultValue = "createdAt") String sortBy,
                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
@@ -79,6 +75,25 @@ public class PetPostCatchController {
     @Operation(summary = "내가 작성한 특정 PostCatch 게시글 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
     public ResponseEntity<ResponseDto> deletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
         return petPostCatchService.delete(petPostCatchId, userDetails.getMember());
+    }
+
+    @PostMapping(value = "/links")
+    @Operation(summary = "PostCatch 게시글에서 다른 게시글로 링크걸기", description = "사용자가 연결짓고 싶은 게시물 간의 링크를 생성합니다. PostType에 대상 게시물이 CATCH인지 MISSING인지 입력해주어야합니다.")
+    public ResponseEntity<ResponseDto> createLink(@RequestBody PostLinkRequestDto requestDto,
+                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return petPostCatchService.createLink(requestDto, memberDetails.getMember());
+    }
+    @GetMapping(value = "/links/{petPostCatchId}")
+    @Operation(summary = "PostCatch 게시글에서 생성된 링크들을 조회합니다", description = "해당 게시글에서 생성된 링크들을 조회합니다. 게시글에서 생성된 링크가 전혀 없는지, 하나라도 있는지 사용자에게 표시해줍니다.")
+    public ResponseEntity<ResponseDto> getLink(@PathVariable Long petPostCatchId,
+                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return petPostCatchService.getLink(petPostCatchId, memberDetails.getMember());
+    }
+    @DeleteMapping(value = "/links/{petPostCatchId}")
+    @Operation(summary = "PostCatch 게시글에서 내가 만든 링크를 삭제합니다", description = "해당 게시글에서 생성된 링크 중, 내가 생성한 링크를 일괄 삭제합니다. 연결한 반대편 게시글에서도 링크가 같이 삭제됩니다.")
+    public ResponseEntity<ResponseDto> deleteLink(@PathVariable Long petPostCatchId,
+                                               @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return petPostCatchService.deleteLink(petPostCatchId, memberDetails.getMember());
     }
 
 }

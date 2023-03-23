@@ -17,6 +17,7 @@ public enum ExceptionMessage {
 
     NICKNAME_WITH_SPACES(BAD_REQUEST,"공백이 포함된 닉네임입니다."),
     IMAGE_INVALID(BAD_REQUEST,"이미지가 잘못 되었습니다."),
+    KAKAO_UNLINK_FAIL(BAD_REQUEST, "회원탈퇴 실패"),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */

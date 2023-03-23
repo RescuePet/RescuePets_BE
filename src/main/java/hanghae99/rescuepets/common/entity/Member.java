@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -24,8 +23,6 @@ public class Member {
     private String password;
     @Column
     private Long kakaoId;
-    @Column
-    private LocalDate suspendedUntil;
 
     @Column
     private String profileImage;
@@ -46,9 +43,11 @@ public class Member {
         this.profileImage = profileImage;
     }
 
-
-
-    public void setSuspendedUntil(LocalDate plusDays) {
-        this.suspendedUntil = plusDays;
+    public void withdrawal() {
+        this.nickname = "탈퇴한 회원";
+        this.email = "탈퇴한 회원";
+        this.address = "탈퇴한 회원";
+        this.kakaoId = null;
+        this.profileImage = null;
     }
 }
