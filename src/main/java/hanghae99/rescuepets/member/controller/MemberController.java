@@ -63,13 +63,13 @@ public class MemberController {
         return ResponseDto.toResponseEntity(SuccessMessage.REISSUE_ACCESS_TOKEN);
     }
 
-    @Operation(summary = "로그아웃", description = "자세한 설명")
+    @Operation(summary = "로그아웃")
     @GetMapping("member/logout")
     public ResponseEntity<ResponseDto> logout(@Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.logout(memberDetails.getMember());
     }
 
-    @Operation(summary = "회원탈퇴", description = "자세한 설명")
+    @Operation(summary = "회원탈퇴")
     @PostMapping("/member/Withdrawal")
     public ResponseEntity<ResponseDto> Withdrawal(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.Withdrawal(memberDetails.getMember());
