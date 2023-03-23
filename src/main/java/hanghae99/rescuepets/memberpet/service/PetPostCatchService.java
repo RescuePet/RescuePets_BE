@@ -88,10 +88,7 @@ public class PetPostCatchService {
     public ResponseEntity<ResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
-        List<PostLink> postLinkList = postLinkRepository.findAllByPetPostCatch(petPostCatch);
-        if(postLinkList.size() != 0){
-            responseDto.setLinked(true);
-        }
+        responseDto.setLinked(postLinkRepository.findByPetPostCatchId(petPostCatch.getId()).isPresent());
         responseDto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
         return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
     }
