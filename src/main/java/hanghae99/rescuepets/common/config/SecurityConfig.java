@@ -38,8 +38,6 @@ public class SecurityConfig {
                 .mvcMatchers("/docs/**")
                 .mvcMatchers("/version")
                 .mvcMatchers("/swagger-ui/**")
-                .mvcMatchers("/h2-console/**")
-                .requestMatchers(PathRequest.toH2Console())
                 .mvcMatchers("/public");
 
     }
