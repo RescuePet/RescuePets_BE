@@ -144,7 +144,7 @@ public class PetPostCatchService {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(requestDto.getPetPostCatchId()).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
         PostLink postLink = new PostLink(petPostCatch,requestDto,member);
         postLinkRepository.save(postLink);
-        PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(CATCH, requestDto.getLinkedPostId());
+        PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(CATCH, requestDto.getPetPostCatchId());
         if(postLink.getPostType() == CATCH){
             PetPostCatch petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("3단계에서 막힘ㅋ"));
             postLinkRepository.save(new PostLink(petPostCatchTemp,requestDtoTemp,member));
