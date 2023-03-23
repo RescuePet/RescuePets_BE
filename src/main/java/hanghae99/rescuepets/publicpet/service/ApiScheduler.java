@@ -13,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -39,7 +40,7 @@ public class ApiScheduler {
     //현재 실행 결과 소요시간 ={1차: 326434ms 2차:286378ms(업데이트만) 3차:278525ms(저장만)}
 //    @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
-    protected void ApiSchedule() throws IOException {
+    protected void apiSchedule() throws IOException {
         long startTime = System.currentTimeMillis();//시작 시간
         String[] state = {"", "protect", "notice", "end"};
         int stateNo = 0;
@@ -64,9 +65,9 @@ public class ApiScheduler {
 
     @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
-    protected void ApiScheduleTest() throws IOException {
+    public void apiCompareDataSchedule() throws IOException { //protected로 변경해야함
         long startTime = System.currentTimeMillis();//시작 시간
-        String[] state = {"", "protect", "notice", "end"};
+        String[] state = {"notice","protect", "", "end"};
         int stateNo = 0;
         int pageNo = 0;
         String size = "1000";
@@ -75,7 +76,7 @@ public class ApiScheduler {
             String apiUrl = createApiUrl(String.valueOf(pageNo), state[stateNo], size);
             JSONArray itemList = fetchDataFromApi(apiUrl);
             if (itemList == null || itemList.isEmpty()) {
-                log.info("State: " + state[stateNo] + ",  pageNo: " + pageNo + "을 API로부터 데이터를 받아오지 못했습니다.-------------------------------------------------------------------------");
+//                log.info("State: " + state[stateNo] + ",  pageNo: " + pageNo + "을 API로부터 데이터를 받아오지 못했습니다.-------------------------------------------------------------------------");
                 stateNo++;
                 pageNo = 0;
                 continue;
@@ -85,7 +86,7 @@ public class ApiScheduler {
         }
         long endTime = System.currentTimeMillis(); //종료 시간
         long executionTime = endTime - startTime; //소요 시간 계산
-        log.info("-------------------------Execution time: " + executionTime + "ms");
+//        log.info("-------------------------Execution time: " + executionTime + "ms");
     }
 
     protected String createApiUrl(String pageNo, String state, String size) throws UnsupportedEncodingException {
@@ -164,7 +165,6 @@ public class ApiScheduler {
     }
 
 
-
     protected PetInfoByAPI buildPetInfo(JSONObject itemObject, String state) {
         return PetInfoByAPI.builder()
                 .desertionNo(itemObject.optString("desertionNo"))
@@ -208,87 +208,89 @@ public class ApiScheduler {
             } else {
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.orElse(null);
 //                log.info("saveAndUpdateToDatabase 메서드 update 동작");
-                if (!petInfoByAPI.getFilename().equals(itemObject.optString("filename"))){
+                if (!petInfoByAPI.getFilename().equals(itemObject.optString("filename"))) {
                     compareDataList.add("filename");
                 }
-                if (!petInfoByAPI.getHappenDt().equals(itemObject.optString("happenDt"))){
+                if (!petInfoByAPI.getHappenDt().equals(itemObject.optString("happenDt"))) {
                     compareDataList.add("happenDt");
                 }
-                if (!petInfoByAPI.getHappenPlace().equals(itemObject.optString("happenPlace"))){
+                if (!petInfoByAPI.getHappenPlace().equals(itemObject.optString("happenPlace"))) {
                     compareDataList.add("happenPlace");
                 }
-                if (!petInfoByAPI.getKindCd().equals(itemObject.optString("kindCd"))){
+                if (!petInfoByAPI.getKindCd().equals(itemObject.optString("kindCd"))) {
                     compareDataList.add("kindCd");
                 }
-                if (!petInfoByAPI.getColorCd().equals(itemObject.optString("colorCd"))){
+                if (!petInfoByAPI.getColorCd().equals(itemObject.optString("colorCd"))) {
                     compareDataList.add("colorCd");
                 }
-                if (!petInfoByAPI.getAge().equals(itemObject.optString("age"))){
+                if (!petInfoByAPI.getAge().equals(itemObject.optString("age"))) {
                     compareDataList.add("age");
                 }
-                if (!petInfoByAPI.getWeight().equals(itemObject.optString("weight"))){
+                if (!petInfoByAPI.getWeight().equals(itemObject.optString("weight"))) {
                     compareDataList.add("weight");
                 }
-                if (!petInfoByAPI.getNoticeNo().equals(itemObject.optString("noticeNo"))){
+                if (!petInfoByAPI.getNoticeNo().equals(itemObject.optString("noticeNo"))) {
                     compareDataList.add("noticeNo");
                 }
-                if (!petInfoByAPI.getNoticeSdt().equals(itemObject.optString("noticeSdt"))){
+                if (!petInfoByAPI.getNoticeSdt().equals(itemObject.optString("noticeSdt"))) {
                     compareDataList.add("noticeSdt");
                 }
-                if (!petInfoByAPI.getNoticeEdt().equals(itemObject.optString("noticeEdt"))){
+                if (!petInfoByAPI.getNoticeEdt().equals(itemObject.optString("noticeEdt"))) {
                     compareDataList.add("noticeEdt");
                 }
-                if (!petInfoByAPI.getPopfile().equals(itemObject.optString("popfile"))){
+                if (!petInfoByAPI.getPopfile().equals(itemObject.optString("popfile"))) {
                     compareDataList.add("popfile");
                 }
-                if (!petInfoByAPI.getProcessState().equals(itemObject.optString("processState"))){
+                if (!petInfoByAPI.getProcessState().equals(itemObject.optString("processState"))) {
                     compareDataList.add("processState");
                 }
-                if (!petInfoByAPI.getSexCd().equals(itemObject.optString("sexCd"))){
+                if (!petInfoByAPI.getSexCd().equals(itemObject.optString("sexCd"))) {
                     compareDataList.add("sexCd");
                 }
-                if (!petInfoByAPI.getNeuterYn().equals(itemObject.optString("neuterYn"))){
+                if (!petInfoByAPI.getNeuterYn().equals(itemObject.optString("neuterYn"))) {
                     compareDataList.add("neuterYn");
                 }
-                if (!petInfoByAPI.getSpecialMark().equals(itemObject.optString("specialMark"))){
+                if (!petInfoByAPI.getSpecialMark().equals(itemObject.optString("specialMark"))) {
                     compareDataList.add("specialMark");
                 }
-                if (!petInfoByAPI.getCareNm().equals(itemObject.optString("careNm"))){
+                if (!petInfoByAPI.getCareNm().equals(itemObject.optString("careNm"))) {
                     compareDataList.add("careNm");
                 }
-                if (!petInfoByAPI.getCareTel().equals(itemObject.optString("careTel"))){
+                if (!petInfoByAPI.getCareTel().equals(itemObject.optString("careTel"))) {
                     compareDataList.add("careTel");
                 }
-                if (!petInfoByAPI.getCareAddr().equals(itemObject.optString("careAddr"))){
+                if (!petInfoByAPI.getCareAddr().equals(itemObject.optString("careAddr"))) {
                     compareDataList.add("careAddr");
                 }
-                if (!petInfoByAPI.getOrgNm().equals(itemObject.optString("orgNm"))){
+                if (!petInfoByAPI.getOrgNm().equals(itemObject.optString("orgNm"))) {
                     compareDataList.add("orgNm");
                 }
-                if (!petInfoByAPI.getChargeNm().equals(itemObject.optString("chargeNm"))){
+                if (!petInfoByAPI.getChargeNm().equals(itemObject.optString("chargeNm"))) {
                     compareDataList.add("chargeNm");
                 }
-                if (!petInfoByAPI.getOfficetel().equals(itemObject.optString("officetel"))){
+                if (!petInfoByAPI.getOfficetel().equals(itemObject.optString("officetel"))) {
                     compareDataList.add("officetel");
                 }
-                if (!petInfoByAPI.getState().equals(state)){ //state가 다를 경우 true
-                    if (state.equals("")&&itemObject.optString("getProcessState").contains("종료")){ //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
+                if (!petInfoByAPI.getState().equals(state)) { //state가 다를 경우 true
+                    if (state.equals("") && itemObject.optString("getProcessState").contains("종료")) { //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
                         compareDataList.add("state");
 //                        log.info("수정 동작 --- state == null");
                     }
-                    if ((state.equals("protect")||state.equals("notice")) && !itemObject.optString("getProcessState").contains("보호")){
+                    if ((state.equals("protect") || state.equals("notice")) && !itemObject.optString("getProcessState").contains("보호")) {
                         compareDataList.add("state");
 //                        log.info("수정 동작 --- state == protect/notice");
                     }
                 }
-                if (!compareDataList.isEmpty()){
+                if (!compareDataList.isEmpty()) {
                     String compareDataKey = String.join(", ", compareDataList);
-                    PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
+                    PetInfoByAPI petInfo = petInfoByAPIOptional.orElse(null);
+                    PetInfoByAPI petInfoByUpdate = buildPetInfo(itemObject, state);
+                    petInfo.update(petInfoByUpdate);
                     PetInfoState petInfoEntity = buildPetInfoApi(itemObject, state, compareDataKey);
-                    PetInfoState entityPetInfo = buildPetInfoEntity(petInfoByAPI, state, compareDataKey);
-                    petInfoByAPI.update(petInfo);
                     petInfoStateRepository.save(petInfoEntity);
+                    PetInfoState entityPetInfo = buildPetInfoEntity(petInfoByAPI, state, compareDataKey);
                     petInfoStateRepository.save(entityPetInfo);
+//                    publicPetRepository.saveAndFlush(petInfo);
 //                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
                 }
                 //list가 비었을 경우 변동 사항이 없으므로 업데이트 동작하지 않음
@@ -296,6 +298,7 @@ public class ApiScheduler {
 //            log.info("compareDataList 비었는지 체크 true(null),false(값이 있음):" + compareDataList.isEmpty() + "");
         }
     }
+
     protected PetInfoState buildPetInfoApi(JSONObject itemObject, String state, String compareDataKey) {
         return PetInfoState.builder()
                 .desertionNo(itemObject.optString("desertionNo"))
@@ -325,6 +328,7 @@ public class ApiScheduler {
                 .compareDataKey(compareDataKey)
                 .build();
     }
+
     protected PetInfoState buildPetInfoEntity(PetInfoByAPI petInfoByAPI, String state, String compareDataKey) {
         return PetInfoState.builder()
                 .desertionNo(petInfoByAPI.getDesertionNo())

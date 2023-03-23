@@ -34,6 +34,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 setAuthentication(jwtUtil.getEmailFromToken(accessToken));
             } else if (jwtUtil.validateToken(accessToken) == 2) {
                 jwtExceptionHandler(response, HttpStatus.SEE_OTHER.value());
+                return;
             } else {
                 jwtExceptionHandler(response, HttpStatus.BAD_REQUEST.value());
                 return;
