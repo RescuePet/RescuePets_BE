@@ -45,13 +45,14 @@ public class PublicPetController {
                                                   @RequestParam(value = "state") String state, @RequestParam(value = "size") String size) throws IOException {
         return apiDataService.apiCompareData(pageNo, state, size);
     }
-    @SecurityRequirements
-    @PostMapping("api-compare-data/auto")
-    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화 Auto 버전", description = "자세한 설명")
-    public String apiCompareDataAuto() throws IOException {
-        apiScheduler.apiCompareDataSchedule();
-        return "자동 비교 완료";
-    }
+    //api 요청 자동비교 비활성화
+//    @SecurityRequirements
+//    @PostMapping("api-compare-data/auto")
+//    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화 Auto 버전", description = "자세한 설명")
+//    public String apiCompareDataAuto() throws IOException {
+//        apiScheduler.apiCompareDataSchedule();
+//        return "자동 비교 완료";
+//    }
 
 //    @SecurityRequirements
 //    @PostMapping("/api-save/{pageNo}")
