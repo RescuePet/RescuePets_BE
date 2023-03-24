@@ -119,6 +119,7 @@ public class KakaoService {
                 .get("email").asText();
         String profileImage = jsonNode.get("kakao_account")
                 .get("profile").get("profile_image_url").asText();
+
         return new KakaoUserInfoDto(id, nickname, email, profileImage);
     }
 
