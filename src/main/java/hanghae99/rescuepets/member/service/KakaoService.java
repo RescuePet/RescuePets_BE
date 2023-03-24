@@ -165,6 +165,7 @@ public class KakaoService {
 
             memberRepository.save(kakaoUser);
         }
+
         return kakaoUser;
     }
 
