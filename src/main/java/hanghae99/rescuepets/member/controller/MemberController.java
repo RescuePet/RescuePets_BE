@@ -64,7 +64,7 @@ public class MemberController {
     }
 
     @Operation(summary = "로그아웃")
-    @GetMapping("member/logout")
+    @DeleteMapping("member/logout")
     public ResponseEntity<ResponseDto> logout(@Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.logout(memberDetails.getMember());
     }
