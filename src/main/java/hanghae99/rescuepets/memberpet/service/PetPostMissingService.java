@@ -45,7 +45,6 @@ public class PetPostMissingService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostMissing> PetPostMissingPage = petPostMissingRepository.findAll(pageable);
         List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
-
         for (PetPostMissing petPostMissing : PetPostMissingPage) {
             PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
@@ -77,12 +76,11 @@ public class PetPostMissingService {
         List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
         for (PetPostMissing petPostMissing : PetPostMissingPage) {
             PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
-            dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
+           dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
-        return ResponseDto.toResponseEntity(MY_POST_READING_SUCCESS, dtoList);
+       return ResponseDto.toResponseEntity(MY_POST_READING_SUCCESS, dtoList);
     }
-
 
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostMissing(Long petPostMissingId, Member member) {
