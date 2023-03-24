@@ -137,6 +137,9 @@ public class PetPostCatchService {
     public ResponseEntity<ResponseDto> createLink(Long petPostCatchId, PostLinkRequestDto requestDto, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
         PostLink postLink = new PostLink(petPostCatch,requestDto,member);
+        if((postLinkRepository.findByPetPostCatchAndMemberIdAndPostTypeAndLinkedPostId(petPostCatch,member.getId(),requestDto.getPostType(),requestDto.getLinkedPostId())).isPresent()){
+            throw new NullPointerException("이미 존재하지롱");
+        }
         postLinkRepository.save(postLink);
         PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(CATCH, petPostCatchId);
         if(requestDto.getPostType() == CATCH){

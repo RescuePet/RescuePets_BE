@@ -17,7 +17,10 @@ public interface PostLinkRepository extends JpaRepository<PostLink, Long> {
             (PetPostCatch petPostCatch, Long memberId, PostTypeEnum postType, Long linkedPostId);
     void deleteByPetPostMissingAndMemberIdAndPostTypeAndLinkedPostId
             (PetPostMissing petPostMissing, Long memberId, PostTypeEnum postType, Long linkedPostId);
-
-    Optional<Object> findByPetPostCatchId(Long petPostCatchId);
-    Optional<Object> findByPetPostMissingId(Long petPostMissingId);
+    Optional<PostLink> findByPetPostCatchId(Long petPostCatchId);
+    Optional<PostLink> findByPetPostMissingId(Long petPostMissingId);
+    Optional<PostLink> findByPetPostCatchAndMemberIdAndPostTypeAndLinkedPostId
+            (PetPostCatch petPostCatch, Long memberId, PostTypeEnum postType, Long linkedPostId);
+    Optional<PostLink> findByPetPostMissingAndMemberIdAndPostTypeAndLinkedPostId
+            (PetPostMissing petPostMissing, Long memberId, PostTypeEnum postType, Long linkedPostId);
 }

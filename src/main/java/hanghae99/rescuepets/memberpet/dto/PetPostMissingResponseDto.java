@@ -58,10 +58,10 @@ public class PetPostMissingResponseDto {
                 .postImages(petPostMissing.getPostImages().stream().map(PostImageResponseDto::of).toList())
                 .build();
     }
-    public void setWished(boolean isWished) {
+    public void setWished(Boolean isWished) {
         this.isWished = isWished;
     }
-    public void setLinked(boolean isLinked) {
+    public void setLinked(Boolean isLinked) {
         this.isLinked = isLinked;
     }
 }
