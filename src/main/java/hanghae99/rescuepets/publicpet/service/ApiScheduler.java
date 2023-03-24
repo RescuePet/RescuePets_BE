@@ -65,13 +65,15 @@ public class ApiScheduler {
 
     @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
-    public void apiCompareDataSchedule() throws IOException { //protected로 변경해야함
-        long startTime = System.currentTimeMillis();//시작 시간
-        String[] state = {"notice","protect", "", "end"};
+    protected void apiCompareDataSchedule() throws IOException { //protected로 변경해야함
+//        log.info("apiCompareDataSchedule 동작");
+//        long startTime = System.currentTimeMillis();//시작 시간
+        String[] state = {"notice", "protect", "", "end"};
         int stateNo = 0;
         int pageNo = 0;
         String size = "1000";
         while (stateNo < 3) {
+//            log.info("while문 동작" + state[stateNo].toString() + "/ pageNo: "+pageNo +  "  시작" );
             pageNo++;
             String apiUrl = createApiUrl(String.valueOf(pageNo), state[stateNo], size);
             JSONArray itemList = fetchDataFromApi(apiUrl);
@@ -84,8 +86,8 @@ public class ApiScheduler {
             compareData(itemList, state[stateNo]);
 //            log.info(state[stateNo].toString() + "/ pageNo: "+pageNo +  "  완료");
         }
-        long endTime = System.currentTimeMillis(); //종료 시간
-        long executionTime = endTime - startTime; //소요 시간 계산
+//        long endTime = System.currentTimeMillis(); //종료 시간
+//        long executionTime = endTime - startTime; //소요 시간 계산
 //        log.info("-------------------------Execution time: " + executionTime + "ms");
     }
 
@@ -291,7 +293,7 @@ public class ApiScheduler {
                     PetInfoState entityPetInfo = buildPetInfoEntity(petInfoByAPI, state, compareDataKey);
                     petInfoStateRepository.save(entityPetInfo);
 //                    publicPetRepository.saveAndFlush(petInfo);
-//                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
+                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
                 }
                 //list가 비었을 경우 변동 사항이 없으므로 업데이트 동작하지 않음
             }

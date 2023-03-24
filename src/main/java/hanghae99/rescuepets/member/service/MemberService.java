@@ -40,11 +40,13 @@ public class MemberService {
             throw new CustomException(DUPLICATE_NICKNAME);
         }
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
+        String defaultProfileImage = "https://s3.ap-northeast-2.amazonaws.com/youngsbucket/images/rescuepet/5f818015-c99e-4b29-afc9-dce98d801d90.png";
 
         Member member = Member.builder()
                 .email(signupRequestDto.getEmail())
                 .password(password)
                 .nickname(signupRequestDto.getNickname())
+                .profileImage(defaultProfileImage)
                 .build();
 
         memberRepository.save(member);
