@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
@@ -142,9 +143,13 @@ public class PetPostCatchService {
         postLinkRepository.save(postLink);
         PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(CATCH, petPostCatchId);
         if(requestDto.getPostType() == CATCH){
+            if(petPostCatchId == requestDto.getLinkedPostId()){
+                //사실 프론트 단에서 이런일은 미연에 방지할 것입니다. 넣을지 말지 고민 중
+                throw new NullPointerException("자기 자신한테는 연결할 수 없지롱");
+            }
             PetPostCatch petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("3단계에서 막힘ㅋ"));
             postLinkRepository.save(new PostLink(petPostCatchTemp,requestDtoTemp,member));
-        }else{
+        }else if(requestDto.getPostType() == MISSING){
             PetPostMissing petPostMissingTemp = petPostMissingRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("4단계에서 막힘ㅋ"));
             postLinkRepository.save(new PostLink(petPostMissingTemp,requestDtoTemp,member));
         }

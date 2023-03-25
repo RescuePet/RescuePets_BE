@@ -45,7 +45,7 @@ dependencies {
     //Swagger
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.6'
 
-//    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.webjars:sockjs-client:1.1.2'
     implementation 'org.webjars:stomp-websocket:2.3.3-1'

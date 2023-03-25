@@ -77,10 +77,10 @@ public class PetPostCatchController {
         return petPostCatchService.delete(petPostCatchId, userDetails.getMember());
     }
 
-    @PostMapping(value = "/links/{petPostCatchId}")
+    @PostMapping(value = "/links/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "PostCatch 게시글에서 다른 게시글로 링크걸기", description = "사용자가 연결짓고 싶은 게시물 간의 링크를 생성합니다. PostType에 대상 게시물이 CATCH인지 MISSING인지 입력해주어야합니다.")
     public ResponseEntity<ResponseDto> createLink(@PathVariable Long petPostCatchId,
-                                                  @RequestBody PostLinkRequestDto requestDto,
+                                                  @ModelAttribute PostLinkRequestDto requestDto,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return petPostCatchService.createLink(petPostCatchId, requestDto, memberDetails.getMember());
     }

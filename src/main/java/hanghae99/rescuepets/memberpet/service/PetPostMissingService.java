@@ -139,12 +139,19 @@ public class PetPostMissingService {
     public ResponseEntity<ResponseDto> createLink(Long petPostMissingId, PostLinkRequestDto requestDto, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
         PostLink postLink = new PostLink(petPostMissing,requestDto,member);
+        if((postLinkRepository.findByPetPostMissingAndMemberIdAndPostTypeAndLinkedPostId(petPostMissing,member.getId(),requestDto.getPostType(),requestDto.getLinkedPostId())).isPresent()){
+            throw new NullPointerException("이미 존재하지롱");
+        }
         postLinkRepository.save(postLink);
         PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(MISSING, petPostMissingId);
         if(requestDto.getPostType() == CATCH){
             PetPostCatch petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("3단계에서 막힘ㅋ"));
             postLinkRepository.save(new PostLink(petPostCatchTemp,requestDtoTemp,member));
-        }else{
+        }else if(requestDto.getPostType() == MISSING){
+            if(petPostMissingId == requestDto.getLinkedPostId()){
+                //사실 프론트 단에서 이런일은 미연에 방지할 것입니다. 넣을지 말지 고민 중
+                throw new NullPointerException("자기 자신한테는 연결할 수 없지롱");
+            }
             PetPostMissing petPostMissingTemp = petPostMissingRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("4단계에서 막힘ㅋ"));
             postLinkRepository.save(new PostLink(petPostMissingTemp,requestDtoTemp,member));
         }
@@ -175,7 +182,7 @@ public class PetPostMissingService {
                 postLinkRepository.deleteByPetPostCatchAndMemberIdAndPostTypeAndLinkedPostId(petPostCatchInverse, member.getId(), MISSING, petPostMissingId);
             }else if(postLink.getPostType() == MISSING){
                 PetPostMissing petPostMissingInverse = petPostMissingRepository.findById(postLink.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-//                왜 이렇게 복잡하게 조건을 걸어서 삭제하나요? 아래와 같이 삭제하면 해당 게시물에 걸려있는 모든 링크가 삭제되기 때문입니다.
+//                왜 이렇게 복잡하게 조건을 걸어서 삭제하나요? 리턴 위에서와 같이 삭제하면 해당 게시물에 걸려있는 모든 링크가 삭제되기 때문입니다.
 //                현재 사용자가 삭제하려는 게시물쪽으로 걸린 링크 하나만 반대편에서 삭제해야하기 때문에 다음과 같이 삭제합니다.
                 postLinkRepository.deleteByPetPostMissingAndMemberIdAndPostTypeAndLinkedPostId(petPostMissingInverse, member.getId(), MISSING, petPostMissingId);
             }
