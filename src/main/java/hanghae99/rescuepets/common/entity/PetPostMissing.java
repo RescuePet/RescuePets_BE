@@ -18,6 +18,7 @@ public class PetPostMissing extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String kindCd;
+    private String petName;
     private String age;
     private String weight;
     private String colorCd;
@@ -43,6 +44,8 @@ public class PetPostMissing extends TimeStamped{
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
     @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostLink> postLinkList = new ArrayList<>();
+    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
     @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
@@ -54,6 +57,7 @@ public class PetPostMissing extends TimeStamped{
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
         this.kindCd = requestDto.getKindCd();
+        this.petName = requestDto.getPetName();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
@@ -79,6 +83,7 @@ public class PetPostMissing extends TimeStamped{
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
         this.kindCd = requestDto.getKindCd();
+        this.petName = requestDto.getPetName();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();

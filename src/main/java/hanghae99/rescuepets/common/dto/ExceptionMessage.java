@@ -14,8 +14,10 @@ public enum ExceptionMessage {
     INVALID_TOKEN(BAD_REQUEST, "Invalid JWT signature, 유효하지 않는 JWT 서명 입니다."),
     ILLEAGAL_TOKEN(BAD_REQUEST, "JWT claims is empty, 잘못된 JWT 토큰 입니다."),
 
+
     NICKNAME_WITH_SPACES(BAD_REQUEST,"공백이 포함된 닉네임입니다."),
     IMAGE_INVALID(BAD_REQUEST,"이미지가 잘못 되었습니다."),
+    KAKAO_UNLINK_FAIL(BAD_REQUEST, "회원탈퇴 실패"),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
@@ -25,6 +27,7 @@ public enum ExceptionMessage {
 
     /* 403 FORBIDDEN : 권한 없음 */
     USER_FORBIDDEN(FORBIDDEN, "권한이 없습니다."),
+    USER_STOP(FORBIDDEN,"정지"),
     CART_GOODS_DELETE_FORBIDDEN(FORBIDDEN,"해당 장바구니의 삭제 권한이 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
@@ -37,6 +40,9 @@ public enum ExceptionMessage {
     NOT_FOUND_PET_INFO(NOT_FOUND,"해당 유기동물 정보가 없습니다."),
     NOT_FOUND_PET_INFO_MEMBER(NOT_FOUND,"요청하신 유저는 해당 관심 유기 동물이 등록되어 있지 않습니다."),
     NOT_FOUND_WISH(NOT_FOUND,"관심 등록되어 있지 않습니다."),
+    NOT_FOUND_DECLARE(NOT_FOUND,"신고가 등록되어 있지 않습니다."),
+
+    NOT_FOUND_HUMAN(NOT_FOUND,"해당 고객이 존재하지 않습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
@@ -45,7 +51,9 @@ public enum ExceptionMessage {
     DUPLICATE_GOODS(CONFLICT,"해당 상품의 이름은 이미 존재합니다."),
     DUPLICATE_NICKNAME(CONFLICT,"중복된 닉네임이 존재합니다."),
     DUPLICATE_EMAIL(CONFLICT,"중복된 이메일이 존재합니다."),
-    ALREADY_WISH(CONFLICT, "이미 관심 등록되었습니다.");
+    ALREADY_WISH(CONFLICT, "이미 관심 등록되었습니다."),
+    ALREADY_DECLARE(CONFLICT, "이미 신고가 등록되었습니다.");
+
 
 
     private final HttpStatus httpStatus;

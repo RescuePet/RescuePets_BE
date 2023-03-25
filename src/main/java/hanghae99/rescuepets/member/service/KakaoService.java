@@ -3,6 +3,8 @@ package hanghae99.rescuepets.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hanghae99.rescuepets.common.dto.CustomException;
+import hanghae99.rescuepets.common.dto.ExceptionMessage;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Member;
@@ -11,13 +13,9 @@ import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
 import hanghae99.rescuepets.member.dto.MemberResponseDto;
 import hanghae99.rescuepets.member.repository.MemberRepository;
-import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,7 +38,9 @@ public class KakaoService {
 
     @Value("${kakao.api.key}")
     private String kakaoApiKey;
-    private final RefreshTokenRepository refreshTokenRepository;
+
+    @Value("${kakao.admin.key}")
+    private String kakaoAdminKey;
 
     @Transactional
     public ResponseEntity<ResponseDto> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
@@ -71,7 +71,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoApiKey); //Rest API 키
-        body.add("redirect_uri", "http://3.38.193.45/member/kakao/callback");
+        body.add("redirect_uri", "http://localhost:3000/kakaologin");
         body.add("code", code);
 
         // HTTP 요청 보내기
@@ -89,6 +89,7 @@ public class KakaoService {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
+
         return jsonNode.get("access_token").asText();
     }
 
@@ -118,6 +119,7 @@ public class KakaoService {
                 .get("email").asText();
         String profileImage = jsonNode.get("kakao_account")
                 .get("profile").get("profile_image_url").asText();
+
         return new KakaoUserInfoDto(id, nickname, email, profileImage);
     }
 
@@ -134,7 +136,7 @@ public class KakaoService {
             if (sameEmailUser != null) {
                 kakaoUser = sameEmailUser;
                 // 기존 회원정보에 카카오 Id 추가
-                kakaoUser.setKakaoId(kakaoId);
+                kakaoUser.setKakao(kakaoId, kakaoUserInfo.getProfileImage());
             } else {
                 // 신규 회원가입
                 // username: kakao nickname
@@ -163,6 +165,7 @@ public class KakaoService {
 
             memberRepository.save(kakaoUser);
         }
+
         return kakaoUser;
     }
 
@@ -170,5 +173,33 @@ public class KakaoService {
         MemberDetails userDetails = new MemberDetails(kakaoUser, kakaoUser.getEmail());
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    @Transactional
+    public void unlink(Member member) throws JsonProcessingException {
+        // HTTP Header 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded");
+        headers.add("Authorization", "KakaoAK " + kakaoAdminKey);
+
+        // HTTP Body 생성
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("target_id_type", "user_id");
+        body.add("target_id", String.valueOf(member.getKakaoId())); //Rest API 키
+
+        // HTTP 요청 보내기
+        HttpEntity<MultiValueMap<String, String>> request =
+                new HttpEntity<>(body, headers);
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v1/user/unlink",
+                HttpMethod.POST,
+                request,
+                String.class
+        );
+
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new CustomException(ExceptionMessage.KAKAO_UNLINK_FAIL);
+        }
     }
 }
