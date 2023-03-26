@@ -245,6 +245,7 @@ public class ApiScheduler {
                 }
                 if (!petInfoByAPI.getProcessState().equals(itemObject.optString("processState"))) {
                     compareDataList.add("processState");
+                    log.info("processState 변동 /"+"petInfoByAPIOptional.get().getState(): "+petInfoByAPIOptional.get().getState() + "/"+"state: " +state);
                 }
                 if (!petInfoByAPI.getSexCd().equals(itemObject.optString("sexCd"))) {
                     compareDataList.add("sexCd");
