@@ -34,7 +34,6 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
-                .requestMatchers(PathRequest.toH2Console())
                 .mvcMatchers("/api-docs")
                 .mvcMatchers("/docs/**")
                 .mvcMatchers("/version")
