@@ -98,6 +98,7 @@ public class MemberService {
         return ResponseDto.toResponseEntity(EMAIL_CHECK_SUCCESS);
     }
 
+
     @Transactional
     public ResponseEntity<ResponseDto> logout(Member member) {
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmail((member.getEmail()));

@@ -89,6 +89,7 @@ public class KakaoService {
         String responseBody = response.getBody();
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
+
         return jsonNode.get("access_token").asText();
     }
 
@@ -118,6 +119,7 @@ public class KakaoService {
                 .get("email").asText();
         String profileImage = jsonNode.get("kakao_account")
                 .get("profile").get("profile_image_url").asText();
+
         return new KakaoUserInfoDto(id, nickname, email, profileImage);
     }
 
@@ -163,6 +165,7 @@ public class KakaoService {
 
             memberRepository.save(kakaoUser);
         }
+
         return kakaoUser;
     }
 
