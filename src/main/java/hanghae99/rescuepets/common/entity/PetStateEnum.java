@@ -5,22 +5,22 @@ public enum PetStateEnum {
     PROTECT("보호중"),
     END("종료");
 
-    private final String korea;
+    private final String korean;
 
-    PetStateEnum(String korea) {
-        this.korea = korea;
+    PetStateEnum(String korean) {
+        this.korean = korean;
     }
 
-    public static PetStateEnum values(String value) {
-        for (PetStateEnum petStateEnum : PetStateEnum.values()) {
-            if (petStateEnum.korea.equalsIgnoreCase(value)) {
-                return petStateEnum;
-            }
-        }
-        throw new IllegalArgumentException("Invalid house type value: " + value);
+    public String getKorean() {
+        return korean;
     }
 
-    public String getState() {
-        return korea;
-    }
+//    public static PetStateEnum values(String value) {
+//        for (PetStateEnum petStateEnum : PetStateEnum.values()) {
+//            if (petStateEnum.korea.equalsIgnoreCase(value)) {
+//                return petStateEnum;
+//            }
+//        }
+//        throw new IllegalArgumentException("Invalid house type value: " + value);
+//    }
 }

@@ -2,25 +2,13 @@ package hanghae99.rescuepets.publicpet.service;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.PetStateEnum;
-import hanghae99.rescuepets.publicpet.repository.PublicPetRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
+import org.json.JSONArray;;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-
-import static hanghae99.rescuepets.common.dto.SuccessMessage.PET_INFO_WISH_SUCCESS;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.PUBLIC_PET_INFO_SAVE_SUCCESS;
 
 @Slf4j

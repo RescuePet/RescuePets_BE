@@ -37,7 +37,7 @@ public class ApiScheduler {
     private final PetInfoStateRepository petInfoStateRepository;
 
 
-//    @Scheduled(cron = "0 0/30 * * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
@@ -73,9 +73,9 @@ public class ApiScheduler {
         urlBuilder.append("&" + URLEncoder.encode("upr_cd", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*시도코드 (시도 조회 OPEN API 참조)*/
         urlBuilder.append("&" + URLEncoder.encode("org_cd", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*시군구코드 (시군구 조회 OPEN API 참조)*/
         urlBuilder.append("&" + URLEncoder.encode("care_reg_no", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*보호소번호 (보호소 조회 OPEN API 참조)*/
-        if (state.getState().equals("보호중")) {
+        if (state.equals(PROTECT)) {
             urlBuilder.append("&" + URLEncoder.encode("state", "UTF-8") + "=" + URLEncoder.encode("protect", "UTF-8"));
-        } else if (state.getState().equals("공고중")) {
+        } else if (state.equals(NOTICE)) {
             urlBuilder.append("&" + URLEncoder.encode("state", "UTF-8") + "=" + URLEncoder.encode("notice", "UTF-8"));
         } else {
             urlBuilder.append("&" + URLEncoder.encode("state", "UTF-8") + "=" + URLEncoder.encode("", "UTF-8"));
@@ -197,12 +197,12 @@ public class ApiScheduler {
                 if (!petInfoByAPI.getOfficetel().equals(itemObject.optString("officetel"))) {
                     compareDataList.add("officetel");
                 }
-                if (!petInfoByAPI.getPetStateEnum().getState().equals(state)) { //state가 다를 경우 true
-                    if (state.equals("종료") && itemObject.optString("getProcessState").contains("종료")) { //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
+                if (!petInfoByAPI.getPetStateEnum().equals(state)) { //state가 다를 경우 true
+                    if (state.equals(END) && itemObject.optString("getProcessState").contains("종료")) { //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
                         compareDataList.add("state");
 //                        log.info("수정 동작 --- state == null");
                     }
-                    if ((state.equals("보호중") || state.equals("공고중")) && !itemObject.optString("getProcessState").contains("보호")) {
+                    if ((state.equals(PROTECT) || state.equals(NOTICE)) && !itemObject.optString("getProcessState").contains("보호")) {
                         compareDataList.add("state");
 //                        log.info("수정 동작 --- state == protect/notice");
                     }
@@ -216,7 +216,6 @@ public class ApiScheduler {
                     petInfo.update(petInfoByUpdate);
                     PetInfoState petInfoEntity = buildPetInfoApi(itemObject, state, compareDataKey);
                     petInfoStateRepository.save(petInfoEntity);
-                    publicPetRepository.saveAndFlush(petInfo);
                     log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
                 }
                 //list가 비었을 경우 변동 사항이 없으므로 업데이트 동작하지 않음
@@ -332,7 +331,7 @@ public class ApiScheduler {
                 .orgNm(itemObject.optString("orgNm"))
                 .chargeNm(itemObject.optString("chargeNm"))
                 .officetel(itemObject.optString("officetel"))
-                .state(state.getState())
+                .state(state.getKorean())
                 .objectType("Json")
                 .compareDataKey(compareDataKey)
                 .build();
@@ -363,7 +362,7 @@ public class ApiScheduler {
                 .orgNm(petInfoByAPI.getOrgNm())
                 .chargeNm(petInfoByAPI.getChargeNm())
                 .officetel(petInfoByAPI.getOfficetel())
-                .state(petInfoByAPI.getPetStateEnum().getState())
+                .state(petInfoByAPI.getPetStateEnum().getKorean())
                 .objectType("Entity")
                 .compareDataKey(compareDataKey)
                 .build();
