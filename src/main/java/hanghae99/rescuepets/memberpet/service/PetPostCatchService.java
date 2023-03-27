@@ -42,12 +42,11 @@ public class PetPostCatchService {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findAll(pageable);
-
         List<PetPostCatch> PetPostCatches = PetPostCatchPage.getContent();
-        List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
-
+        List<PetPostCatchShortResponseDto> dtoList = new ArrayList<>();
         for (PetPostCatch petPostCatch : PetPostCatches) {
-            PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
+            if(petPostCatch.getIsDeleted()){continue;}
+            PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
@@ -60,6 +59,7 @@ public class PetPostCatchService {
         List<PetPostCatch> PetPostCatchList = petPostCatchRepository.findAll(sort);
         List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
         for (PetPostCatch petPostCatch : PetPostCatchList) {
+            if(petPostCatch.getIsDeleted()){continue;}
             PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
@@ -72,9 +72,12 @@ public class PetPostCatchService {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findByMemberId(member.getId(), pageable);
-        List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
+        List<PetPostCatchShortResponseDto> dtoList = new ArrayList<>();
         for (PetPostCatch petPostCatch : PetPostCatchPage) {
-            PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
+            if(petPostCatch.getIsDeleted()){
+                continue;
+            }
+            PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
@@ -84,6 +87,9 @@ public class PetPostCatchService {
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(petPostCatch.getIsDeleted()){
+            throw new CustomException(POST_NOT_FOUND);
+        }
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
         responseDto.setLinked(postLinkRepository.findByPetPostCatchId(petPostCatch.getId()).isPresent());
         responseDto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());

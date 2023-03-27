@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity(name = "petPostMissing")
@@ -31,6 +32,8 @@ public class PetPostMissing extends TimeStamped{
     private String content;
     private String gratuity;
     private String contact;
+    private Boolean isDeleted = false;
+    private Date deletedDt;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private SexEnum sexCd;
@@ -97,6 +100,8 @@ public class PetPostMissing extends TimeStamped{
         this.gratuity = requestDto.getGratuity();
         this.contact = requestDto.getContact();
     }
-
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 }
 

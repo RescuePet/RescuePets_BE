@@ -9,6 +9,7 @@ import javax.persistence.*;
 //import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -33,6 +34,8 @@ public class PetPostCatch extends TimeStamped{
     private String gratuity;
     private String contact;
     private Boolean openNickname;
+    private Boolean isDeleted = false;
+    private Date deletedDt;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UpkindEnum upkind;
@@ -99,5 +102,8 @@ public class PetPostCatch extends TimeStamped{
         this.gratuity = requestDto.getGratuity();
         this.contact = requestDto.getContact();
         this.openNickname = requestDto.getOpenNickname();
+    }
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

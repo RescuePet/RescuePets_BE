@@ -43,10 +43,11 @@ public class PetPostMissingService {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostMissing> PetPostMissingPage = petPostMissingRepository.findAll(pageable);
-        List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
+        List<PetPostMissingShortResponseDto> dtoList = new ArrayList<>();
 
         for (PetPostMissing petPostMissing : PetPostMissingPage) {
-            PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
+            if(petPostMissing.getIsDeleted()){continue;}
+            PetPostMissingShortResponseDto dto = PetPostMissingShortResponseDto.of(petPostMissing);
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
@@ -60,6 +61,7 @@ public class PetPostMissingService {
         List<PetPostMissing> PetPostMissingList = petPostMissingRepository.findAll(sort);
         List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
         for (PetPostMissing petPostMissing : PetPostMissingList) {
+            if(petPostMissing.getIsDeleted()){continue;}
             PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
@@ -73,9 +75,10 @@ public class PetPostMissingService {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostMissing> PetPostMissingPage = petPostMissingRepository.findByMemberId(member.getId(), pageable);
-        List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
+        List<PetPostMissingShortResponseDto> dtoList = new ArrayList<>();
         for (PetPostMissing petPostMissing : PetPostMissingPage) {
-            PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
+            if(petPostMissing.getIsDeleted()){continue;}
+            PetPostMissingShortResponseDto dto = PetPostMissingShortResponseDto.of(petPostMissing);
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
@@ -86,6 +89,7 @@ public class PetPostMissingService {
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostMissing(Long petPostMissingId, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(petPostMissing.getIsDeleted()){throw new CustomException(POST_NOT_FOUND);}
         PetPostMissingResponseDto responseDto = PetPostMissingResponseDto.of(petPostMissing);
         responseDto.setLinked(postLinkRepository.findByPetPostMissingId(petPostMissing.getId()).isPresent());
         responseDto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissingId, member.getId()).isPresent());
@@ -111,6 +115,7 @@ public class PetPostMissingService {
     @Transactional
     public ResponseEntity<ResponseDto> update(Long petPostMissingId, PetPostMissingRequestDto requestDto, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(petPostMissing.getIsDeleted()){throw new CustomException(POST_NOT_FOUND);}
         if (member.getNickname().equals(petPostMissing.getMember().getNickname())) {
             List<String> postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
             petPostMissing.getPostImages().clear();
@@ -119,6 +124,17 @@ public class PetPostMissingService {
             }
             petPostMissing.update(requestDto);
             return ResponseDto.toResponseEntity(POST_MODIFYING_SUCCESS);
+        }else{
+            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
+        }
+    }
+    @Transactional
+    public ResponseEntity<ResponseDto> softDelete(Long petPostMissingId, Member member) {
+        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(petPostMissing.getIsDeleted()){throw new CustomException(POST_NOT_FOUND);}
+        if (member.getNickname().equals(petPostMissing.getMember().getNickname())){
+            petPostMissing.setIsDeleted(true);
+            return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
         } else {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
@@ -127,6 +143,7 @@ public class PetPostMissingService {
     @Transactional
     public ResponseEntity<ResponseDto> delete(Long petPostMissingId, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(petPostMissing.getIsDeleted()){throw new CustomException(POST_NOT_FOUND);}
         if (member.getNickname().equals(petPostMissing.getMember().getNickname())) {
             petPostMissingRepository.deleteById(petPostMissingId);
             return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);

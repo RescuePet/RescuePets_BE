@@ -26,9 +26,9 @@ public class PetPostCatchController {
     @GetMapping("/")
     @Operation(summary = "PostCatch 전체 게시글 불러오기", description = "PostCatch 전체 게시글을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPetPostCatchList(@RequestParam int page,
-                                                                             @RequestParam int size,
-                                                                             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-                                                                             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+                                                           @RequestParam int size,
+                                                           @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
     }
