@@ -56,7 +56,7 @@ public class PublicPetResponsDto {
                 .orgNm(petInfoByAPI.getOrgNm())
                 .chargeNm(petInfoByAPI.getChargeNm())
                 .officetel(petInfoByAPI.getOfficetel())
-                .state(petInfoByAPI.getState())
+                .state(petInfoByAPI.getPetStateEnum().getState())
                 .build();
     }
 }

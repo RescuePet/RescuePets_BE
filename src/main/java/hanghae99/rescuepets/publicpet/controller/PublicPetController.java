@@ -1,6 +1,7 @@
 package hanghae99.rescuepets.publicpet.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.entity.PetStateEnum;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
 import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
@@ -30,19 +31,19 @@ public class PublicPetController {
     private final ApiScheduler apiScheduler;
 
     //DB SaveOrUpdate
-    @SecurityRequirements
-    @PostMapping("api-new-save/{pageNo}")
-    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화", description = "자세한 설명")
-    public ResponseEntity<ResponseDto> apiNewSave(@PathVariable(value = "pageNo") String pageNo,
-                           @RequestParam(value = "state") String state, @RequestParam(value = "size") String size) throws IOException {
-        return apiDataService.apiDataSave(pageNo, state, size);
-    }
+//    @SecurityRequirements
+//    @PostMapping("api-new-save/{pageNo}")
+//    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화", description = "자세한 설명")
+//    public ResponseEntity<ResponseDto> apiNewSave(@PathVariable(value = "pageNo") String pageNo,
+//                                                  @RequestParam(value = "state") PetStateEnum state, @RequestParam(value = "size") String size) throws IOException {
+//        return apiDataService.apiDataSave(pageNo, state, size);
+//    }
 
     @SecurityRequirements
     @PostMapping("api-compare-data/{pageNo}")
     @Operation(summary = "공공데이터 유기동물API 호출 및 DB 비교 최신화", description = "자세한 설명")
     public ResponseEntity<ResponseDto> apiCompareData(@PathVariable(value = "pageNo") String pageNo,
-                                                  @RequestParam(value = "state") String state, @RequestParam(value = "size") String size) throws IOException {
+                                                  @RequestParam(value = "state") PetStateEnum state, @RequestParam(value = "size") String size) throws IOException {
         return apiDataService.apiCompareData(pageNo, state, size);
     }
     //api 요청 자동비교 비활성화
