@@ -6,6 +6,7 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
+import hanghae99.rescuepets.common.profanityFilter.ProfanityFiltering;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
@@ -24,6 +25,7 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
+    private final ProfanityFiltering profanityFiltering;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
@@ -85,11 +87,14 @@ public class MemberService {
     }
 
     public ResponseEntity<ResponseDto> checkNickname(NicknameRequestDto nicknameRequestDto) {
+        // 비속어 필터링
+        if(profanityFiltering.check(nicknameRequestDto.getNickname())){
+            throw new CustomException(PROFANITY_CHECK);
+        }
         // 중복 닉네임 확인
         if(memberRepository.findByNickname(nicknameRequestDto.getNickname()).isPresent()){
             throw new CustomException(DUPLICATE_EMAIL);
         }
-
         return ResponseDto.toResponseEntity(EMAIL_CHECK_SUCCESS);
     }
 

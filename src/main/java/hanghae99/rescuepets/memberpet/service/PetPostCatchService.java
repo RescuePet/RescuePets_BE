@@ -17,10 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,12 +42,11 @@ public class PetPostCatchService {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findAll(pageable);
-
         List<PetPostCatch> PetPostCatches = PetPostCatchPage.getContent();
-        List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
-
+        List<PetPostCatchShortResponseDto> dtoList = new ArrayList<>();
         for (PetPostCatch petPostCatch : PetPostCatches) {
-            PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
+            if(petPostCatch.getIsDeleted()){continue;}
+            PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
@@ -62,6 +59,7 @@ public class PetPostCatchService {
         List<PetPostCatch> PetPostCatchList = petPostCatchRepository.findAll(sort);
         List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
         for (PetPostCatch petPostCatch : PetPostCatchList) {
+            if(petPostCatch.getIsDeleted()){continue;}
             PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
@@ -74,9 +72,12 @@ public class PetPostCatchService {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findByMemberId(member.getId(), pageable);
-        List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
+        List<PetPostCatchShortResponseDto> dtoList = new ArrayList<>();
         for (PetPostCatch petPostCatch : PetPostCatchPage) {
-            PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
+            if(petPostCatch.getIsDeleted()){
+                continue;
+            }
+            PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
@@ -86,6 +87,9 @@ public class PetPostCatchService {
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(petPostCatch.getIsDeleted()){
+            throw new CustomException(POST_NOT_FOUND);
+        }
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
         responseDto.setLinked(postLinkRepository.findByPetPostCatchId(petPostCatch.getId()).isPresent());
         responseDto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
@@ -136,15 +140,22 @@ public class PetPostCatchService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> createLink(PostLinkRequestDto requestDto, Member member) {
-        PetPostCatch petPostCatch = petPostCatchRepository.findById(requestDto.getPetPostCatchId()).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
+    public ResponseEntity<ResponseDto> createLink(Long petPostCatchId, PostLinkRequestDto requestDto, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
         PostLink postLink = new PostLink(petPostCatch,requestDto,member);
+        if((postLinkRepository.findByPetPostCatchAndMemberIdAndPostTypeAndLinkedPostId(petPostCatch,member.getId(),requestDto.getPostType(),requestDto.getLinkedPostId())).isPresent()){
+            throw new NullPointerException("이미 존재하지롱");
+        }
         postLinkRepository.save(postLink);
-        PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(CATCH, requestDto.getPetPostCatchId());
-        if(postLink.getPostType() == CATCH){
+        PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(CATCH, petPostCatchId);
+        if(requestDto.getPostType() == CATCH){
+            if(petPostCatchId == requestDto.getLinkedPostId()){
+                //사실 프론트 단에서 이런일은 미연에 방지할 것입니다. 넣을지 말지 고민 중
+                throw new NullPointerException("자기 자신한테는 연결할 수 없지롱");
+            }
             PetPostCatch petPostCatchTemp = petPostCatchRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("3단계에서 막힘ㅋ"));
             postLinkRepository.save(new PostLink(petPostCatchTemp,requestDtoTemp,member));
-        }else{
+        }else if(requestDto.getPostType() == MISSING){
             PetPostMissing petPostMissingTemp = petPostMissingRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("4단계에서 막힘ㅋ"));
             postLinkRepository.save(new PostLink(petPostMissingTemp,requestDtoTemp,member));
         }
@@ -157,7 +168,7 @@ public class PetPostCatchService {
         List<PostLink> postLinkList = postLinkRepository.findAllByPetPostCatch(petPostCatch);
         List<PostLinkResponseDto> dtoList = new ArrayList<>();
         for (PostLink postLink : postLinkList) {
-            PostLinkResponseDto responseDto = PostLinkResponseDto.of(postLink, member);
+            PostLinkResponseDto responseDto = PostLinkResponseDto.of(postLink);
             if(member.getNickname().equals(postLink.getMember().getNickname())){
                 responseDto.setLinkedByMe(true);
             }
@@ -175,6 +186,8 @@ public class PetPostCatchService {
                 postLinkRepository.deleteByPetPostCatchAndMemberIdAndPostTypeAndLinkedPostId(petPostCatchInverse, member.getId(), CATCH, petPostCatchId);
             }else if(postLink.getPostType() == MISSING){
                 PetPostMissing petPostMissingInverse = petPostMissingRepository.findById(postLink.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+//                왜 이렇게 복잡하게 조건을 걸어서 삭제하나요? 아래와 같이 삭제하면 해당 게시물에 걸려있는 모든 링크가 삭제되기 때문입니다.
+//                현재 사용자가 삭제하려는 게시물쪽으로 걸린 링크 하나만 반대편에서 삭제해야하기 때문에 다음과 같이 삭제합니다.
                 postLinkRepository.deleteByPetPostMissingAndMemberIdAndPostTypeAndLinkedPostId(petPostMissingInverse, member.getId(), CATCH, petPostCatchId);
             }
         }

@@ -17,11 +17,11 @@ public class PostLinkResponseDto {
     private Long linkedPostId;
     private boolean isLinkedByMe = false;
 
-    public static PostLinkResponseDto of (PostLink postLink, Member member) {
+    public static PostLinkResponseDto of (PostLink postLink) {
         return PostLinkResponseDto.builder()
                 .postType(postLink.getPostType())
                 .linkedPostId(postLink.getLinkedPostId())
-                .memberId(member.getId())
+                .memberId(postLink.getMember().getId())
                 .build();
     }
     public void setLinkedByMe(boolean isLinkedByMe) {
