@@ -43,7 +43,7 @@ public class MemberController {
     }
 
     // 닉네임 중복 확인
-    @Operation(summary = "닉네임 중복 확인", description = "자세한 설명")
+    @Operation(summary = "닉네임 욕설 포함여부 및 중복 확인", description = "자세한 설명")
     @PostMapping("member/nickName-duplicate")
     public ResponseEntity<ResponseDto> checkNickname(@RequestBody NicknameRequestDto nicknameRequestDto) {
         return memberService.checkNickname(nicknameRequestDto);

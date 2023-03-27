@@ -29,6 +29,7 @@ public enum ExceptionMessage {
     USER_FORBIDDEN(FORBIDDEN, "권한이 없습니다."),
     USER_STOP(FORBIDDEN,"정지"),
     CART_GOODS_DELETE_FORBIDDEN(FORBIDDEN,"해당 장바구니의 삭제 권한이 없습니다."),
+    PROFANITY_CHECK(FORBIDDEN, "닉네임에는 비속어를 포함할 수 없습니다."),
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     POST_NOT_FOUND(NOT_FOUND, "대상 게시글을 찾을 수 없습니다."),
@@ -41,7 +42,6 @@ public enum ExceptionMessage {
     NOT_FOUND_PET_INFO_MEMBER(NOT_FOUND,"요청하신 유저는 해당 관심 유기 동물이 등록되어 있지 않습니다."),
     NOT_FOUND_WISH(NOT_FOUND,"관심 등록되어 있지 않습니다."),
     NOT_FOUND_DECLARE(NOT_FOUND,"신고가 등록되어 있지 않습니다."),
-
     NOT_FOUND_HUMAN(NOT_FOUND,"해당 고객이 존재하지 않습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
