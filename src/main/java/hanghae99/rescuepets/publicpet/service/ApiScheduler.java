@@ -37,7 +37,7 @@ public class ApiScheduler {
     private final PetInfoStateRepository petInfoStateRepository;
 
 
-//    @Scheduled(cron = "0 0/30 * * * *")
+    @Scheduled(cron = "0 0/5 * * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
@@ -213,10 +213,10 @@ public class ApiScheduler {
                     PetInfoState entityPetInfo = buildPetInfoEntity(petInfoByAPI, compareDataKey);
                     petInfoStateRepository.save(entityPetInfo);
                     PetInfoByAPI petInfoByUpdate = buildPetInfo(itemObject, state);
-//                    petInfoByAPI.update(petInfoByUpdate);
+                    petInfoByAPI.update(petInfoByUpdate);
                     PetInfoState petInfoEntity = buildPetInfoApi(itemObject, state, compareDataKey);
                     petInfoStateRepository.save(petInfoEntity);
-                    publicPetRepository.saveAndFlush(petInfoByUpdate);
+                    publicPetRepository.saveAndFlush(petInfoByAPI);
                     log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
                 }
                 //list가 비었을 경우 변동 사항이 없으므로 업데이트 동작하지 않음
