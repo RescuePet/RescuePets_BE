@@ -103,5 +103,11 @@ public class PetPostMissing extends TimeStamped{
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
+    public Boolean getIsDeleted() {
+        if(isDeleted == null){
+            return false;
+        }
+        return isDeleted;
+    }
 }
 
