@@ -103,7 +103,11 @@ public class PetPostCatch extends TimeStamped{
         this.contact = requestDto.getContact();
         this.openNickname = requestDto.getOpenNickname();
     }
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
+    public void setIsDeleted(Boolean isDeleted) { this.isDeleted = isDeleted; }
+    public Boolean getIsDeleted() {
+        if(isDeleted == null){
+            return false;
+        }
+        return isDeleted;
     }
 }

@@ -1,9 +1,9 @@
 package hanghae99.rescuepets.common.entity;
 
 public enum SexEnum {
-    MALE(Sex.MALE),  // 강아지
-    FEMALE(Sex.FEMALE),  // 고양이
-    UNKNOWN(Sex.UNKNOWN);  // 기타
+    MALE(Sex.MALE),  // 수컷
+    FEMALE(Sex.FEMALE),  // 암컷
+    UNKNOWN(Sex.UNKNOWN);  // 미상
 
     private final String sex;
 

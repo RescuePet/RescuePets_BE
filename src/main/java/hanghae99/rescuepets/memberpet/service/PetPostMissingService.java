@@ -22,8 +22,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
-import static hanghae99.rescuepets.common.dto.ExceptionMessage.UNAUTHORIZED_UPDATE_OR_DELETE;
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 import static hanghae99.rescuepets.common.entity.PostTypeEnum.CATCH;
 import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
@@ -58,9 +57,9 @@ public class PetPostMissingService {
     public ResponseEntity<ResponseDto> getPetPostMissingAll(String sortBy, Member member) {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        List<PetPostMissing> PetPostMissingList = petPostMissingRepository.findAll(sort);
+        List<PetPostMissing> petPostMissingList = petPostMissingRepository.findAll(sort);
         List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
-        for (PetPostMissing petPostMissing : PetPostMissingList) {
+        for (PetPostMissing petPostMissing : petPostMissingList) {
             if(petPostMissing.getIsDeleted()){continue;}
             PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
@@ -89,7 +88,9 @@ public class PetPostMissingService {
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostMissing(Long petPostMissingId, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(petPostMissing.getIsDeleted()){throw new CustomException(POST_NOT_FOUND);}
+        if(petPostMissing.getIsDeleted()){
+            throw new CustomException(POST_ALREADY_DELETED);
+        }
         PetPostMissingResponseDto responseDto = PetPostMissingResponseDto.of(petPostMissing);
         responseDto.setLinked(postLinkRepository.findByPetPostMissingId(petPostMissing.getId()).isPresent());
         responseDto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissingId, member.getId()).isPresent());
@@ -98,7 +99,7 @@ public class PetPostMissingService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> create(PetPostMissingRequestDto requestDto, Member member) {
+    public ResponseEntity<ResponseDto> createPetPostMissing(PetPostMissingRequestDto requestDto, Member member) {
         List<String> postImageURLs = new ArrayList<>();
         if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
             postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
@@ -108,12 +109,12 @@ public class PetPostMissingService {
             petPostMissing.addPostImage(new PostImage(petPostMissing, postImageURL));
         }
         petPostMissingRepository.save(petPostMissing);
-        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
+        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS, petPostMissing.getId());
     }
 
 
     @Transactional
-    public ResponseEntity<ResponseDto> update(Long petPostMissingId, PetPostMissingRequestDto requestDto, Member member) {
+    public ResponseEntity<ResponseDto> updatePetPostMissing(Long petPostMissingId, PetPostMissingRequestDto requestDto, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if(petPostMissing.getIsDeleted()){throw new CustomException(POST_NOT_FOUND);}
         if (member.getNickname().equals(petPostMissing.getMember().getNickname())) {

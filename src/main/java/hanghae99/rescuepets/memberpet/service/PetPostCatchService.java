@@ -38,6 +38,19 @@ public class PetPostCatchService {
     private final S3Uploader s3Uploader;
 
     @Transactional
+    public ResponseEntity<ResponseDto> createPetPostCatch(PetPostCatchRequestDto requestDto, Member member) {
+        List<String> postImageURLs = new ArrayList<>();
+        if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
+            postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
+        }
+        PetPostCatch petPostCatch = new PetPostCatch(requestDto, member);
+        for (String postImageURL : postImageURLs) {
+            petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
+        }
+        petPostCatchRepository.save(petPostCatch);
+        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
+    }
+    @Transactional
     public ResponseEntity<ResponseDto> getPetPostCatchList(int page, int size, String sortBy, Member member) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -54,11 +67,10 @@ public class PetPostCatchService {
     }
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostCatchAll(String sortBy, Member member) {
-
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        List<PetPostCatch> PetPostCatchList = petPostCatchRepository.findAll(sort);
+        List<PetPostCatch> petPostCatchList = petPostCatchRepository.findAll(sort);
         List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
-        for (PetPostCatch petPostCatch : PetPostCatchList) {
+        for (PetPostCatch petPostCatch : petPostCatchList) {
             if(petPostCatch.getIsDeleted()){continue;}
             PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
@@ -68,15 +80,12 @@ public class PetPostCatchService {
     }
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostCatchListByMember(int page, int size, String sortBy, Member member) {
-
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findByMemberId(member.getId(), pageable);
         List<PetPostCatchShortResponseDto> dtoList = new ArrayList<>();
         for (PetPostCatch petPostCatch : PetPostCatchPage) {
-            if(petPostCatch.getIsDeleted()){
-                continue;
-            }
+            if(petPostCatch.getIsDeleted()){continue;}
             PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
@@ -87,9 +96,7 @@ public class PetPostCatchService {
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(petPostCatch.getIsDeleted()){
-            throw new CustomException(POST_NOT_FOUND);
-        }
+        if(petPostCatch.getIsDeleted()){throw new CustomException(POST_ALREADY_DELETED);}
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
         responseDto.setLinked(postLinkRepository.findByPetPostCatchId(petPostCatch.getId()).isPresent());
         responseDto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
@@ -97,22 +104,7 @@ public class PetPostCatchService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> create(PetPostCatchRequestDto requestDto, Member member) {
-        List<String> postImageURLs = new ArrayList<>();
-        if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
-            postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
-        }
-        PetPostCatch petPostCatch = new PetPostCatch(requestDto, member);
-        for (String postImageURL : postImageURLs) {
-            petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
-        }
-        petPostCatchRepository.save(petPostCatch);
-        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
-    }
-
-
-    @Transactional
-    public ResponseEntity<ResponseDto> update(Long petPostCatchId, PetPostCatchRequestDto requestDto, Member member) {
+    public ResponseEntity<ResponseDto> updatePetPostCatch(Long petPostCatchId, PetPostCatchRequestDto requestDto, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (member.getNickname().equals(petPostCatch.getMember().getNickname())) {
             List<String> postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
@@ -126,11 +118,29 @@ public class PetPostCatchService {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
-
     @Transactional
-    public ResponseEntity<ResponseDto> delete(Long petPostCatchId, Member member) {
-        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND)
-        );
+    public ResponseEntity<ResponseDto> softDeletePetPostCatch(Long petPostCatchId, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if (member.getNickname().equals(petPostCatch.getMember().getNickname())) {
+            petPostCatch.setIsDeleted(true);
+            return ResponseDto.toResponseEntity(POST_SOFT_DELETE_SUCCESS);
+        } else {
+            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
+        }
+    }
+    @Transactional
+    public ResponseEntity<ResponseDto> deletePetPostCatch(Long petPostCatchId, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if (member.getNickname().equals(petPostCatch.getMember().getNickname())) {
+            petPostCatchRepository.deleteById(petPostCatchId);
+            return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
+        } else {
+            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
+        }
+    }
+    @Transactional
+    public ResponseEntity<ResponseDto> periodicDeletePetPostCatch(Long petPostCatchId, Member member) {
+        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (member.getNickname().equals(petPostCatch.getMember().getNickname())) {
             petPostCatchRepository.deleteById(petPostCatchId);
             return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);

@@ -25,7 +25,6 @@ import org.springframework.web.cors.CorsUtils;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final JwtAuthFilter jwtAuthFilter;
     private final CorsFilter corsFilter;
     private final JwtAccessDeniedHandler accessDeniedHandler;
@@ -34,6 +33,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
+//                .requestMatchers(PathRequest.toH2Console())
                 .mvcMatchers("/api-docs")
                 .mvcMatchers("/docs/**")
                 .mvcMatchers("/version")
