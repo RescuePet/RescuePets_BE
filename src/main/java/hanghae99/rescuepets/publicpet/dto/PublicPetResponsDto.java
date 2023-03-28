@@ -33,7 +33,10 @@ public class PublicPetResponsDto {
     private String state;
     private Boolean isScrap;
     private Integer scrapCount;
-    public static PublicPetResponsDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap, Integer scrapCount) {
+    private Boolean isInquiry;
+    private Integer InquiryCount;
+
+    public static PublicPetResponsDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap, Integer scrapCount, Boolean isInquiry, Integer InquiryCount) {
         return PublicPetResponsDto.builder()
                 .id(petInfoByAPI.getId())
                 .desertionNo(petInfoByAPI.getDesertionNo())
@@ -61,6 +64,8 @@ public class PublicPetResponsDto {
                 .state(petInfoByAPI.getPetStateEnum().getKorean())
                 .isScrap(isScrap)
                 .scrapCount(scrapCount)
+                .isInquiry(isInquiry)
+                .InquiryCount(InquiryCount)
                 .build();
     }
 }

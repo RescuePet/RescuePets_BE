@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class PetInfoScrap extends TimeStamped{
+public class PetInfoScrap{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

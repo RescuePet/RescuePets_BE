@@ -48,8 +48,8 @@ public class PublicPetController {
     }
     @PostMapping("/inquiry/{desertionNo}")
     @Operation(summary = "유기동물 문의내역 기록", description = "자세한 설명")
-    public ResponseEntity<ResponseDto> petInfoInquiryCheck(@PathVariable(value = "desertionNo") String desertionNo, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return publicPetService.petInfoInquiryCheck(desertionNo, memberDetails.getMember());
+    public ResponseEntity<ResponseDto> petInfoInquiry(@PathVariable(value = "desertionNo") String desertionNo, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return publicPetService.petInfoInquiry(desertionNo, memberDetails.getMember());
     }
 
 }

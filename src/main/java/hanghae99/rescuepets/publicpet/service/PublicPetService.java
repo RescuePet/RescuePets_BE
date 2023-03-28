@@ -4,6 +4,7 @@ import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetInfoByAPI;
+import hanghae99.rescuepets.common.entity.PetInfoInquiry;
 import hanghae99.rescuepets.common.entity.PetInfoScrap;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
 import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
@@ -47,7 +48,7 @@ public class PublicPetService {
 
         for (PetInfoByAPI petInfoByAPI : postPage) {
             Boolean isScrap = petInfoScrapRepository.findByMemberIdAndDesertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
-            PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI, isScrap, null);
+            PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI, isScrap, null, null, null);
             dtoList.add(responseDto);
         }
         log.info("요청된 내용" + "page: " + page + "size: " + size + "sortBy: " + sortBy);
@@ -59,9 +60,11 @@ public class PublicPetService {
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getPublicPetDetails(String desertionNo, Member member) {
         PetInfoByAPI petInfoByAPI = getPetInfo(desertionNo);
-        Boolean isScrap = petInfoScrapRepository.findByMemberIdAndDesertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
-        Integer scrapCount = petInfoScrapRepository.countByDesertionNo(petInfoByAPI.getDesertionNo());
-        return ResponseDto.toResponseEntity(PET_INFO_GET_DETAILS_SUCCESS, PublicPetResponsDto.of(petInfoByAPI, isScrap, scrapCount));
+        Boolean isScrap = petInfoScrapRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent();
+        Integer scrapCount = petInfoScrapRepository.countByDesertionNo(desertionNo);
+        Boolean isInquiry = petInfoInquiryRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent();
+        Integer InquiryCount = petInfoInquiryRepository.countByDesertionNo(desertionNo);
+        return ResponseDto.toResponseEntity(PET_INFO_GET_DETAILS_SUCCESS, PublicPetResponsDto.of(petInfoByAPI, isScrap, scrapCount, isInquiry, InquiryCount));
     }
 
     //관심 유기동물 등록
@@ -87,12 +90,12 @@ public class PublicPetService {
 
     //문의 기록
     @Transactional
-    public ResponseEntity<ResponseDto> petInfoInquiryCheck(String desertionNo, Member member) {
+    public ResponseEntity<ResponseDto> petInfoInquiry(String desertionNo, Member member) {
         getPetInfo(desertionNo);
         if (petInfoInquiryRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent()) {
             throw new CustomException(DUPLICATE_RESOURCE_PET_INFO_INQUIRY);
         }
-        petInfoScrapRepository.save(new PetInfoScrap(member, desertionNo));
+        petInfoInquiryRepository.save(new PetInfoInquiry(member, desertionNo));
         return ResponseDto.toResponseEntity(PET_INFO_INQUIRY_SUCCESS);
     }
 

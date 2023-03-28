@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
-import static hanghae99.rescuepets.common.dto.SuccessMessage.PUBLIC_PET_INFO_SAVE_SUCCESS;
+import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 
 @Slf4j
 @RequiredArgsConstructor
