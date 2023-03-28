@@ -46,7 +46,8 @@ public enum ExceptionMessage {
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
-    DUPLICATE_RESOURCE_PET_INFO(CONFLICT, "데이터가 이미 존재합니다"),
+    DUPLICATE_RESOURCE_PET_INFO_SCRAP(CONFLICT, "관심 유기동물에 이미 존재합니다"),
+    DUPLICATE_RESOURCE_PET_INFO_INQUIRY(CONFLICT, "해당 유기동물에 문의한 내역이 존재합니다"),
     DUPLICATE_USER(CONFLICT,"중복된 사용자가 존재합니다."),
     DUPLICATE_GOODS(CONFLICT,"해당 상품의 이름은 이미 존재합니다."),
     DUPLICATE_NICKNAME(CONFLICT,"중복된 닉네임이 존재합니다."),

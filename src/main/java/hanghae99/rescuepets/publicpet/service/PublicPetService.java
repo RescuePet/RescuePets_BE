@@ -4,15 +4,13 @@ import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetInfoByAPI;
-import hanghae99.rescuepets.common.entity.PetInfoLike;
+import hanghae99.rescuepets.common.entity.PetInfoScrap;
 import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
 import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
-import hanghae99.rescuepets.publicpet.repository.PetInfoLikeRepository;
+import hanghae99.rescuepets.publicpet.repository.PetInfoInquiryRepository;
+import hanghae99.rescuepets.publicpet.repository.PetInfoScrapRepository;
 import hanghae99.rescuepets.publicpet.repository.PublicPetRepository;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,19 +32,22 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 @Service
 public class PublicPetService {
     private final PublicPetRepository publicPetRepository;
-    private final PetInfoLikeRepository petInfoLikeRepository;
+    private final PetInfoScrapRepository petInfoScrapRepository;
+    private final PetInfoInquiryRepository petInfoInquiryRepository;
 
     //전체 페이지
     @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDto> getPublicPet(int page, int size, String sortBy) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo").and(Sort.by(Sort.Direction.DESC, sortBy));
+    public ResponseEntity<ResponseDto> getPublicPet(int page, int size, String sortBy, Member member) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo", sortBy);
+//        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo").and(Sort.by(Sort.Direction.DESC, sortBy));
 //        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo-" + sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetInfoByAPI> postPage = publicPetRepository.findAll(pageable);
         List<PublicPetResponsDto> dtoList = new ArrayList<>();
 
         for (PetInfoByAPI petInfoByAPI : postPage) {
-            PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI);
+            Boolean isScrap = petInfoScrapRepository.findByMemberIdAndDesertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
+            PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI, isScrap, null);
             dtoList.add(responseDto);
         }
         log.info("요청된 내용" + "page: " + page + "size: " + size + "sortBy: " + sortBy);
@@ -56,30 +57,43 @@ public class PublicPetService {
 
     //상세 페이지
     @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDto> getPublicPetDetails(String desertionNo) {
+    public ResponseEntity<ResponseDto> getPublicPetDetails(String desertionNo, Member member) {
         PetInfoByAPI petInfoByAPI = getPetInfo(desertionNo);
-        return ResponseDto.toResponseEntity(PET_INFO_GET_DETAILS_SUCCESS, PublicPetResponsDto.of(petInfoByAPI));
+        Boolean isScrap = petInfoScrapRepository.findByMemberIdAndDesertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
+        Integer scrapCount = petInfoScrapRepository.countByDesertionNo(petInfoByAPI.getDesertionNo());
+        return ResponseDto.toResponseEntity(PET_INFO_GET_DETAILS_SUCCESS, PublicPetResponsDto.of(petInfoByAPI, isScrap, scrapCount));
     }
 
     //관심 유기동물 등록
     @Transactional
-    public ResponseEntity<ResponseDto> petInfoLike(String desertionNo, Member member) {
+    public ResponseEntity<ResponseDto> petInfoScrap(String desertionNo, Member member) {
         getPetInfo(desertionNo);
-        if (petInfoLikeRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent()) {
-            throw new CustomException(DUPLICATE_RESOURCE_PET_INFO);
+        if (petInfoScrapRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent()) {
+            throw new CustomException(DUPLICATE_RESOURCE_PET_INFO_SCRAP);
         }
-        petInfoLikeRepository.save(new PetInfoLike(member, desertionNo));
-        return ResponseDto.toResponseEntity(PET_INFO_WISH_SUCCESS);
+        petInfoScrapRepository.save(new PetInfoScrap(member, desertionNo));
+        return ResponseDto.toResponseEntity(PET_INFO_SCRAP_SUCCESS);
     }
 
     //관심 유기동물 삭제
     @Transactional
-    public ResponseEntity<ResponseDto> deletePetInfoLike(Long PetInfoLikeId, Member member) {
-        if (petInfoLikeRepository.findByMemberIdAndId(member.getId(), PetInfoLikeId).isEmpty()) {
+    public ResponseEntity<ResponseDto> deletePetInfoScrap(Long PetInfoLikeId, Member member) {
+        if (petInfoScrapRepository.findByMemberIdAndId(member.getId(), PetInfoLikeId).isEmpty()) {
             throw new CustomException(NOT_FOUND_PET_INFO_MEMBER);
         }
-        petInfoLikeRepository.deleteByMemberIdAndId(member.getId(), PetInfoLikeId);
+        petInfoScrapRepository.deleteByMemberIdAndId(member.getId(), PetInfoLikeId);
         return ResponseDto.toResponseEntity(PET_INFO_WISH_DELETE_SUCCESS);
+    }
+
+    //문의 기록
+    @Transactional
+    public ResponseEntity<ResponseDto> petInfoInquiryCheck(String desertionNo, Member member) {
+        getPetInfo(desertionNo);
+        if (petInfoInquiryRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent()) {
+            throw new CustomException(DUPLICATE_RESOURCE_PET_INFO_INQUIRY);
+        }
+        petInfoScrapRepository.save(new PetInfoScrap(member, desertionNo));
+        return ResponseDto.toResponseEntity(PET_INFO_INQUIRY_SUCCESS);
     }
 
     private PetInfoByAPI getPetInfo(String desertionNo) {
