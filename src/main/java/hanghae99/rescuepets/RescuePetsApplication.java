@@ -13,7 +13,7 @@ import java.util.TimeZone;
 @EnableJpaAuditing
 @EnableScheduling //scheduler
 @SpringBootApplication
-@OpenAPIDefinition(servers = {@Server(url = "https://heukwu.shop", description = "Default Server URL"), @Server(url = "http://localhost:8080", description = "Local Server URL")})
+@OpenAPIDefinition(servers = {@Server(url = "https://heukwu.shop"), @Server(url = "http://localhost:8080")})
 public class RescuePetsApplication {
 
     static {
