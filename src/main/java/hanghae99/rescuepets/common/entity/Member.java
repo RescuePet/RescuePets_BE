@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.MEMBER;
+
 @Getter
 @Entity
 @NoArgsConstructor
@@ -23,10 +25,11 @@ public class Member {
     private String password;
     @Column
     private Long kakaoId;
-
     @Column
     private String profileImage;
-
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private MemberRoleEnum memberRole = MEMBER;
     @Builder
     public Member(Long id, String email, String nickname , String password, String address, Long kakaoId, String profileImage){
         this.id = id;
