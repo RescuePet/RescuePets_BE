@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .cors().disable()
 
                 .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+//                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                 .antMatchers("/api/member/signup", "/api/member/login","/api/users/email-duplicate/**","/api/users/nickName/**").permitAll()
                 .antMatchers(HttpMethod.GET, "api/pets/petinfobyapi/**", "api/pets/catch/**","api/pets/missing","api/pets/missing/comments/**").permitAll()
                 .antMatchers(HttpMethod.GET, "api/chat/catchroom/**","api/chat/missingroom/**","chat/rooms","chat/rooms/**").permitAll()
