@@ -1,12 +1,15 @@
 package hanghae99.rescuepets.member.service;
 
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.PostImage;
 import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.profanityFilter.ProfanityFiltering;
+import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
@@ -14,9 +17,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
@@ -30,6 +36,8 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final KakaoService kakaoService;
+
+    private final S3Uploader s3Uploader;
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -95,6 +103,7 @@ public class MemberService {
         if(memberRepository.findByNickname(nicknameRequestDto.getNickname()).isPresent()){
             throw new CustomException(DUPLICATE_EMAIL);
         }
+
         return ResponseDto.toResponseEntity(EMAIL_CHECK_SUCCESS);
     }
 
@@ -122,4 +131,20 @@ public class MemberService {
         member.withdrawal();
         return ResponseDto.toResponseEntity(WITHDRAWAL_SUCCESS);
     }
-}
+    @Transactional
+    public ResponseEntity<ResponseDto> memberEdit(UpdateRequestDto updateRequestDto,MultipartFile  multipartFile,Member member) {
+        Member member1 = memberRepository.findById(member.getId()).orElseThrow(
+                () -> new CustomException(NOT_FOUND_HUMAN)
+        );
+        if(multipartFile != null){
+            member1.update(s3Uploader.uploadSingle(multipartFile));
+            if (updateRequestDto != null && !updateRequestDto.getNickname().equalsIgnoreCase("")){
+                member1.updates(updateRequestDto.getNickname());
+            }
+        } else {
+            throw new CustomException(DUPLICATE_NICKNAME);
+        }
+            return ResponseDto.toResponseEntity(POST_MODIFYING_SUCCESS);
+        }
+    }
+
