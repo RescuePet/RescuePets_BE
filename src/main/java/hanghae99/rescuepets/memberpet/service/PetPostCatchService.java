@@ -48,7 +48,7 @@ public class PetPostCatchService {
             petPostCatch.addPostImage(new PostImage(petPostCatch, postImageURL));
         }
         petPostCatchRepository.save(petPostCatch);
-        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS);
+        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS, petPostCatch.getId());
     }
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostCatchList(int page, int size, String sortBy, Member member) {
