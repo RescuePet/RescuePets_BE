@@ -1,5 +1,7 @@
 package hanghae99.rescuepets;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -11,6 +13,7 @@ import java.util.TimeZone;
 @EnableJpaAuditing
 @EnableScheduling //scheduler
 @SpringBootApplication
+@OpenAPIDefinition(servers = {@Server(url = "https://heukwu.shop", description = "Default Server URL"), @Server(url = "http://localhost:8080", description = "Local Server URL")})
 public class RescuePetsApplication {
 
     static {
@@ -21,7 +24,6 @@ public class RescuePetsApplication {
         System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
     }
 
-
     @PostConstruct
     public void started() {
         TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
@@ -30,5 +32,4 @@ public class RescuePetsApplication {
     public static void main(String[] args) {
         SpringApplication.run(RescuePetsApplication.class, args);
     }
-
 }

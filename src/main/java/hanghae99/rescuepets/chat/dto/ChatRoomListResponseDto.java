@@ -9,16 +9,22 @@ import lombok.Getter;
 public class ChatRoomListResponseDto {
 
     private String roomId;
-    private String roomName;
+    private String partner;
     private String lastChat;
     private String profileImage;
+    private String postName;
+    private String roomName;
+    private Long postId;
 
-    public static ChatRoomListResponseDto of(ChatRoom room, String roomName, String lastChat, String profileImage) {
+    public static ChatRoomListResponseDto of(ChatRoom room, String partner, String lastChat, String profileImage, String postName, Long postId, String roomName) {
         return ChatRoomListResponseDto.builder()
                 .roomId(room.getRoomId())
-                .roomName(roomName)
+                .partner(partner)
                 .lastChat(lastChat)
                 .profileImage(profileImage)
+                .postName(postName)
+                .postId(postId)
+                .roomName(roomName)
                 .build();
     }
 }
