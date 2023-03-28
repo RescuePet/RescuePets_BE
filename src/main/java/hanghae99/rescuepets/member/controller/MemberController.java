@@ -27,7 +27,6 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
 
-    //회원가입
     @Operation(summary = "회원가입", description = "자세한 설명")
     @PostMapping("member/signup")
     public ResponseEntity<ResponseDto> signup(@RequestBody @Validated SignupRequestDto signupRequestDto) {
@@ -35,21 +34,18 @@ public class MemberController {
 
     }
 
-    // 이메일 중복 확인
     @Operation(summary = "이메일 중복 확인", description = "자세한 설명")
     @GetMapping("member/email-duplicate")
     public ResponseEntity<ResponseDto> checkEmail(@RequestBody EmailRequestDto emailRequestDto) {
         return memberService.checkEmail(emailRequestDto);
     }
 
-    // 닉네임 중복 확인
-    @Operation(summary = "닉네임 중복 확인", description = "자세한 설명")
+    @Operation(summary = "닉네임 욕설 포함여부 및 중복 확인", description = "자세한 설명")
     @PostMapping("member/nickName-duplicate")
     public ResponseEntity<ResponseDto> checkNickname(@RequestBody NicknameRequestDto nicknameRequestDto) {
         return memberService.checkNickname(nicknameRequestDto);
     }
 
-    // 로그인 하기
     @Operation(summary = "로그인", description = "자세한 설명")
     @PostMapping("/member/login")
     public ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {

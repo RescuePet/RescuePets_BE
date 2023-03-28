@@ -8,13 +8,19 @@ import java.util.Optional;
 
 public interface PostLinkRepository extends JpaRepository<PostLink, Long> {
     List<PostLink> findAllByPetPostCatch(PetPostCatch petPostCatch);
+    List<PostLink> findAllByPetPostMissing(PetPostMissing petPostMissing);
     List<PostLink> findAllByPetPostCatchAndMemberId(PetPostCatch petPostCatch, Long memberId);
+    List<PostLink> findAllByPetPostMissingAndMemberId(PetPostMissing petPostMissing, Long memberId);
     void deleteByPetPostCatchAndMemberId(PetPostCatch petPostCatch, Long memberId);
     void deleteByPetPostMissingAndMemberId(PetPostMissing petPostMissing, Long memberId);
     void deleteByPetPostCatchAndMemberIdAndPostTypeAndLinkedPostId
             (PetPostCatch petPostCatch, Long memberId, PostTypeEnum postType, Long linkedPostId);
     void deleteByPetPostMissingAndMemberIdAndPostTypeAndLinkedPostId
             (PetPostMissing petPostMissing, Long memberId, PostTypeEnum postType, Long linkedPostId);
-
-    Optional<Object> findByPetPostCatchId(Long petPostCatchId);
+    Optional<PostLink> findByPetPostCatchId(Long petPostCatchId);
+    Optional<PostLink> findByPetPostMissingId(Long petPostMissingId);
+    Optional<PostLink> findByPetPostCatchAndMemberIdAndPostTypeAndLinkedPostId
+            (PetPostCatch petPostCatch, Long memberId, PostTypeEnum postType, Long linkedPostId);
+    Optional<PostLink> findByPetPostMissingAndMemberIdAndPostTypeAndLinkedPostId
+            (PetPostMissing petPostMissing, Long memberId, PostTypeEnum postType, Long linkedPostId);
 }

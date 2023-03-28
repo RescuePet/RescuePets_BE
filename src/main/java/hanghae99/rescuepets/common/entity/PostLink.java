@@ -1,13 +1,10 @@
 package hanghae99.rescuepets.common.entity;
 
-import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PostLinkRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
-import static hanghae99.rescuepets.common.entity.PostTypeEnum.*;
 
 @Entity
 @Getter
@@ -31,14 +28,14 @@ public class PostLink {
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
 
-    public PostLink(PetPostCatch petPostCatch,PostLinkRequestDto requestDto, Member member) {
+    public PostLink(PetPostCatch petPostCatch, PostLinkRequestDto requestDto, Member member) {
         this.petPostCatch = petPostCatch;
         this.postType = requestDto.getPostType();
         this.linkedPostId = requestDto.getLinkedPostId();
         this.member = member;
     }
 
-    public PostLink(PetPostMissing petPostMissing,PostLinkRequestDto requestDto, Member member) {
+    public PostLink(PetPostMissing petPostMissing, PostLinkRequestDto requestDto, Member member) {
         this.petPostMissing = petPostMissing;
         this.postType = requestDto.getPostType();
         this.linkedPostId = requestDto.getLinkedPostId();

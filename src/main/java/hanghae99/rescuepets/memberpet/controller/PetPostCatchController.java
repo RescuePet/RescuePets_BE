@@ -26,9 +26,9 @@ public class PetPostCatchController {
     @GetMapping("/")
     @Operation(summary = "PostCatch 전체 게시글 불러오기", description = "PostCatch 전체 게시글을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPetPostCatchList(@RequestParam int page,
-                                                                             @RequestParam int size,
-                                                                             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-                                                                             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+                                                           @RequestParam int size,
+                                                           @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         Member member = memberDetails.getMember();
         return petPostCatchService.getPetPostCatchList(page-1, size, sortBy, member);
     }
@@ -60,7 +60,7 @@ public class PetPostCatchController {
     @Operation(summary = "PostCatch 게시글 작성하기", description = "PostCatch 게시글 하나를 작성합니다")
     public ResponseEntity<ResponseDto> createPetPostCatch(@ModelAttribute PetPostCatchRequestDto requestDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return petPostCatchService.create(requestDto, memberDetails.getMember());
+        return petPostCatchService.createPetPostCatch(requestDto, memberDetails.getMember());
     }
 
     @PutMapping(value = "/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -68,20 +68,26 @@ public class PetPostCatchController {
     public ResponseEntity<ResponseDto> updatePetPostCatch(@PathVariable Long petPostCatchId,
                                           @ModelAttribute PetPostCatchRequestDto requestDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return petPostCatchService.update(petPostCatchId, requestDto, memberDetails.getMember());
+        return petPostCatchService.updatePetPostCatch(petPostCatchId, requestDto, memberDetails.getMember());
     }
 
     @DeleteMapping("/{petPostCatchId}")
-    @Operation(summary = "내가 작성한 특정 PostCatch 게시글 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
+    @Operation(summary = "PostCatch 게시글 임시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
+    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
+        return petPostCatchService.softDeletePetPostCatch(petPostCatchId, userDetails.getMember());
+    }
+    @DeleteMapping("/{petPostCatchId}/now")
+    @Operation(summary = "PostCatch 게시글 즉시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
     public ResponseEntity<ResponseDto> deletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
-        return petPostCatchService.delete(petPostCatchId, userDetails.getMember());
+        return petPostCatchService.deletePetPostCatch(petPostCatchId, userDetails.getMember());
     }
 
-    @PostMapping(value = "/links")
+    @PostMapping(value = "/links/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "PostCatch 게시글에서 다른 게시글로 링크걸기", description = "사용자가 연결짓고 싶은 게시물 간의 링크를 생성합니다. PostType에 대상 게시물이 CATCH인지 MISSING인지 입력해주어야합니다.")
-    public ResponseEntity<ResponseDto> createLink(@RequestBody PostLinkRequestDto requestDto,
+    public ResponseEntity<ResponseDto> createLink(@PathVariable Long petPostCatchId,
+                                                  @ModelAttribute PostLinkRequestDto requestDto,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return petPostCatchService.createLink(requestDto, memberDetails.getMember());
+        return petPostCatchService.createLink(petPostCatchId, requestDto, memberDetails.getMember());
     }
     @GetMapping(value = "/links/{petPostCatchId}")
     @Operation(summary = "PostCatch 게시글에서 생성된 링크들을 조회합니다", description = "해당 게시글에서 생성된 링크들을 조회합니다. 게시글에서 생성된 링크가 전혀 없는지, 하나라도 있는지 사용자에게 표시해줍니다.")

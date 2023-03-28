@@ -1,9 +1,9 @@
 package hanghae99.rescuepets.common.entity;
 
 public enum NeuterEnum {
-    YES(Neuter.YES),  // 강아지
-    NO(Neuter.NO),  // 고양이
-    UNKNOWN(Neuter.UNKNOWN);  // 기타
+    YES(Neuter.YES),  // 중성화 함
+    NO(Neuter.NO),  // 중성화 안 함
+    UNKNOWN(Neuter.UNKNOWN);  // 알 수 없음
 
     private final String neuter;
 
