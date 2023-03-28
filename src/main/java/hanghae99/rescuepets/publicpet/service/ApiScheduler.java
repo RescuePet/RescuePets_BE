@@ -37,7 +37,7 @@ public class ApiScheduler {
     private final PetInfoStateRepository petInfoStateRepository;
 
 
-    @Scheduled(cron = "0 0/30 * * * *")
+//    @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
@@ -198,22 +198,22 @@ public class ApiScheduler {
                     compareDataList.add("officetel");
                 }
                 if (!petInfoByAPI.getPetStateEnum().equals(state)) { //state가 다를 경우 true
-                    if (state.equals(END) && itemObject.optString("getProcessState").contains("종료")) { //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
+                    if (state.equals(END) && itemObject.optString("ProcessState").contains("종료")) { //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
                         compareDataList.add("state");
 //                        log.info("수정 동작 --- state == null");
                     }
-                    if ((state.equals(PROTECT) || state.equals(NOTICE)) && !itemObject.optString("getProcessState").contains("보호")) {
+                    if ((state.equals(PROTECT) || state.equals(NOTICE)) && !itemObject.optString("ProcessState").contains("보호")) {
                         compareDataList.add("state");
 //                        log.info("수정 동작 --- state == protect/notice");
                     }
                 }
                 if (!compareDataList.isEmpty()) {
                     String compareDataKey = String.join(", ", compareDataList);
-                    PetInfoByAPI petInfo = petInfoByAPIOptional.orElse(null);
+//                    PetInfoByAPI petInfo = petInfoByAPIOptional.orElse(null);
                     PetInfoState entityPetInfo = buildPetInfoEntity(petInfoByAPI, compareDataKey);
                     petInfoStateRepository.save(entityPetInfo);
                     PetInfoByAPI petInfoByUpdate = buildPetInfo(itemObject, state);
-                    petInfo.update(petInfoByUpdate);
+                    petInfoByAPI.update(petInfoByUpdate);
                     PetInfoState petInfoEntity = buildPetInfoApi(itemObject, state, compareDataKey);
                     petInfoStateRepository.save(petInfoEntity);
                     log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");

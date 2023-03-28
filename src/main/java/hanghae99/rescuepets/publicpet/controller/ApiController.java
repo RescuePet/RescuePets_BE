@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @Slf4j
-@Tag(name = "유기동물 공공 API")
+@Tag(name = "TEST용 유기동물 공공 API")
 @RestController
 @RequestMapping("/api/pets")
 @RequiredArgsConstructor
@@ -29,6 +29,7 @@ public class ApiController {
                                                       @RequestParam(value = "state") PetStateEnum state, @RequestParam(value = "size") String size) throws IOException {
         return apiDataService.apiCompareData(pageNo, state, size);
     }
+
 //   공공데이터 api 요청 자동비교/테스트용
 //    @SecurityRequirements
 //    @PostMapping("api-compare-data/auto")

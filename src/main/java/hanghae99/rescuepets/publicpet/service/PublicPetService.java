@@ -39,8 +39,8 @@ public class PublicPetService {
     //전체 페이지
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getPublicPet(int page, int size, String sortBy) {
-
-        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo").and(Sort.by(Sort.Direction.DESC, sortBy));
+//        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo-" + sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetInfoByAPI> postPage = publicPetRepository.findAll(pageable);
         List<PublicPetResponsDto> dtoList = new ArrayList<>();
