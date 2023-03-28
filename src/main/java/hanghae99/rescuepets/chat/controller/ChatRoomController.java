@@ -17,7 +17,7 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
-    @Operation(summary = "채팅방 조회")
+    @Operation(summary = "나의 채팅방 조회")
     @GetMapping("/rooms")
     public ResponseEntity<ResponseDto> rooms(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return chatRoomService.getRoomList(memberDetails.getMember());
