@@ -32,7 +32,7 @@ public class ChatRoomService {
 
     @Transactional
     public ResponseEntity<ResponseDto> getRoomList(Member member) {
-        List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByRoomIdDesc(member.getId(), member.getId());
+        List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByModifiedAtDesc(member.getId(), member.getId());
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
         for (ChatRoom room : roomList) {
             String lastChat = "";
