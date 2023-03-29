@@ -20,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -99,7 +98,7 @@ public class ApiScheduler {
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         } else {
             log.info(new BufferedReader(new InputStreamReader(conn.getErrorStream())) + "");
-            throw new IOException();
+            throw new IOException(); //체크
         }
         StringBuilder sb = new StringBuilder();
         String line;
@@ -131,8 +130,8 @@ public class ApiScheduler {
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
                 publicPetRepository.save(petInfo);
             } else {
+
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.orElse(null);
-//                log.info("saveAndUpdateToDatabase 메서드 update 동작");
                 if (!petInfoByAPI.getFilename().equals(itemObject.optString("filename"))) {
                     compareDataList.add("filename");
                 }
@@ -197,6 +196,7 @@ public class ApiScheduler {
                 if (!petInfoByAPI.getOfficetel().equals(itemObject.optString("officetel"))) {
                     compareDataList.add("officetel");
                 }
+
                 if (!petInfoByAPI.getPetStateEnum().equals(state)) { //state가 다를 경우 true
                     if (state.equals(END) && itemObject.optString("ProcessState").contains("종료")) { //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
                         compareDataList.add("state");
@@ -214,10 +214,11 @@ public class ApiScheduler {
                     petInfoStateRepository.save(entityPetInfo);
                     PetInfoByAPI petInfoByUpdate = buildPetInfo(itemObject, state);
                     petInfoByAPI.update(petInfoByUpdate);
+                    publicPetRepository.saveAndFlush(petInfoByAPI);
+
                     PetInfoState petInfoEntity = buildPetInfoApi(itemObject, state, compareDataKey);
                     petInfoStateRepository.save(petInfoEntity);
-                    publicPetRepository.saveAndFlush(petInfoByAPI);
-                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
+//                    log.info("현재시간: " + LocalTime.now() + "/ desertionNo 및 변경사항: :" + itemObject.optString("desertionNo") + "/ " + compareDataKey + "-------------------------------------------------------------------------");
                 }
                 //list가 비었을 경우 변동 사항이 없으므로 업데이트 동작하지 않음
             }

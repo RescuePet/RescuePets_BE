@@ -16,7 +16,7 @@ public class PetInfoInquiry {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "MemberId")
     private Member member;
-
+//연관관계 맺을지 고려
     @Column(nullable = false)
     private String desertionNo;
 

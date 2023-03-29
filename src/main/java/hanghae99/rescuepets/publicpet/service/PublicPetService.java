@@ -41,18 +41,16 @@ public class PublicPetService {
     public ResponseEntity<ResponseDto> getPublicPet(int page, int size, String sortBy, Member member) {
         Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo", sortBy);
 //        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo").and(Sort.by(Sort.Direction.DESC, sortBy));
-//        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo-" + sortBy);
+//        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetInfoByAPI> postPage = publicPetRepository.findAll(pageable);
         List<PublicPetResponsDto> dtoList = new ArrayList<>();
 
         for (PetInfoByAPI petInfoByAPI : postPage) {
             Boolean isScrap = petInfoScrapRepository.findByMemberIdAndDesertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
-            PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI, isScrap, null, null, null);
+            PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI, isScrap);
             dtoList.add(responseDto);
         }
-        log.info("요청된 내용" + "page: " + page + "size: " + size + "sortBy: " + sortBy);
-        log.info("dtoList contents: {}", "내용 물:    1번: " + dtoList.get(0).getDesertionNo() + "    2번:" + dtoList.get(1).getDesertionNo() + "    3번: " + dtoList.get(2).getDesertionNo() + "    4번: " + dtoList.get(3).getDesertionNo() + "    5번: " + dtoList.get(4).getDesertionNo());
         return ResponseDto.toResponseEntity(PET_INFO_GET_LIST_SUCCESS, PublicPetsResponsDto.of(dtoList, postPage.isLast()));
     }
 
