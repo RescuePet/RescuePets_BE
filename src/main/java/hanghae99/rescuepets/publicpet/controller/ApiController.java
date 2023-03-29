@@ -22,6 +22,7 @@ import java.io.IOException;
 public class ApiController {
     private final ApiDataService apiDataService;
     private final ApiScheduler apiScheduler;
+
     @SecurityRequirements
     @PostMapping("api-compare-data/{pageNo}")
     @Operation(summary = "공공데이터 유기동물API 호출 및 DB 비교 최신화", description = "자세한 설명")
