@@ -36,7 +36,7 @@ public class ApiScheduler {
     private final PetInfoStateRepository petInfoStateRepository;
 
 
-    @Scheduled(cron = "0 0/5 * * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
