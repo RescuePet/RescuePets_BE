@@ -19,6 +19,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.CREATE_CHAT_ROOM_EXCEPTION;
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
 
 @Service
@@ -31,7 +32,7 @@ public class ChatRoomService {
 
     @Transactional
     public ResponseEntity<ResponseDto> getRoomList(Member member) {
-        List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByRoomIdDesc(member.getId(), member.getId());
+        List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByModifiedAtDesc(member.getId(), member.getId());
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
         for (ChatRoom room : roomList) {
             String lastChat = "";
@@ -52,6 +53,9 @@ public class ChatRoomService {
     @Transactional
     public String createCatchRoom(Long postId, Member member) {
         PetPostCatch post = petPostCatchRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if (post.getMember().getId().equals(member.getId())) {
+            throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
+        }
         ChatRoom room = chatRoomRepository.findChatRoomByCatchPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(
                 ChatRoom.of(post, member));
         chatRoomRepository.save(room);
@@ -62,6 +66,9 @@ public class ChatRoomService {
     @Transactional
     public String createMissingRoom(Long postId, Member member) {
         PetPostMissing post = petPostMissingRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if (post.getMember().getId().equals(member.getId())) {
+            throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
+        }
         ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(
                 ChatRoom.of(post, member));
         chatRoomRepository.save(room);

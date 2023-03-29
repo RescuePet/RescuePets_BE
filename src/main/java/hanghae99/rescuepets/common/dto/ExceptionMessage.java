@@ -13,6 +13,7 @@ public enum ExceptionMessage {
     MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다."),
     INVALID_TOKEN(BAD_REQUEST, "Invalid JWT signature, 유효하지 않는 JWT 서명 입니다."),
     ILLEAGAL_TOKEN(BAD_REQUEST, "JWT claims is empty, 잘못된 JWT 토큰 입니다."),
+    CREATE_CHAT_ROOM_EXCEPTION(BAD_REQUEST, "자신에게 채팅할 수 없습니다."),
 
 
     NICKNAME_WITH_SPACES(BAD_REQUEST,"공백이 포함된 닉네임입니다."),
@@ -47,7 +48,8 @@ public enum ExceptionMessage {
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다"),
-    DUPLICATE_RESOURCE_PET_INFO(CONFLICT, "데이터가 이미 존재합니다"),
+    DUPLICATE_RESOURCE_PET_INFO_SCRAP(CONFLICT, "관심 유기동물에 이미 존재합니다"),
+    DUPLICATE_RESOURCE_PET_INFO_INQUIRY(CONFLICT, "해당 유기동물에 문의한 내역이 존재합니다"),
     DUPLICATE_USER(CONFLICT,"중복된 사용자가 존재합니다."),
     DUPLICATE_GOODS(CONFLICT,"해당 상품의 이름은 이미 존재합니다."),
     DUPLICATE_NICKNAME(CONFLICT,"중복된 닉네임이 존재합니다."),

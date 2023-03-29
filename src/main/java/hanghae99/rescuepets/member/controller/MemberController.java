@@ -4,20 +4,20 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
-import hanghae99.rescuepets.member.dto.EmailRequestDto;
-import hanghae99.rescuepets.member.dto.LoginRequestDto;
-import hanghae99.rescuepets.member.dto.NicknameRequestDto;
-import hanghae99.rescuepets.member.dto.SignupRequestDto;
+import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -69,5 +69,11 @@ public class MemberController {
     @PostMapping("/member/Withdrawal")
     public ResponseEntity<ResponseDto> Withdrawal(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.Withdrawal(memberDetails.getMember());
+    }
+
+    @Operation(summary = "회원정보수정")
+    @PutMapping(value = "/member/edit", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> memberEdit(@RequestPart(name = "nickname", required = false) UpdateRequestDto updateRequestDto, @RequestPart(name = "image", required = false) MultipartFile multipartFile, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.memberEdit(updateRequestDto, multipartFile, memberDetails.getMember());
     }
 }

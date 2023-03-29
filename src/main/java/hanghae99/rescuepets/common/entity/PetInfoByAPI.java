@@ -61,8 +61,9 @@ public class PetInfoByAPI extends TimeStamped{
     private String chargeNm;
     @Column
     private String officetel;
+    @Enumerated(value = EnumType.STRING)
     @Column
-    private String state;
+    private PetStateEnum petStateEnum;
 
     public void update(PetInfoByAPI petInfo) {
         this.desertionNo = petInfo.desertionNo;
@@ -87,7 +88,7 @@ public class PetInfoByAPI extends TimeStamped{
         this.orgNm = petInfo.orgNm;
         this.chargeNm = petInfo.chargeNm;
         this.officetel = petInfo.officetel;
-        this.state = petInfo.state;
+        this.petStateEnum = petInfo.petStateEnum;
     }
 
 }
