@@ -69,10 +69,10 @@ public class PetPostCatchService {
     public ResponseEntity<ResponseDto> getPetPostCatchAll(String sortBy, Member member) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         List<PetPostCatch> petPostCatchList = petPostCatchRepository.findAll(sort);
-        List<PetPostCatchShortResponseDto> dtoList = new ArrayList<>();
+        List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
         for (PetPostCatch petPostCatch : petPostCatchList) {
             if(petPostCatch.getIsDeleted()){continue;}
-            PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
+            PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
             dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }

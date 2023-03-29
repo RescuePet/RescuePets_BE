@@ -58,10 +58,10 @@ public class PetPostMissingService {
 
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         List<PetPostMissing> petPostMissingList = petPostMissingRepository.findAll(sort);
-        List<PetPostMissingShortResponseDto> dtoList = new ArrayList<>();
+        List<PetPostMissingResponseDto> dtoList = new ArrayList<>();
         for (PetPostMissing petPostMissing : petPostMissingList) {
             if(petPostMissing.getIsDeleted()){continue;}
-            PetPostMissingShortResponseDto dto = PetPostMissingShortResponseDto.of(petPostMissing);
+            PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
             dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
