@@ -9,6 +9,8 @@ import lombok.Getter;
 
 import java.util.List;
 
+import static hanghae99.rescuepets.common.entity.NeuterEnum.YES;
+
 @Getter
 @Builder
 public class PetPostCatchShortResponseDto {

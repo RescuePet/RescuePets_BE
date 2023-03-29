@@ -29,10 +29,11 @@ public class CommentController {
     private final PetPostCatchRepository petPostCatchRepository;
     private final PetPostMissingRepository petPostMissingRepository;
 
-//    @GetMapping("/pets/missing/members/{memberId}")
-//    public ResponseDto<List<CommentResponseDto>> getCommentByUser(@AuthenticationPrincipal MemberDetails userDetails){
-//        return commentService.getCommentList(userDetails.getMember());
-//    }
+    @GetMapping("/pets/missing/members/{memberId}")
+    @Operation(summary = "내가 쓴 댓글 불러오기", description = "")
+    public ResponseEntity<ResponseDto> getCommentListByMember(@AuthenticationPrincipal MemberDetails userDetails){
+        return commentService.getCommentListByMember(userDetails.getMember());
+    }
 
     @GetMapping("/pets/catch/comments/{petPostCatchId}")
     @Operation(summary = "PostCatch 게시글 하나 댓글 불러오기", description = "")
