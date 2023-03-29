@@ -69,7 +69,7 @@ public class PublicPetService {
     @Transactional
     public ResponseEntity<ResponseDto> petInfoScrap(String desertionNo, Member member) {
         getPetInfo(desertionNo);
-        if (petInfoScrapRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent()) {
+        if (isScrap(desertionNo,member.getId())) {
             throw new CustomException(DUPLICATE_RESOURCE_PET_INFO_SCRAP);
         }
         petInfoScrapRepository.save(new PetInfoScrap(member, desertionNo));
@@ -78,12 +78,12 @@ public class PublicPetService {
 
     //관심 유기동물 삭제
     @Transactional
-    public ResponseEntity<ResponseDto> deletePetInfoScrap(Long PetInfoLikeId, Member member) {
-        if (petInfoScrapRepository.findByMemberIdAndId(member.getId(), PetInfoLikeId).isEmpty()) {
-            throw new CustomException(NOT_FOUND_PET_INFO_MEMBER);
+    public ResponseEntity<ResponseDto> deletePetInfoScrap(String desertionNo, Member member) {
+        if (!isScrap(desertionNo,member.getId())) {
+            throw new CustomException(NOT_FOUND_PET_INFO_SCRAP_MEMBER);
         }
-        petInfoScrapRepository.deleteByMemberIdAndId(member.getId(), PetInfoLikeId);
-        return ResponseDto.toResponseEntity(PET_INFO_WISH_DELETE_SUCCESS);
+        petInfoScrapRepository.deleteByMemberIdAndDesertionNo(member.getId(), desertionNo);
+        return ResponseDto.toResponseEntity(PET_INFO_SCRAP_DELETE_SUCCESS);
     }
 
     //문의 기록
@@ -101,5 +101,8 @@ public class PublicPetService {
         return publicPetRepository.findByDesertionNo(desertionNo).orElseThrow(
                 () -> new CustomException(NOT_FOUND_PET_INFO)
         );
+    }
+    private boolean isScrap(String desertionNo, Long memberId){
+        return petInfoScrapRepository.findByMemberIdAndDesertionNo(memberId, desertionNo).isPresent();
     }
 }
