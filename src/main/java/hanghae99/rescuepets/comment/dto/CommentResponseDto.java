@@ -6,6 +6,8 @@ import hanghae99.rescuepets.common.entity.PetPostCatch;
 import hanghae99.rescuepets.common.entity.PetPostMissing;
 import lombok.Getter;
 
+import javax.persistence.Column;
+
 @Getter
 public class CommentResponseDto {
     private Long id;
@@ -15,6 +17,7 @@ public class CommentResponseDto {
     private String modifiedAt;
     private Long petPostCatchId;
     private Long petPostMissingId;
+    private String profileImage;
 
     public CommentResponseDto(Comment comment, PetPostCatch petPostCatch) {
         this.id = comment.getId();
@@ -23,6 +26,7 @@ public class CommentResponseDto {
         this.createdAt = comment.getCreatedAt().toString();
         this.modifiedAt = comment.getModifiedAt().toString();
         this.petPostCatchId = petPostCatch.getId();
+        this.profileImage = comment.getMember().getProfileImage();
     }
     public CommentResponseDto(Comment comment, PetPostMissing petPostMissing) {
         this.id = comment.getId();
@@ -31,14 +35,16 @@ public class CommentResponseDto {
         this.createdAt = comment.getCreatedAt().toString();
         this.modifiedAt = comment.getModifiedAt().toString();
         this.petPostMissingId = petPostMissing.getId();
+        this.profileImage = comment.getMember().getProfileImage();
     }
 
-    public CommentResponseDto(Comment comment, Member member) {
+    public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
         this.content = comment.getContent();
-        this.userNickName = member.getNickname();
+        this.userNickName = comment.getMember().getNickname();
         this.createdAt = comment.getCreatedAt().toString();
         this.modifiedAt = comment.getModifiedAt().toString();
         this.petPostMissingId = comment.getPetPostMissing().getId();
+        this.profileImage = comment.getMember().getProfileImage();
     }
 }
