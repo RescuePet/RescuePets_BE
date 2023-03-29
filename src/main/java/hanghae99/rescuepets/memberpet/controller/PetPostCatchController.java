@@ -71,12 +71,12 @@ public class PetPostCatchController {
         return petPostCatchService.updatePetPostCatch(petPostCatchId, requestDto, memberDetails.getMember());
     }
 
+//    @DeleteMapping("/{petPostCatchId}")
+//    @Operation(summary = "PostCatch 게시글 임시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
+//    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
+//        return petPostCatchService.softDeletePetPostCatch(petPostCatchId, userDetails.getMember());
+//    }
     @DeleteMapping("/{petPostCatchId}")
-    @Operation(summary = "PostCatch 게시글 임시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
-    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
-        return petPostCatchService.softDeletePetPostCatch(petPostCatchId, userDetails.getMember());
-    }
-    @DeleteMapping("/{petPostCatchId}/now")
     @Operation(summary = "PostCatch 게시글 즉시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
     public ResponseEntity<ResponseDto> deletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
         return petPostCatchService.deletePetPostCatch(petPostCatchId, userDetails.getMember());
