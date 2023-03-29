@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class GrobalExceptionHandler {
+public class GlobalExceptionHandler {
 
     //CustomException
     @ExceptionHandler(value = {CustomException.class})

@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class PetInfoLike extends TimeStamped{
+public class PetInfoScrap{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +21,7 @@ public class PetInfoLike extends TimeStamped{
     @Column(nullable = false)
     private String desertionNo;
 
-    public PetInfoLike(Member member, String desertionNo) {
+    public PetInfoScrap(Member member, String desertionNo) {
         this.member = member;
         this.desertionNo = desertionNo;
     }
