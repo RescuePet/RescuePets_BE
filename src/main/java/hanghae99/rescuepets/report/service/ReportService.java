@@ -1,17 +1,17 @@
-package hanghae99.rescuepets.declare.service;
+package hanghae99.rescuepets.report.service;
 
 
 import hanghae99.rescuepets.comment.repository.CommentRepository;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.*;
-import hanghae99.rescuepets.declare.dto.ReportIdRequestDto;
-import hanghae99.rescuepets.declare.dto.ReportMemberRequestDto;
-import hanghae99.rescuepets.declare.dto.ReportRequestDto;
-import hanghae99.rescuepets.declare.repository.CommentReportRepository;
-import hanghae99.rescuepets.declare.repository.MemberReportRepository;
-import hanghae99.rescuepets.declare.repository.PostCatchReportRepository;
-import hanghae99.rescuepets.declare.repository.PostMissingReportRepository;
+import hanghae99.rescuepets.report.dto.ReportIdRequestDto;
+import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
+import hanghae99.rescuepets.report.dto.ReportRequestDto;
+import hanghae99.rescuepets.report.repository.CommentReportRepository;
+import hanghae99.rescuepets.report.repository.MemberReportRepository;
+import hanghae99.rescuepets.report.repository.PostCatchReportRepository;
+import hanghae99.rescuepets.report.repository.PostMissingReportRepository;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;

@@ -1,6 +1,6 @@
 package hanghae99.rescuepets.common.entity;
 
-import hanghae99.rescuepets.declare.dto.ReportMemberRequestDto;
+import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

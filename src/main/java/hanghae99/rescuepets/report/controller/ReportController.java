@@ -1,13 +1,12 @@
-package hanghae99.rescuepets.declare.controller;
+package hanghae99.rescuepets.report.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.ReportEnum;
-import hanghae99.rescuepets.common.entity.ReportMember;
 import hanghae99.rescuepets.common.security.MemberDetails;
-import hanghae99.rescuepets.declare.dto.ReportIdRequestDto;
-import hanghae99.rescuepets.declare.dto.ReportMemberRequestDto;
-import hanghae99.rescuepets.declare.dto.ReportRequestDto;
-import hanghae99.rescuepets.declare.service.ReportService;
+import hanghae99.rescuepets.report.dto.ReportIdRequestDto;
+import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
+import hanghae99.rescuepets.report.dto.ReportRequestDto;
+import hanghae99.rescuepets.report.service.ReportService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
