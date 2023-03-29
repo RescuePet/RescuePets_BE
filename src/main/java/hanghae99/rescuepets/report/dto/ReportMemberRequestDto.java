@@ -1,4 +1,4 @@
-package hanghae99.rescuepets.declare.dto;
+package hanghae99.rescuepets.report.dto;
 
 import hanghae99.rescuepets.common.entity.ReportEnum;
 import lombok.Getter;

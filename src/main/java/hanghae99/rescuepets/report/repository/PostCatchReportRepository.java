@@ -1,6 +1,5 @@
-package hanghae99.rescuepets.declare.repository;
+package hanghae99.rescuepets.report.repository;
 
-import hanghae99.rescuepets.common.entity.PetPostCatch;
 import hanghae99.rescuepets.common.entity.ReportCatch;
 import org.springframework.data.jpa.repository.JpaRepository;
 
