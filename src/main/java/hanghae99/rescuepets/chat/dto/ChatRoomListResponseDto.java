@@ -1,6 +1,7 @@
 package hanghae99.rescuepets.chat.dto;
 
 import hanghae99.rescuepets.common.entity.ChatRoom;
+import hanghae99.rescuepets.common.entity.SexEnum;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,8 +16,9 @@ public class ChatRoomListResponseDto {
     private String postName;
     private String roomName;
     private Long postId;
+    private SexEnum sexCd;
 
-    public static ChatRoomListResponseDto of(ChatRoom room, String partner, String lastChat, String profileImage, String postName, Long postId, String roomName) {
+    public static ChatRoomListResponseDto of(ChatRoom room, String partner, String lastChat, String profileImage, String postName, Long postId, String roomName, SexEnum sexCd) {
         return ChatRoomListResponseDto.builder()
                 .roomId(room.getRoomId())
                 .partner(partner)
@@ -25,6 +27,7 @@ public class ChatRoomListResponseDto {
                 .postName(postName)
                 .postId(postId)
                 .roomName(roomName)
+                .sexCd(sexCd)
                 .build();
     }
 }

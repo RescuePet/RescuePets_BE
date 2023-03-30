@@ -132,16 +132,16 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> memberEdit(UpdateRequestDto updateRequestDto, MultipartFile multipartFile, Member member) {
+    public ResponseEntity<ResponseDto> memberEdit(String nickname, MultipartFile multipartFile, Member member) {
         member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
         if (multipartFile.getName() != null && multipartFile.getSize() > 0) {
             member.update(s3Uploader.uploadSingle(multipartFile));
         }
-        if (updateRequestDto != null && !updateRequestDto.getNickname().equalsIgnoreCase("")) {
-            if (memberRepository.findByNickname(updateRequestDto.getNickname()).isPresent()) {
+        if (nickname != null && !nickname.equalsIgnoreCase("")) {
+            if (memberRepository.findByNickname(nickname).isPresent()) {
                 throw new CustomException(DUPLICATE_NICKNAME);
             }
-            member.updates(updateRequestDto.getNickname());
+            member.updates(nickname);
         }
         MemberReviseResponseDto memberReviseResponseDto = new MemberReviseResponseDto(member);
         return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS, memberReviseResponseDto);

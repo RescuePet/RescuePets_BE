@@ -5,10 +5,7 @@ import hanghae99.rescuepets.chat.repository.ChatRoomRepository;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
-import hanghae99.rescuepets.common.entity.ChatRoom;
-import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.PetPostCatch;
-import hanghae99.rescuepets.common.entity.PetPostMissing;
+import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +41,8 @@ public class ChatRoomService {
             String postName = room.getCatchPost() == null ? "missing-room" : "catch-room";
             Long postId = room.getCatchPost() == null ? room.getMissingPost().getId() : room.getCatchPost().getId();
             String roomName = room.getCatchPost() == null ? room.getMissingPost().getKindCd() : room.getCatchPost().getKindCd();
-            dto.add(ChatRoomListResponseDto.of(room, partner, lastChat, profileImage, postName, postId, roomName));
+            SexEnum sexCd = room.getCatchPost() == null ? room.getMissingPost().getSexCd() : room.getCatchPost().getSexCd();
+            dto.add(ChatRoomListResponseDto.of(room, partner, lastChat, profileImage, postName, postId, roomName, sexCd));
         }
 
         return ResponseDto.toResponseEntity(SuccessMessage.Chat_Room_List_SUCCESS, dto);
