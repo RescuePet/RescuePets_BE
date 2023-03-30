@@ -7,6 +7,7 @@ import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.service.MemberService;
+import hanghae99.rescuepets.memberpet.dto.PostLinkRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -74,8 +75,8 @@ public class MemberController {
 
     @Operation(summary = "회원정보수정")
     @JsonProperty
-    @PutMapping(value = "/member/edit", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> memberEdit(@RequestPart(name = "nickname", required = false) UpdateRequestDto updateRequestDto, @RequestPart(name = "image", required = false) MultipartFile multipartFile, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return memberService.memberEdit(updateRequestDto, multipartFile, memberDetails.getMember());
+    @PutMapping(value = "/member/edit", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> memberEdit(@ModelAttribute UpdateRequestDto updateRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.memberEdit(updateRequestDto, memberDetails.getMember());
     }
 }
