@@ -136,7 +136,7 @@ public class MemberService {
             member.update(s3Uploader.uploadSingle(updateRequestDto.getImage()));
         }
         if (updateRequestDto.getNickname() == null) {
-            return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
+            throw new CustomException(USER_STOP);
         }
         if (!updateRequestDto.getNickname().equalsIgnoreCase("")) {
             if (memberRepository.findByNickname(updateRequestDto.getNickname()).isPresent()) {
