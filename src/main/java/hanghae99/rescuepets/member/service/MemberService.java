@@ -132,7 +132,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<ResponseDto> memberEdit(String nickname, MultipartFile multipartFile, Member member) {
         member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
-        if (multipartFile.getName() != null && multipartFile.getSize() > 0) {
+        if (multipartFile != null && multipartFile.getSize() > 0) {
             member.update(s3Uploader.uploadSingle(multipartFile));
         }
         if (nickname != null && !nickname.equalsIgnoreCase("")) {
