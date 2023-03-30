@@ -46,7 +46,7 @@ public class MemberService {
             throw new CustomException(DUPLICATE_NICKNAME);
         }
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
-        String defaultProfileImage = "https://heukwu.s3.ap-northeast-2.amazonaws.com/images/rescuepet/1f8a1bd3-5762-478f-a389-a800534a0217.png";
+        String defaultProfileImage = "https://heukwu.s3.ap-northeast-2.amazonaws.com/images/rescuepet/Component+43.png";
 
         Member member = Member.builder()
                 .email(signupRequestDto.getEmail())
@@ -135,10 +135,7 @@ public class MemberService {
         if (updateRequestDto.getImage() != null) {
             member.update(s3Uploader.uploadSingle(updateRequestDto.getImage()));
         }
-        if (updateRequestDto.getNickname() == null) {
-            throw new CustomException(USER_STOP);
-        }
-        if (!updateRequestDto.getNickname().equalsIgnoreCase("")) {
+        if (updateRequestDto.getNickname() != null && !updateRequestDto.getNickname().equalsIgnoreCase("")) {
             if (memberRepository.findByNickname(updateRequestDto.getNickname()).isPresent()) {
                 throw new CustomException(DUPLICATE_NICKNAME);
             }
