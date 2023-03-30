@@ -37,10 +37,10 @@ public class ApiScheduler {
     private final PetInfoStateRepository petInfoStateRepository;
 
 
-    @Scheduled(cron = "0 0/30 * * * *")
+    @Scheduled(cron = "10 2 10 * * *")
     @Transactional
-    protected void apiSchedule() throws IOException {
-        log.info("apiSchedule 동작");
+    public void apiSchedule() throws IOException {
+        log.info("apiSchedule 동작"+ Thread.currentThread().getId());
         long startTime = System.currentTimeMillis();//시작 시간
         PetStateEnum[] state = {NOTICE, PROTECT, END};
         int stateNo = 0;

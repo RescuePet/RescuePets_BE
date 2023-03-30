@@ -10,6 +10,7 @@ import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
 import hanghae99.rescuepets.memberpet.repository.PostLinkRepository;
 import hanghae99.rescuepets.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -26,7 +27,7 @@ import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 import static hanghae99.rescuepets.common.entity.PostTypeEnum.CATCH;
 import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PetPostMissingService {
@@ -38,7 +39,7 @@ public class PetPostMissingService {
 
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostMissingList(int page, int size, String sortBy, Member member) {
-
+        log.info("missingListtest  "+ Thread.currentThread().getId());
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetPostMissing> PetPostMissingPage = petPostMissingRepository.findAll(pageable);
