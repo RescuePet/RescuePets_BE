@@ -71,7 +71,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoApiKey); //Rest API 키
-        body.add("redirect_uri", "http://localhost:3000/kakaologin");
+        body.add("redirect_uri", "https://rescuepets.co.kr/kakaologin");
         body.add("code", code);
 
         // HTTP 요청 보내기

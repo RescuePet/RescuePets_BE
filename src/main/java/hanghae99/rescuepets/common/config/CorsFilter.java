@@ -16,6 +16,9 @@ public class CorsFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest request = (HttpServletRequest) req;
 
+        String[] allowedOrigins = {"http://localhost:3000", "https://www.rescuepets.co.kr"};
+        response.setHeader("Access-Control-Allow-Origin", String.join(",", allowedOrigins));
+
         // 모든 출처에서의 요청을 허용하도록 설정합니다.
         response.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
         // 요청 메서드를 허용합니다.
