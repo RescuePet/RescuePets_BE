@@ -35,7 +35,7 @@ public class MemberController {
     }
 
     @Operation(summary = "이메일 중복 확인", description = "자세한 설명")
-    @GetMapping("member/email-duplicate")
+    @PostMapping("member/email-duplicate")
     public ResponseEntity<ResponseDto> checkEmail(@RequestBody EmailRequestDto emailRequestDto) {
         return memberService.checkEmail(emailRequestDto);
     }

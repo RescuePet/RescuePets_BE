@@ -132,7 +132,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<ResponseDto> memberEdit(UpdateRequestDto updateRequestDto, MultipartFile multipartFile, Member member) {
         member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
-        if (multipartFile != null) {
+        if (multipartFile.getName() != null && multipartFile.getSize() > 0) {
             member.update(s3Uploader.uploadSingle(multipartFile));
         }
         if (updateRequestDto != null && !updateRequestDto.getNickname().equalsIgnoreCase("")) {
@@ -141,7 +141,8 @@ public class MemberService {
             }
             member.updates(updateRequestDto.getNickname());
         }
-        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
+        MemberReviseResponseDto memberReviseResponseDto = new MemberReviseResponseDto(member);
+        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS, memberReviseResponseDto);
     }
 }
 
