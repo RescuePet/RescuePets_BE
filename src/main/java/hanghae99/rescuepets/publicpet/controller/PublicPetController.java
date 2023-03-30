@@ -33,17 +33,6 @@ public class PublicPetController {
         return publicPetService.getPublicPetDetails(desertionNo, memberDetails.getMember());
     }
 
-    @PostMapping("/scrap/{desertionNo}")
-    @Operation(summary = "유기동물 관심 등록", description = "자세한 설명")
-    public ResponseEntity<ResponseDto> petInfoScrap(@PathVariable(value = "desertionNo") String desertionNo, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return publicPetService.petInfoScrap(desertionNo, memberDetails.getMember());
-    }
-
-    @DeleteMapping("/scrap/{desertionNo}")
-    @Operation(summary = "유기동물 관심 삭제", description = "자세한 설명")
-    public ResponseEntity<ResponseDto> deletePetInfoScrap(@PathVariable(value = "desertionNo") String desertionNo, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return publicPetService.deletePetInfoScrap(desertionNo, memberDetails.getMember());
-    }
     @PostMapping("/inquiry/{desertionNo}")
     @Operation(summary = "유기동물 문의내역 기록", description = "자세한 설명")
     public ResponseEntity<ResponseDto> petInfoInquiry(@PathVariable(value = "desertionNo") String desertionNo, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {

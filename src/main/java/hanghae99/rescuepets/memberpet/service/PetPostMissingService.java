@@ -8,9 +8,8 @@ import hanghae99.rescuepets.memberpet.dto.*;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
 import hanghae99.rescuepets.memberpet.repository.PostLinkRepository;
-import hanghae99.rescuepets.wish.repository.WishRepository;
+import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.Session;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +31,7 @@ import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
 public class PetPostMissingService {
     private final PetPostCatchRepository petPostCatchRepository;
     private final PetPostMissingRepository petPostMissingRepository;
-    private final WishRepository wishRepository;
+    private final ScrapRepository scrapRepository;
     private final PostLinkRepository postLinkRepository;
     private final S3Uploader s3Uploader;
 
@@ -47,7 +46,7 @@ public class PetPostMissingService {
         for (PetPostMissing petPostMissing : PetPostMissingPage) {
             if(petPostMissing.getIsDeleted()){continue;}
             PetPostMissingShortResponseDto dto = PetPostMissingShortResponseDto.of(petPostMissing);
-            dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
+            dto.setWished(scrapRepository.findScrapByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
@@ -62,7 +61,7 @@ public class PetPostMissingService {
         for (PetPostMissing petPostMissing : petPostMissingList) {
             if(petPostMissing.getIsDeleted()){continue;}
             PetPostMissingResponseDto dto = PetPostMissingResponseDto.of(petPostMissing);
-            dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
+            dto.setWished(scrapRepository.findScrapByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
@@ -78,7 +77,7 @@ public class PetPostMissingService {
         for (PetPostMissing petPostMissing : PetPostMissingPage) {
             if(petPostMissing.getIsDeleted()){continue;}
             PetPostMissingShortResponseDto dto = PetPostMissingShortResponseDto.of(petPostMissing);
-            dto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
+            dto.setWished(scrapRepository.findScrapByPetPostMissingIdAndMemberId(petPostMissing.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(MY_POST_READING_SUCCESS, dtoList);
@@ -91,8 +90,8 @@ public class PetPostMissingService {
         }
         PetPostMissingResponseDto responseDto = PetPostMissingResponseDto.of(petPostMissing);
         responseDto.setLinked(postLinkRepository.findByPetPostMissingId(petPostMissing.getId()).isPresent());
-        responseDto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissingId, member.getId()).isPresent());
-        responseDto.setWishedCount(wishRepository.countByPetPostMissingId(petPostMissingId));
+        responseDto.setWished(scrapRepository.findScrapByPetPostMissingIdAndMemberId(petPostMissingId, member.getId()).isPresent());
+        responseDto.setWishedCount(scrapRepository.countByPetPostMissingId(petPostMissingId));
         return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
     }
 

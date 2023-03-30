@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -64,6 +66,9 @@ public class PetInfoByAPI extends TimeStamped{
     @Enumerated(value = EnumType.STRING)
     @Column
     private PetStateEnum petStateEnum;
+
+    @OneToMany(mappedBy = "petInfoByAPI", cascade = CascadeType.REMOVE)
+    private List<Scrap> scrapList = new ArrayList<>();
 
     public void update(PetInfoByAPI petInfo) {
         this.desertionNo = petInfo.desertionNo;

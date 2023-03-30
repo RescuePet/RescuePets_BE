@@ -4,7 +4,7 @@ import hanghae99.rescuepets.common.entity.PetInfoByAPI;
 import hanghae99.rescuepets.common.entity.PetInfoState;
 import hanghae99.rescuepets.common.entity.PetStateEnum;
 import hanghae99.rescuepets.publicpet.repository.PetInfoStateRepository;
-import hanghae99.rescuepets.publicpet.repository.PublicPetRepository;
+import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -33,11 +33,11 @@ import static hanghae99.rescuepets.common.entity.PetStateEnum.*;
 public class ApiScheduler {
     @Value("${public.api.key}")
     private String publicApiKey;
-    private final PublicPetRepository publicPetRepository;
+    private final PublicPetInfoRepository publicPetInfoRepository;
     private final PetInfoStateRepository petInfoStateRepository;
 
 
-    @Scheduled(cron = "0 0/30 * * * *")
+    @Scheduled(cron = "0 0/59 * * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
@@ -123,12 +123,18 @@ public class ApiScheduler {
     protected void compareData(JSONArray itemList, PetStateEnum state) {
         for (int i = 0; i < itemList.length(); i++) {
             JSONObject itemObject = itemList.getJSONObject(i);
-            Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetRepository.findByDesertionNo(itemObject.optString("desertionNo"));
+            log.info("check1");
+            Optional<PetInfoByAPI> petInfoByAPIOptional2 = publicPetInfoRepository.findById(969L);
+            Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetInfoRepository.findByDesertionNo(itemObject.optString("desertionNo"));
+            log.info("check2");
             List<String> compareDataList = new ArrayList<>();
+            log.info("check3");
             if (petInfoByAPIOptional.isEmpty()) {
+                log.info("check4");
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
-                publicPetRepository.save(petInfo);
+                publicPetInfoRepository.save(petInfo);
             } else {
+                log.info("check5");
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.get();
                 Field[] fields = petInfoByAPI.getClass().getDeclaredFields();
                 for (Field field : fields) {
@@ -167,7 +173,7 @@ public class ApiScheduler {
 
                     petInfoStateRepository.save(petInfoEntity);
 
-                    publicPetRepository.saveAndFlush(petInfoByAPI);
+                    publicPetInfoRepository.saveAndFlush(petInfoByAPI);
                 }
             }
         }

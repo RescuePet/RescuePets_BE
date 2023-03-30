@@ -43,7 +43,7 @@ public enum ExceptionMessage {
     NOT_FOUND_PET_INFO(NOT_FOUND,"해당 유기동물 정보가 없습니다."),
     NOT_FOUND_CHANGE(NOT_FOUND,"변동사항이 존재하지 않습니다"),
     NOT_FOUND_PET_INFO_SCRAP_MEMBER(NOT_FOUND,"요청하신 유저는 해당 관심 유기 동물이 등록되어 있지 않습니다."),
-    NOT_FOUND_WISH(NOT_FOUND,"관심 등록되어 있지 않습니다."),
+    NOT_FOUND_SCRAP(NOT_FOUND,"관심 등록되어 있지 않습니다."),
     NOT_FOUND_DECLARE(NOT_FOUND,"신고가 등록되어 있지 않습니다."),
     NOT_FOUND_HUMAN(NOT_FOUND,"해당 고객이 존재하지 않습니다"),
 
@@ -55,7 +55,7 @@ public enum ExceptionMessage {
     DUPLICATE_GOODS(CONFLICT,"해당 상품의 이름은 이미 존재합니다."),
     DUPLICATE_NICKNAME(CONFLICT,"중복된 닉네임이 존재합니다."),
     DUPLICATE_EMAIL(CONFLICT,"중복된 이메일이 존재합니다."),
-    ALREADY_WISH(CONFLICT, "이미 관심 등록되었습니다."),
+    ALREADY_SCRAP(CONFLICT, "이미 관심 등록되었습니다."),
     ALREADY_DECLARE(CONFLICT, "이미 신고가 등록되었습니다.");
 
 

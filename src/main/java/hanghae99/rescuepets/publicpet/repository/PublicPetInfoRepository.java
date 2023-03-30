@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface PublicPetRepository extends JpaRepository<PetInfoByAPI, Long> {
+public interface PublicPetInfoRepository extends JpaRepository<PetInfoByAPI, Long> {
     Optional<PetInfoByAPI>findByDesertionNo(String desertionNo);
+    Optional<PetInfoByAPI>findById(Long Id);
 }
