@@ -145,7 +145,7 @@ public class ApiScheduler {
                             compareDataList.add(name);
                         }
                     }
-                    log.info(field.getName() + ": " + value);
+//                    log.info(field.getName() + ": " + value);
                 }
                 if (!petInfoByAPI.getPetStateEnum().equals(state)) {
                     if (state.equals(END) && itemObject.optString("processState").contains("종료")) { //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
