@@ -12,4 +12,6 @@ import java.util.List;
 public interface PetPostCatchRepository extends JpaRepository<PetPostCatch, Long>{
     List<PetPostCatch> findAllByMemberId(Long memberId);
     Page<PetPostCatch> findByMemberId(Long memberId, Pageable pageable);
+    Integer countByMember(Member member);
+
 }

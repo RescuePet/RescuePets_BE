@@ -11,6 +11,7 @@ import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
+import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +37,7 @@ public class MemberService {
     private final S3Uploader s3Uploader;
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final PetPostCatchRepository petPostCatchRepository;
 
     public ResponseEntity<ResponseDto> signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {
@@ -143,6 +145,11 @@ public class MemberService {
         }
         MemberReviseResponseDto memberReviseResponseDto = new MemberReviseResponseDto(member);
         return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS, memberReviseResponseDto);
+    }
+
+    public ResponseEntity<ResponseDto> getMyPage(Member member) {
+        Integer petPostCount = petPostCatchRepository.countByMember(member);
+        return ResponseDto.toResponseEntity(TEST_SUCCESS, "petPostCount: " + petPostCount);
     }
 }
 

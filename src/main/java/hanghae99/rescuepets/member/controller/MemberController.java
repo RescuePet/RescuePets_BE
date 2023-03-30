@@ -8,6 +8,7 @@ import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -75,5 +76,10 @@ public class MemberController {
     @PutMapping(value = "/member/edit", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseDto> memberEdit(@RequestPart(name = "nickname", required = false) UpdateRequestDto updateRequestDto, @RequestPart(name = "image", required = false) MultipartFile multipartFile, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.memberEdit(updateRequestDto, multipartFile, memberDetails.getMember());
+    }
+    @Operation(summary = "회원정보")
+    @GetMapping("/member")
+    public ResponseEntity<ResponseDto> getMyPage(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.getMyPage(memberDetails.getMember());
     }
 }
