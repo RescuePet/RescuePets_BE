@@ -29,7 +29,8 @@ public class PetPostMissingResponseDto {
     private String nickname;
     private String createdAt;
     private String modifiedAt;
-    private Boolean isWished;
+    private Boolean isWished = false;
+    private Integer wishedCount = 0;
     private List<PostImageResponseDto> postImages;
     private Boolean isLinked = false;
 
@@ -61,6 +62,7 @@ public class PetPostMissingResponseDto {
     public void setWished(Boolean isWished) {
         this.isWished = isWished;
     }
+    public void setWishedCount(Integer wishedCount) {this.wishedCount = wishedCount;}
     public void setLinked(Boolean isLinked) {
         this.isLinked = isLinked;
     }
