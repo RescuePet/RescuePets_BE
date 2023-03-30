@@ -76,6 +76,6 @@ public class MemberController {
     @JsonProperty
     @PutMapping(value = "/member/edit", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseDto> memberEdit(@RequestPart(name = "nickname", required = false) UpdateRequestDto updateRequestDto, @RequestPart(name = "image", required = false) MultipartFile multipartFile, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return memberService.memberEdit(updateRequestDto.getNickname(), multipartFile, memberDetails.getMember());
+        return memberService.memberEdit(updateRequestDto, multipartFile, memberDetails.getMember());
     }
 }
