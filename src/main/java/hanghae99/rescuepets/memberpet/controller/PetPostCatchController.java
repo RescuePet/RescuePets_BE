@@ -78,7 +78,7 @@ public class PetPostCatchController {
 //    }
     @DeleteMapping("/{petPostCatchId}")
     @Operation(summary = "PostCatch 게시글 즉시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
-    public ResponseEntity<ResponseDto> deletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
+    public ResponseEntity<ResponseDto> deletePetPostCatch(@PathVariable Long petPostCatchId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return petPostCatchService.deletePetPostCatch(petPostCatchId, userDetails.getMember());
     }
 

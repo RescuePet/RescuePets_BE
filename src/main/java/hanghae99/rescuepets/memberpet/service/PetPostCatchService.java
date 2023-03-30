@@ -96,10 +96,13 @@ public class PetPostCatchService {
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostCatch(Long petPostCatchId, Member member) {
         PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(petPostCatch.getIsDeleted()){throw new CustomException(POST_ALREADY_DELETED);}
+        if(petPostCatch.getIsDeleted()){throw new CustomException(
+                POST_ALREADY_DELETED);
+        }
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
         responseDto.setLinked(postLinkRepository.findByPetPostCatchId(petPostCatch.getId()).isPresent());
         responseDto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
+        responseDto.setWishedCount(wishRepository.countByPetPostCatchId(petPostCatchId));
         return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
     }
 

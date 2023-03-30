@@ -83,8 +83,6 @@ public class PetPostMissingService {
         }
         return ResponseDto.toResponseEntity(MY_POST_READING_SUCCESS, dtoList);
     }
-
-
     @Transactional
     public ResponseEntity<ResponseDto> getPetPostMissing(Long petPostMissingId, Member member) {
         PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -94,7 +92,7 @@ public class PetPostMissingService {
         PetPostMissingResponseDto responseDto = PetPostMissingResponseDto.of(petPostMissing);
         responseDto.setLinked(postLinkRepository.findByPetPostMissingId(petPostMissing.getId()).isPresent());
         responseDto.setWished(wishRepository.findWishByPetPostMissingIdAndMemberId(petPostMissingId, member.getId()).isPresent());
-
+        responseDto.setWishedCount(wishRepository.countByPetPostMissingId(petPostMissingId));
         return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
     }
 

@@ -74,8 +74,8 @@ public class PetPostMissingController {
         return petPostMissingService.updatePetPostMissing(petPostMissingId, requestDto, memberDetails.getMember());
     }
     @DeleteMapping("/{petPostMissingId}")
-    @Operation(summary = "내가 작성한 특정 PostMissing 게시글 삭제하기", description = "내가 작성한 PostMissing 게시글 하나를 삭제합니다")
-    public ResponseEntity<ResponseDto> deletePetPostMissing(@PathVariable Long petPostMissingId, @AuthenticationPrincipal MemberDetails userDetails) {
+    @Operation(summary = "내가 작성한 특정 PostMissing 게시글 즉시 삭제하기", description = "내가 작성한 PostMissing 게시글 하나를 삭제합니다")
+    public ResponseEntity<ResponseDto> deletePetPostMissing(@PathVariable Long petPostMissingId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return petPostMissingService.delete(petPostMissingId, userDetails.getMember());
     }
     @PostMapping(value = "/links/{petPostMissingId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
