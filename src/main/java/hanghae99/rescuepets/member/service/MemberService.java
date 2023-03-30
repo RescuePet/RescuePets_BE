@@ -135,6 +135,9 @@ public class MemberService {
         if (updateRequestDto.getImage() != null) {
             member.update(s3Uploader.uploadSingle(updateRequestDto.getImage()));
         }
+        if (updateRequestDto.getNickname() == null) {
+            return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
+        }
         if (!updateRequestDto.getNickname().equalsIgnoreCase("")) {
             if (memberRepository.findByNickname(updateRequestDto.getNickname()).isPresent()) {
                 throw new CustomException(DUPLICATE_NICKNAME);

@@ -74,7 +74,6 @@ public class MemberController {
     }
 
     @Operation(summary = "회원정보수정")
-    @JsonProperty
     @PutMapping(value = "/member/edit", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseDto> memberEdit(@ModelAttribute UpdateRequestDto updateRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.memberEdit(updateRequestDto, memberDetails.getMember());
