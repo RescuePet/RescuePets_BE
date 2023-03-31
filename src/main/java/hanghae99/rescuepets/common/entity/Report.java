@@ -2,6 +2,8 @@ package hanghae99.rescuepets.common.entity;
 
 
 import hanghae99.rescuepets.report.dto.ReportRequestDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +12,9 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class ReportMissing {
+@AllArgsConstructor
+@Builder
+public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,25 +32,28 @@ public class ReportMissing {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "petpostcatch_id")
+    private PetPostCatch petPostCatch;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "petPostMissing_id")
     private PetPostMissing petPostMissing;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member informant;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member respondent;
 
-
-    public ReportMissing(Member member, ReportRequestDto declareRequestDto, PetPostMissing petPostMissing) {
-        this.member = member;
-        this.petPostMissing = petPostMissing;
-        this.content = declareRequestDto.getContent();
-        this.reportcode = declareRequestDto.getReportCode().getValue();
-    }
 
     public void update(ReportRequestDto reportRequestDto) {
-         this.reportcode = reportRequestDto.getReportCode().getValue();
-         this.content =reportRequestDto.getContent();
+        this.content = reportRequestDto.getContent();
+        this.reportcode =reportRequestDto.getReportCode().getValue();
     }
 }
 
