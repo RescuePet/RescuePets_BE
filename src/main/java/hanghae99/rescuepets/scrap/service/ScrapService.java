@@ -92,10 +92,10 @@ public class ScrapService {
         if (!publicPetIsScrap(desertionNo, member.getId())) {
             throw new CustomException(NOT_FOUND_PET_INFO_SCRAP_MEMBER);
         }
-        scrapRepository.deleteByMemberIdAndPetInfoByAPIDesertionNo(member.getId(), desertionNo);
+        scrapRepository.deleteByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), desertionNo);
         return ResponseDto.toResponseEntity(PET_INFO_SCRAP_DELETE_SUCCESS);
     }
     private boolean publicPetIsScrap(String desertionNo, Long memberId){
-        return scrapRepository.findByMemberIdAndPetInfoByAPIDesertionNo(memberId, desertionNo).isPresent();
+        return scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(memberId, desertionNo).isPresent();
     }
 }

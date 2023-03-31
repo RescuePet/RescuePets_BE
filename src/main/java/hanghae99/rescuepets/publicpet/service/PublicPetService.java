@@ -46,7 +46,7 @@ public class PublicPetService {
         List<PublicPetResponsDto> dtoList = new ArrayList<>();
 
         for (PetInfoByAPI petInfoByAPI : postPage) {
-            Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPIDesertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
+            Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
             PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI, isScrap);
             dtoList.add(responseDto);
         }
@@ -57,8 +57,8 @@ public class PublicPetService {
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getPublicPetDetails(String desertionNo, Member member) {
         PetInfoByAPI petInfoByAPI = getPetInfo(desertionNo);
-        Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPIDesertionNo(member.getId(), desertionNo).isPresent();
-        Integer scrapCount = scrapRepository.countByPetInfoByAPIDesertionNo(desertionNo);
+        Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), desertionNo).isPresent();
+        Integer scrapCount = scrapRepository.countByPetInfoByAPI_desertionNo(desertionNo);
         Boolean isInquiry = petInfoInquiryRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent();
         Integer InquiryCount = petInfoInquiryRepository.countByDesertionNo(desertionNo);
         return ResponseDto.toResponseEntity(PET_INFO_GET_DETAILS_SUCCESS, PublicPetResponsDto.of(petInfoByAPI, isScrap, scrapCount, isInquiry, InquiryCount));

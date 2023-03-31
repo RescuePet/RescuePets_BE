@@ -15,7 +15,7 @@ public interface ScrapRepository extends JpaRepository<Scrap, Long> {
 
 
 
-    Optional<Scrap> findByMemberIdAndPetInfoByAPIDesertionNo(Long memberId, String desertionNo);
-    Integer countByPetInfoByAPIDesertionNo(String desertionNo);
-    void deleteByMemberIdAndPetInfoByAPIDesertionNo(Long memberId, String desertionNo);
+    Optional<Scrap> findByMemberIdAndPetInfoByAPI_desertionNo(Long memberId, String desertionNo);
+    Integer countByPetInfoByAPI_desertionNo(String desertionNo);
+    void deleteByMemberIdAndPetInfoByAPI_desertionNo(Long memberId, String desertionNo);
 }
