@@ -28,9 +28,9 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final KakaoService kakaoService;
-
     private final RefreshTokenRepository refreshTokenRepository;
 
+    @Transactional
     public ResponseEntity<ResponseDto> signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {
             throw new CustomException(DUPLICATE_EMAIL);
@@ -39,6 +39,7 @@ public class MemberService {
         if (memberRepository.findByNickname(signupRequestDto.getNickname()).isPresent()){
             throw new CustomException(DUPLICATE_NICKNAME);
         }
+
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
         String defaultProfileImage = "https://s3.ap-northeast-2.amazonaws.com/youngsbucket/images/rescuepet/5f818015-c99e-4b29-afc9-dce98d801d90.png";
 
@@ -48,35 +49,29 @@ public class MemberService {
                 .nickname(signupRequestDto.getNickname())
                 .profileImage(defaultProfileImage)
                 .build();
-
         memberRepository.save(member);
-        return ResponseDto.toResponseEntity(SIGN_UP_SUCCESS,new MemberResponseDto(member)
-        );
 
+        return ResponseDto.toResponseEntity(SIGN_UP_SUCCESS, new MemberResponseDto(member));
     }
+
     public ResponseEntity<ResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
 
-        // 사용자 확인
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(MEMBER_NOT_FOUND)
         );
 
-        // 비밀번호 확인
-        if(!passwordEncoder.matches(password, member.getPassword())){
+        if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new CustomException(MEMBER_NOT_FOUND);
         }
 
         jwtUtil.createToken(response, member);
 
-        return ResponseDto.toResponseEntity(LOGIN_SUCCESS,new MemberResponseDto(member));
+        return ResponseDto.toResponseEntity(LOGIN_SUCCESS, new MemberResponseDto(member));
     }
 
     public ResponseEntity<ResponseDto> checkEmail(EmailRequestDto emailRequestDto) {
-
-
-        // 중복 이메일 확인
         if(memberRepository.findByEmail(emailRequestDto.getEmail()).isPresent()){
             throw new CustomException(DUPLICATE_EMAIL);
         }
@@ -85,7 +80,6 @@ public class MemberService {
     }
 
     public ResponseEntity<ResponseDto> checkNickname(NicknameRequestDto nicknameRequestDto) {
-        // 중복 닉네임 확인
         if(memberRepository.findByNickname(nicknameRequestDto.getNickname()).isPresent()){
             throw new CustomException(DUPLICATE_EMAIL);
         }
@@ -93,8 +87,6 @@ public class MemberService {
         return ResponseDto.toResponseEntity(EMAIL_CHECK_SUCCESS);
     }
 
-
-    @Transactional
     public ResponseEntity<ResponseDto> logout(Member member) {
         Optional<RefreshToken> refreshToken = refreshTokenRepository.findByMemberEmail((member.getEmail()));
         if (refreshToken.isPresent()) {
@@ -104,7 +96,6 @@ public class MemberService {
         return ResponseDto.toResponseEntity(LOGOUT_SUCCESS);
     }
 
-    @Transactional
     public ResponseEntity<ResponseDto> Withdrawal(Member member) {
         member = memberRepository.findById(member.getId()).orElseThrow(NullPointerException::new);
         if (member.getKakaoId() != null) {

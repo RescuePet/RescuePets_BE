@@ -8,26 +8,24 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ChatRoomListResponseDto {
-
     private String roomId;
-    private String partner;
-    private String lastChat;
-    private String profileImage;
-    private String postName;
     private String roomName;
+    private String partner;
+    private String profileImage;
+    private String lastChat;
+    private String time;
     private Long postId;
+    private String postName;
     private SexEnum sexCd;
 
-    public static ChatRoomListResponseDto of(ChatRoom room, String partner, String lastChat, String profileImage, String postName, Long postId, String roomName, SexEnum sexCd) {
+    public static ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder of(ChatRoom room, String roomName, String partner, String profileImage, Long postId, String postName, SexEnum sexCd) {
         return ChatRoomListResponseDto.builder()
                 .roomId(room.getRoomId())
-                .partner(partner)
-                .lastChat(lastChat)
-                .profileImage(profileImage)
-                .postName(postName)
-                .postId(postId)
                 .roomName(roomName)
-                .sexCd(sexCd)
-                .build();
+                .partner(partner)
+                .profileImage(profileImage)
+                .postId(postId)
+                .postName(postName)
+                .sexCd(sexCd);
     }
 }

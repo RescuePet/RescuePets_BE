@@ -6,6 +6,7 @@ import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.*;
+import hanghae99.rescuepets.common.util.Time;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,17 +33,22 @@ public class ChatRoomService {
         List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByModifiedAtDesc(member.getId(), member.getId());
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
         for (ChatRoom room : roomList) {
-            String lastChat = "";
-            if (room.getChatMessages().size() > 0) {
-                lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1).getMessage();
-            }
             String partner = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getNickname() : room.getHost().getNickname();
             String profileImage = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getProfileImage() : room.getHost().getProfileImage();
             String postName = room.getCatchPost() == null ? "missing-room" : "catch-room";
             Long postId = room.getCatchPost() == null ? room.getMissingPost().getId() : room.getCatchPost().getId();
             String roomName = room.getCatchPost() == null ? room.getMissingPost().getKindCd() : room.getCatchPost().getKindCd();
             SexEnum sexCd = room.getCatchPost() == null ? room.getMissingPost().getSexCd() : room.getCatchPost().getSexCd();
-            dto.add(ChatRoomListResponseDto.of(room, partner, lastChat, profileImage, postName, postId, roomName, sexCd));
+
+            if (room.getChatMessages().size() > 0) {
+                Chat lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1);
+
+                dto.add(ChatRoomListResponseDto.of(room, roomName, partner, profileImage, postId, postName, sexCd)
+                        .lastChat(lastChat.getMessage()).time(Time.chatTime(lastChat.getCreatedAt()))
+                        .build());
+            }
+
+            dto.add(ChatRoomListResponseDto.of(room, roomName, partner, profileImage, postId, postName, sexCd).build());
         }
 
         return ResponseDto.toResponseEntity(SuccessMessage.Chat_Room_List_SUCCESS, dto);
