@@ -8,11 +8,20 @@ import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
 import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
+import hanghae99.rescuepets.scrap.dto.ScrapListResponseDto;
+import hanghae99.rescuepets.scrap.dto.ScrapResponseDto;
 import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
@@ -90,6 +99,25 @@ public class ScrapService {
         }
         scrapRepository.deleteByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), desertionNo);
         return ResponseDto.toResponseEntity(PET_INFO_SCRAP_DELETE_SUCCESS);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<ResponseDto> getMyScrapList(int page, int size, String sortBy, Member member) {
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Scrap> scrapPages = scrapRepository.findByMemberId(member.getId(), pageable);
+        List<ScrapResponseDto> dtoList = new ArrayList<>();
+
+        for (Scrap scrapPage : scrapPages) {
+            if (scrapPage.getPetInfoByAPI() != null) {
+                dtoList.add(ScrapResponseDto.of("publicPet", scrapPage.getId(), scrapPage.getPetInfoByAPI()));
+            } else if (scrapPage.getPetPostCatch() != null) {
+                dtoList.add(ScrapResponseDto.of("petCatch", scrapPage.getId(), scrapPage.getPetPostCatch()));
+            } else if (scrapPage.getPetPostMissing() != null) {
+                dtoList.add(ScrapResponseDto.of("petMissing", scrapPage.getId(), scrapPage.getPetPostMissing()));
+            }
+        }
+        return ResponseDto.toResponseEntity(SCRAP_ALL_LIST_SUCCESS, ScrapListResponseDto.of(dtoList, scrapPages.isLast()));
     }
 
     private boolean publicPetIsScrap(String desertionNo, Long memberId) {

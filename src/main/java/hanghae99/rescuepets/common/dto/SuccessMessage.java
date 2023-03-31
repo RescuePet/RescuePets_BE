@@ -38,6 +38,7 @@ public enum SuccessMessage {
     PET_INFO_GET_DETAILS_SUCCESS(HttpStatus.OK, "유기동물 상세 페이지 불러오기 성공"),
     PET_INFO_GET_LIST_SUCCESS(HttpStatus.OK, "유기동물 전체 페이지 불러오기 성공"),
     PET_INFO_SCRAP_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
+    SCRAP_ALL_LIST_SUCCESS(HttpStatus.CREATED, "나의 스크랩 리스트 불러오기 성공"),
     PET_INFO_INQUIRY_SUCCESS(HttpStatus.CREATED, "해당 유기동물의 문의 내역이 저장되었습니다."),
     PUBLIC_PET_INFO_SAVE_SUCCESS(HttpStatus.CREATED, "유기동물 API 호출 및 DB 저장 성공."),
     POST_SCRAP_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),

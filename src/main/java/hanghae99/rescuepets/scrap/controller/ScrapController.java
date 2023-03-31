@@ -16,6 +16,14 @@ import org.springframework.web.bind.annotation.*;
 public class ScrapController {
 
     private final ScrapService scrapService;
+    @GetMapping("/list")
+    @Operation(summary = "나의 스크랩 전체 가져오기")
+    public ResponseEntity<ResponseDto> getPublicPet(@RequestParam(value = "page") int page,
+                                                    @RequestParam(value = "size") int size,
+                                                    @RequestParam(value = "sortBy", required = false, defaultValue = "createdAt") String sortBy,
+                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return scrapService.getMyScrapList(page - 1, size, sortBy, memberDetails.getMember());
+    }
 
     @Operation(summary = "발견 게시글 관심 등록")
     @PostMapping("/catch/{catchId}")

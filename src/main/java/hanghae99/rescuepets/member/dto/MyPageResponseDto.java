@@ -1,7 +1,5 @@
 package hanghae99.rescuepets.member.dto;
 
-import hanghae99.rescuepets.common.entity.PetInfoByAPI;
-import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
 import lombok.Builder;
 import lombok.Getter;
 
