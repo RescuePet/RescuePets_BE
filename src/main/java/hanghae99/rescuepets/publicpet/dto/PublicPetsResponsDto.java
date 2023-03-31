@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Builder
 public class PublicPetsResponsDto {
-    List<PublicPetResponsDto> publicPetResponsDto = new ArrayList<>();
+    List<PublicPetResponsDto> publicPetResponsDto    = new ArrayList<>();
     Boolean isLast = false;
 
     public PublicPetsResponsDto(List<PublicPetResponsDto> publicPetResponsDto, Boolean isLast) {

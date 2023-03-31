@@ -123,18 +123,13 @@ public class ApiScheduler {
     protected void compareData(JSONArray itemList, PetStateEnum state) {
         for (int i = 0; i < itemList.length(); i++) {
             JSONObject itemObject = itemList.getJSONObject(i);
-            log.info("check1");
             Optional<PetInfoByAPI> petInfoByAPIOptional2 = publicPetInfoRepository.findById(969L);
             Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetInfoRepository.findByDesertionNo(itemObject.optString("desertionNo"));
-            log.info("check2");
             List<String> compareDataList = new ArrayList<>();
-            log.info("check3");
             if (petInfoByAPIOptional.isEmpty()) {
-                log.info("check4");
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
                 publicPetInfoRepository.save(petInfo);
             } else {
-                log.info("check5");
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.get();
                 Field[] fields = petInfoByAPI.getClass().getDeclaredFields();
                 for (Field field : fields) {

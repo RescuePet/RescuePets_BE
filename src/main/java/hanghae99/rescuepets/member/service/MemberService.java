@@ -147,10 +147,5 @@ public class MemberService {
         MemberReviseResponseDto memberReviseResponseDto = new MemberReviseResponseDto(member);
         return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS, memberReviseResponseDto);
     }
-
-//    public ResponseEntity<ResponseDto> getMyPage(Member member) {
-//        Integer petPostCount = scrapRepository.countByPetInfoByAPI_desertionNo(member);
-//        return ResponseDto.toResponseEntity(TEST_SUCCESS, "petPostCount: " + petPostCount);
-//    }
 }
 

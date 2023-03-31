@@ -77,9 +77,4 @@ public class MemberController {
     public ResponseEntity<ResponseDto> memberEdit(@RequestPart(name = "nickname", required = false) String nickname, @RequestPart(name = "image", required = false) MultipartFile multipartFile, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.memberEdit(nickname, multipartFile, memberDetails.getMember());
     }
-//    @Operation(summary = "회원정보")
-//    @GetMapping("/member")
-//    public ResponseEntity<ResponseDto> getMyPage(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return memberService.getMyPage(memberDetails.getMember());
-//    }
 }
