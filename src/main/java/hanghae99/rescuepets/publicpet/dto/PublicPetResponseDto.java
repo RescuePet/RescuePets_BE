@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PublicPetResponsDto {
+public class PublicPetResponseDto {
     private Long id;//전체/상세
     private String desertionNo;//무조건 사용
     private String filename; //전체
@@ -35,9 +35,9 @@ public class PublicPetResponsDto {
     private Boolean isInquiry;//상세
     private Integer InquiryCount;//상세
 
-    public static PublicPetResponsDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap) {
+    public static PublicPetResponseDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap) {
         String neuterYn = neuterYnChange(petInfoByAPI.getNeuterYn());
-        return PublicPetResponsDto.builder()
+        return PublicPetResponseDto.builder()
                 .id(petInfoByAPI.getId())
                 .desertionNo(petInfoByAPI.getDesertionNo())
                 .filename(petInfoByAPI.getFilename())
@@ -51,9 +51,9 @@ public class PublicPetResponsDto {
                 .isScrap(isScrap)
                 .build();
     }
-    public static PublicPetResponsDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap, Integer scrapCount, Boolean isInquiry, Integer InquiryCount) {
+    public static PublicPetResponseDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap, Integer scrapCount, Boolean isInquiry, Integer InquiryCount) {
         String neuterYn = neuterYnChange(petInfoByAPI.getNeuterYn());
-        return PublicPetResponsDto.builder()
+        return PublicPetResponseDto.builder()
                 .id(petInfoByAPI.getId())
                 .desertionNo(petInfoByAPI.getDesertionNo())
                 .filename(petInfoByAPI.getFilename())

@@ -5,8 +5,8 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetInfoByAPI;
 import hanghae99.rescuepets.common.entity.PetInfoInquiry;
-import hanghae99.rescuepets.publicpet.dto.PublicPetResponsDto;
-import hanghae99.rescuepets.publicpet.dto.PublicPetsResponsDto;
+import hanghae99.rescuepets.publicpet.dto.PublicPetResponseDto;
+import hanghae99.rescuepets.publicpet.dto.PublicPetListResponseDto;
 import hanghae99.rescuepets.publicpet.repository.PetInfoInquiryRepository;
 import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
 import hanghae99.rescuepets.scrap.repository.ScrapRepository;
@@ -43,14 +43,14 @@ public class PublicPetService {
 //        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetInfoByAPI> postPage = publicPetInfoRepository.findAll(pageable);
-        List<PublicPetResponsDto> dtoList = new ArrayList<>();
+        List<PublicPetResponseDto> dtoList = new ArrayList<>();
 
         for (PetInfoByAPI petInfoByAPI : postPage) {
             Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
-            PublicPetResponsDto responseDto = PublicPetResponsDto.of(petInfoByAPI, isScrap);
+            PublicPetResponseDto responseDto = PublicPetResponseDto.of(petInfoByAPI, isScrap);
             dtoList.add(responseDto);
         }
-        return ResponseDto.toResponseEntity(PET_INFO_GET_LIST_SUCCESS, PublicPetsResponsDto.of(dtoList, postPage.isLast()));
+        return ResponseDto.toResponseEntity(PET_INFO_GET_LIST_SUCCESS, PublicPetListResponseDto.of(dtoList, postPage.isLast()));
     }
 
     //상세 페이지
@@ -61,7 +61,7 @@ public class PublicPetService {
         Integer scrapCount = scrapRepository.countByPetInfoByAPI_desertionNo(desertionNo);
         Boolean isInquiry = petInfoInquiryRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent();
         Integer InquiryCount = petInfoInquiryRepository.countByDesertionNo(desertionNo);
-        return ResponseDto.toResponseEntity(PET_INFO_GET_DETAILS_SUCCESS, PublicPetResponsDto.of(petInfoByAPI, isScrap, scrapCount, isInquiry, InquiryCount));
+        return ResponseDto.toResponseEntity(PET_INFO_GET_DETAILS_SUCCESS, PublicPetResponseDto.of(petInfoByAPI, isScrap, scrapCount, isInquiry, InquiryCount));
     }
 
     //문의 기록
