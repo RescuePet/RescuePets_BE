@@ -12,13 +12,11 @@ import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
-import static hanghae99.rescuepets.common.dto.SuccessMessage.PET_INFO_SCRAP_DELETE_SUCCESS;
-import static hanghae99.rescuepets.common.dto.SuccessMessage.PET_INFO_SCRAP_SUCCESS;
+import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +50,18 @@ public class ScrapService {
     }
 
     @Transactional
+    public ResponseEntity<ResponseDto> scrapPublicPet(String desertionNo, Member member) {
+        PetInfoByAPI petInfoByAPI = publicPetInfoRepository.findByDesertionNo(desertionNo).orElseThrow(
+                () -> new CustomException(NOT_FOUND_PET_INFO)
+        );
+        if (publicPetIsScrap(desertionNo, member.getId())) {
+            throw new CustomException(DUPLICATE_RESOURCE_PET_INFO_SCRAP);
+        }
+        scrapRepository.save(new Scrap(member, petInfoByAPI));
+        return ResponseDto.toResponseEntity(PET_INFO_SCRAP_SUCCESS);
+    }
+
+    @Transactional
     public ResponseEntity<ResponseDto> deleteCatch(Long catchId, Member member) {
         PetPostCatch post = petPostCatchRepository.findById(catchId).orElseThrow(NullPointerException::new);
         Optional<Scrap> scrap = scrapRepository.findScrapByPetPostCatchIdAndMemberId(catchId, member.getId());
@@ -73,21 +83,7 @@ public class ScrapService {
         return ResponseDto.toResponseEntity(SuccessMessage.DELETE_POST_SCRAP_SUCCESS);
     }
 
-    //관심 유기동물 등록
-    @org.springframework.transaction.annotation.Transactional
-    public ResponseEntity<ResponseDto> scrapPublicPet(String desertionNo, Member member) {
-        PetInfoByAPI petInfoByAPI = publicPetInfoRepository.findByDesertionNo(desertionNo).orElseThrow(
-                () -> new CustomException(NOT_FOUND_PET_INFO)
-        );
-        if (publicPetIsScrap(desertionNo, member.getId())) {
-            throw new CustomException(DUPLICATE_RESOURCE_PET_INFO_SCRAP);
-        }
-        scrapRepository.save(new Scrap(member, petInfoByAPI));
-        return ResponseDto.toResponseEntity(PET_INFO_SCRAP_SUCCESS);
-    }
-
-    //관심 유기동물 삭제
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public ResponseEntity<ResponseDto> deleteScrapPublicPet(String desertionNo, Member member) {
         if (!publicPetIsScrap(desertionNo, member.getId())) {
             throw new CustomException(NOT_FOUND_PET_INFO_SCRAP_MEMBER);
@@ -95,7 +91,8 @@ public class ScrapService {
         scrapRepository.deleteByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), desertionNo);
         return ResponseDto.toResponseEntity(PET_INFO_SCRAP_DELETE_SUCCESS);
     }
-    private boolean publicPetIsScrap(String desertionNo, Long memberId){
+
+    private boolean publicPetIsScrap(String desertionNo, Long memberId) {
         return scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(memberId, desertionNo).isPresent();
     }
 }

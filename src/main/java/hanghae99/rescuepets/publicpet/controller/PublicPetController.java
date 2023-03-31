@@ -22,20 +22,25 @@ public class PublicPetController {
     private final PublicPetService publicPetService;
 
     @GetMapping("/info-list")
-    @Operation(summary = "유기동물 전체 정보 가져오기", description = "자세한 설명")
-    public ResponseEntity<ResponseDto> getPublicPet(@RequestParam(value = "page") int page, @RequestParam(value = "size") int size, @RequestParam(value = "sortBy", required = false, defaultValue = "happenDt") String sortBy, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    @Operation(summary = "유기동물 전체 정보 가져오기")
+    public ResponseEntity<ResponseDto> getPublicPet(@RequestParam(value = "page") int page,
+                                                    @RequestParam(value = "size") int size,
+                                                    @RequestParam(value = "sortBy", required = false, defaultValue = "happenDt") String sortBy,
+                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.getPublicPet(page - 1, size, sortBy, memberDetails.getMember());
     }
 
     @GetMapping("/details/{desertionNo}")
-    @Operation(summary = "유기동물 상세 정보 가져오기", description = "자세한 설명")
-    public ResponseEntity<ResponseDto> getPublicPetDetails(@PathVariable(value = "desertionNo") String desertionNo, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    @Operation(summary = "유기동물 상세 정보 가져오기")
+    public ResponseEntity<ResponseDto> getPublicPetDetails(@PathVariable(value = "desertionNo") String desertionNo,
+                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.getPublicPetDetails(desertionNo, memberDetails.getMember());
     }
 
     @PostMapping("/inquiry/{desertionNo}")
-    @Operation(summary = "유기동물 문의내역 기록", description = "자세한 설명")
-    public ResponseEntity<ResponseDto> petInfoInquiry(@PathVariable(value = "desertionNo") String desertionNo, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    @Operation(summary = "유기동물 문의내역 기록")
+    public ResponseEntity<ResponseDto> petInfoInquiry(@PathVariable(value = "desertionNo") String desertionNo,
+                                                      @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.petInfoInquiry(desertionNo, memberDetails.getMember());
     }
 

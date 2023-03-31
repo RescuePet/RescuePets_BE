@@ -13,7 +13,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @Builder
-public class PetInfoState extends TimeStamped{
+public class PetInfoCompare extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

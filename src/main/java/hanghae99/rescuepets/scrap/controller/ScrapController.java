@@ -31,6 +31,13 @@ public class ScrapController {
         return scrapService.scrapMissing(missingId, memberDetails.getMember());
     }
 
+    @PostMapping("/scrap/{desertionNo}")
+    @Operation(summary = "유기동물 관심 등록")
+    public ResponseEntity<ResponseDto> petInfoScrap(@PathVariable(value = "desertionNo") String desertionNo,
+                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return scrapService.scrapPublicPet(desertionNo, memberDetails.getMember());
+    }
+
     @Operation(summary = "발견 게시글 관심 해제")
     @DeleteMapping("/catch/{catchId}")
     public ResponseEntity<ResponseDto> deleteCatch(@PathVariable Long catchId,
@@ -43,12 +50,6 @@ public class ScrapController {
     public ResponseEntity<ResponseDto> deleteMissing(@PathVariable Long missingId,
                                                      @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return scrapService.deleteMissing(missingId, memberDetails.getMember());
-    }
-    @PostMapping("/scrap/{desertionNo}")
-    @Operation(summary = "유기동물 관심 등록")
-    public ResponseEntity<ResponseDto> petInfoScrap(@PathVariable(value = "desertionNo") String desertionNo,
-                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return scrapService.scrapPublicPet(desertionNo, memberDetails.getMember());
     }
 
     @DeleteMapping("/scrap/{desertionNo}")
