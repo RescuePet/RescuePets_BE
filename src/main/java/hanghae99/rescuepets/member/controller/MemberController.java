@@ -10,6 +10,7 @@ import hanghae99.rescuepets.member.service.MemberService;
 import hanghae99.rescuepets.memberpet.dto.PostLinkRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

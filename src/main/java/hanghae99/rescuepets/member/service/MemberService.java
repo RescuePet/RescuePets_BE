@@ -11,6 +11,8 @@ import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
+import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
+import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,6 +38,7 @@ public class MemberService {
     private final S3Uploader s3Uploader;
 
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ScrapRepository scrapRepository;
 
     public ResponseEntity<ResponseDto> signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {

@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Wish {
+public class Scrap extends TimeStamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,17 +26,26 @@ public class Wish {
     @JoinColumn(name = "petPostMissingId")
     private PetPostMissing petPostMissing;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "petInfoByAPIdesertionNo", referencedColumnName = "desertionNo")
+    private PetInfoByAPI petInfoByAPI;
+
     public void setPetPostCatch(PetPostCatch petPostCatch) {
         this.petPostCatch = petPostCatch;
     }
 
-    public Wish(Member member, PetPostMissing petPostMissing) {
+    public Scrap(Member member, PetPostMissing petPostMissing) {
         this.member = member;
         this.petPostMissing = petPostMissing;
     }
 
-    public Wish(Member member, PetPostCatch petPostCatch) {
+    public Scrap(Member member, PetPostCatch petPostCatch) {
         this.member = member;
         this.petPostCatch = petPostCatch;
+    }
+
+    public Scrap(Member member, PetInfoByAPI petInfoByAPI) {
+        this.member = member;
+        this.petInfoByAPI = petInfoByAPI;
     }
 }

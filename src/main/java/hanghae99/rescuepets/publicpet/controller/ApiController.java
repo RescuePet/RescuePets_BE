@@ -26,16 +26,8 @@ public class ApiController {
     @PostMapping("api-compare-data/{pageNo}")
     @Operation(summary = "공공데이터 유기동물API 호출 및 DB 비교 최신화", description = "자세한 설명")
     public ResponseEntity<ResponseDto> apiCompareData(@PathVariable(value = "pageNo") String pageNo,
-                                                      @RequestParam(value = "state") PetStateEnum state, @RequestParam(value = "size") String size) throws IOException {
+                                                      @RequestParam(value = "state") PetStateEnum state,
+                                                      @RequestParam(value = "size") String size) throws IOException {
         return apiDataService.apiCompareData(pageNo, state, size);
     }
-
-//   공공데이터 api 요청 자동비교/테스트용
-//    @SecurityRequirements
-//    @PostMapping("api-compare-data/auto")
-//    @Operation(summary = "공공데이터 유기동물API 호출 및 DB 최신화 Auto 버전/ TEST용", description = "필요 시 apiScheduler.apiSchedule() 접근제한자 변경해야함")
-//    public String apiCompareDataAuto() throws IOException {
-//        apiScheduler.apiSchedule();
-//        return "자동 비교 완료";
-//    }
 }

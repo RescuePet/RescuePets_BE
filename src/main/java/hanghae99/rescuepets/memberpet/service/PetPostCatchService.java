@@ -9,7 +9,7 @@ import hanghae99.rescuepets.memberpet.dto.*;
 import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
 import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
 import hanghae99.rescuepets.memberpet.repository.PostLinkRepository;
-import hanghae99.rescuepets.wish.repository.WishRepository;
+import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
@@ -33,7 +32,7 @@ import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
 public class PetPostCatchService {
     private final PetPostCatchRepository petPostCatchRepository;
     private final PetPostMissingRepository petPostMissingRepository;
-    private final WishRepository wishRepository;
+    private final ScrapRepository scrapRepository;
     private final PostLinkRepository postLinkRepository;
     private final S3Uploader s3Uploader;
 
@@ -60,7 +59,7 @@ public class PetPostCatchService {
         for (PetPostCatch petPostCatch : PetPostCatches) {
             if(petPostCatch.getIsDeleted()){continue;}
             PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
-            dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+            dto.setWished(scrapRepository.findScrapByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
@@ -73,7 +72,7 @@ public class PetPostCatchService {
         for (PetPostCatch petPostCatch : petPostCatchList) {
             if(petPostCatch.getIsDeleted()){continue;}
             PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
-            dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+            dto.setWished(scrapRepository.findScrapByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
@@ -87,7 +86,7 @@ public class PetPostCatchService {
         for (PetPostCatch petPostCatch : PetPostCatchPage) {
             if(petPostCatch.getIsDeleted()){continue;}
             PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
-            dto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+            dto.setWished(scrapRepository.findScrapByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(MY_POST_READING_SUCCESS, dtoList);
@@ -101,8 +100,8 @@ public class PetPostCatchService {
         }
         PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
         responseDto.setLinked(postLinkRepository.findByPetPostCatchId(petPostCatch.getId()).isPresent());
-        responseDto.setWished(wishRepository.findWishByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
-        responseDto.setWishedCount(wishRepository.countByPetPostCatchId(petPostCatchId));
+        responseDto.setWished(scrapRepository.findScrapByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
+        responseDto.setWishedCount(scrapRepository.countByPetPostCatchId(petPostCatchId));
         return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
     }
 

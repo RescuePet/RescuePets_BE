@@ -7,8 +7,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 @AllArgsConstructor
 public enum SuccessMessage {
-
+    TEST_SUCCESS(HttpStatus.CREATED, "테스트 성공."),
     SIGN_UP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료 되었습니다."),
+
     POST_WRITING_SUCCESS(HttpStatus.CREATED, "게시물 작성이 완료 되었습니다."),
     COMMENT_WRITING_SUCCESS(HttpStatus.CREATED, "댓글 작성이 완료 되었습니다."),
     POST_LINKING_SUCCESS(HttpStatus.CREATED, "링크 생성이 완료 되었습니다."),
@@ -39,8 +40,8 @@ public enum SuccessMessage {
     PET_INFO_SCRAP_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
     PET_INFO_INQUIRY_SUCCESS(HttpStatus.CREATED, "해당 유기동물의 문의 내역이 저장되었습니다."),
     PUBLIC_PET_INFO_SAVE_SUCCESS(HttpStatus.CREATED, "유기동물 API 호출 및 DB 저장 성공."),
-    POST_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
-    DELETE_POST_WISH_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
+    POST_SCRAP_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
+    DELETE_POST_SCRAP_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
     WITHDRAWAL_SUCCESS(HttpStatus.OK,"회원탈퇴에 성공하였습니다"),
     DECLARE_PUT_SUCCESS(HttpStatus.OK,"신고수정이 완료되었습니다"),
     DECLARE_DELETE_SUCCESS(HttpStatus.OK,"신고수정이 완료되었습니다"),
