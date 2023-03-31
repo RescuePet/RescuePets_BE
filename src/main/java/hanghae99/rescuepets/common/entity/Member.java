@@ -3,12 +3,10 @@ package hanghae99.rescuepets.common.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
 @Getter
-@Setter
 @Entity
 @NoArgsConstructor
 public class Member {
@@ -53,11 +51,11 @@ public class Member {
         this.profileImage = null;
     }
 
-    public void update(String uploadSingle) {
-        this.profileImage = uploadSingle;
+    public void updateImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 
-    public void updates(String nickname) {
+    public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
 }

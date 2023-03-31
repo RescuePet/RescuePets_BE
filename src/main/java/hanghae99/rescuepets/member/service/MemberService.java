@@ -11,13 +11,10 @@ import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
-import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
-import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -34,59 +31,44 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final KakaoService kakaoService;
-
     private final S3Uploader s3Uploader;
-
     private final RefreshTokenRepository refreshTokenRepository;
-    private final ScrapRepository scrapRepository;
+    private final String defaultImage = "https://heukwu.s3.ap-northeast-2.amazonaws.com/images/rescuepet/Component+43.png";
 
     public ResponseEntity<ResponseDto> signup(SignupRequestDto signupRequestDto) {
         if (memberRepository.findByEmail(signupRequestDto.getEmail()).isPresent()) {
             throw new CustomException(DUPLICATE_EMAIL);
         }
-
         if (memberRepository.findByNickname(signupRequestDto.getNickname()).isPresent()) {
             throw new CustomException(DUPLICATE_NICKNAME);
         }
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
-        String defaultProfileImage = "https://heukwu.s3.ap-northeast-2.amazonaws.com/images/rescuepet/Component+43.png";
-
         Member member = Member.builder()
                 .email(signupRequestDto.getEmail())
                 .password(password)
                 .nickname(signupRequestDto.getNickname())
-                .profileImage(defaultProfileImage)
+                .profileImage(defaultImage)
                 .build();
-
         memberRepository.save(member);
-        return ResponseDto.toResponseEntity(SIGN_UP_SUCCESS, new MemberResponseDto(member)
-        );
 
+        return ResponseDto.toResponseEntity(SIGN_UP_SUCCESS, new MemberResponseDto(member));
     }
 
     public ResponseEntity<ResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
-
-        // 사용자 확인
         Member member = memberRepository.findByEmail(email).orElseThrow(
                 () -> new CustomException(MEMBER_NOT_FOUND)
         );
-
-        // 비밀번호 확인
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new CustomException(MEMBER_NOT_FOUND);
         }
-
         jwtUtil.createToken(response, member);
 
         return ResponseDto.toResponseEntity(LOGIN_SUCCESS, new MemberResponseDto(member));
     }
 
     public ResponseEntity<ResponseDto> checkEmail(EmailRequestDto emailRequestDto) {
-
-
-        // 중복 이메일 확인
         if (memberRepository.findByEmail(emailRequestDto.getEmail()).isPresent()) {
             throw new CustomException(DUPLICATE_EMAIL);
         }
@@ -106,7 +88,6 @@ public class MemberService {
 
         return ResponseDto.toResponseEntity(EMAIL_CHECK_SUCCESS);
     }
-
 
     @Transactional
     public ResponseEntity<ResponseDto> logout(Member member) {
@@ -129,6 +110,7 @@ public class MemberService {
             }
         }
         member.withdrawal();
+
         return ResponseDto.toResponseEntity(WITHDRAWAL_SUCCESS);
     }
 
@@ -136,16 +118,25 @@ public class MemberService {
     public ResponseEntity<ResponseDto> memberEdit(UpdateRequestDto updateRequestDto, Member member) {
         member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
         if (updateRequestDto.getImage() != null) {
-            member.update(s3Uploader.uploadSingle(updateRequestDto.getImage()));
+            member.updateImage(s3Uploader.uploadSingle(updateRequestDto.getImage()));
         }
         if (updateRequestDto.getNickname() != null && !updateRequestDto.getNickname().equalsIgnoreCase("")) {
             if (memberRepository.findByNickname(updateRequestDto.getNickname()).isPresent()) {
                 throw new CustomException(DUPLICATE_NICKNAME);
             }
-            member.updates(updateRequestDto.getNickname());
+            member.updateNickname(updateRequestDto.getNickname());
         }
         MemberReviseResponseDto memberReviseResponseDto = new MemberReviseResponseDto(member);
+
         return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS, memberReviseResponseDto);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> setDefault(Member member) {
+        member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
+        member.updateImage(defaultImage);
+
+        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
     }
 }
 
