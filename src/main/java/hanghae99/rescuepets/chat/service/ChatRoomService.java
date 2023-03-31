@@ -33,22 +33,16 @@ public class ChatRoomService {
         List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByModifiedAtDesc(member.getId(), member.getId());
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
         for (ChatRoom room : roomList) {
-            String partner = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getNickname() : room.getHost().getNickname();
-            String profileImage = room.getHost().getNickname().equals(member.getNickname()) ? room.getGuest().getProfileImage() : room.getHost().getProfileImage();
-            String postName = room.getCatchPost() == null ? "missing-room" : "catch-room";
-            Long postId = room.getCatchPost() == null ? room.getMissingPost().getId() : room.getCatchPost().getId();
-            String roomName = room.getCatchPost() == null ? room.getMissingPost().getKindCd() : room.getCatchPost().getKindCd();
-            SexEnum sexCd = room.getCatchPost() == null ? room.getMissingPost().getSexCd() : room.getCatchPost().getSexCd();
+            Member partner = getPartner(room, member);
+
+            ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder roomBuilder = ChatRoomListResponseDto
+                    .of(room, getRoomName(room), partner.getNickname(), partner.getProfileImage(), getPostId(room), getPostName(room), getSexCd(room));
 
             if (room.getChatMessages().size() > 0) {
                 Chat lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1);
-
-                dto.add(ChatRoomListResponseDto.of(room, roomName, partner, profileImage, postId, postName, sexCd)
-                        .lastChat(lastChat.getMessage()).time(Time.chatTime(lastChat.getCreatedAt()))
-                        .build());
+                roomBuilder.lastChat(lastChat.getMessage()).time(Time.chatTime(lastChat.getCreatedAt()));
             }
-
-            dto.add(ChatRoomListResponseDto.of(room, roomName, partner, profileImage, postId, postName, sexCd).build());
+            dto.add(roomBuilder.build());
         }
 
         return ResponseDto.toResponseEntity(SuccessMessage.Chat_Room_List_SUCCESS, dto);
@@ -60,8 +54,7 @@ public class ChatRoomService {
         if (post.getMember().getId().equals(member.getId())) {
             throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
         }
-        ChatRoom room = chatRoomRepository.findChatRoomByCatchPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(
-                ChatRoom.of(post, member));
+        ChatRoom room = chatRoomRepository.findChatRoomByCatchPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(ChatRoom.of(post, member));
         chatRoomRepository.save(room);
 
         return room.getRoomId();
@@ -73,10 +66,29 @@ public class ChatRoomService {
         if (post.getMember().getId().equals(member.getId())) {
             throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
         }
-        ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(
-                ChatRoom.of(post, member));
+        ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(ChatRoom.of(post, member));
         chatRoomRepository.save(room);
 
         return room.getRoomId();
+    }
+
+    private Member getPartner(ChatRoom room, Member member) {
+        return room.getHost().getId().equals(member.getId()) ? room.getGuest() : room.getHost();
+    }
+
+    private String getPostName(ChatRoom room) {
+        return room.getCatchPost() == null ? "missing-room" : "catch-room";
+    }
+
+    private Long getPostId(ChatRoom room) {
+        return room.getCatchPost() == null ? room.getMissingPost().getId() : room.getCatchPost().getId();
+    }
+
+    private String getRoomName(ChatRoom room) {
+        return room.getCatchPost() == null ? room.getMissingPost().getKindCd() : room.getCatchPost().getKindCd();
+    }
+
+    private SexEnum getSexCd(ChatRoom room) {
+        return room.getCatchPost() == null ? room.getMissingPost().getSexCd() : room.getCatchPost().getSexCd();
     }
 }
