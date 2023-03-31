@@ -29,7 +29,7 @@ public class CommentController {
     private final PetPostCatchRepository petPostCatchRepository;
     private final PetPostMissingRepository petPostMissingRepository;
 
-    @GetMapping("/pets/missing/member")
+    @GetMapping("/pets/comments/member")
     @Operation(summary = "내가 쓴 댓글 불러오기", description = "")
     public ResponseEntity<ResponseDto> getCommentListByMember(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails){
         return commentService.getCommentListByMember(userDetails.getMember());
