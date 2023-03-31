@@ -79,4 +79,10 @@ public class MemberController {
     public ResponseEntity<ResponseDto> memberEdit(@ModelAttribute UpdateRequestDto updateRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.memberEdit(updateRequestDto, memberDetails.getMember());
     }
+
+    @Operation(summary = "프로필 이미지 기본값 변경")
+    @PutMapping(value = "/member/default-image")
+    public ResponseEntity<ResponseDto> setDefault(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.setDefault(memberDetails.getMember());
+    }
 }
