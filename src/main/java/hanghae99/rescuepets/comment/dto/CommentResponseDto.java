@@ -28,6 +28,7 @@ public class CommentResponseDto {
         this.petPostCatchId = petPostCatch.getId();
         this.profileImage = comment.getMember().getProfileImage();
     }
+
     public CommentResponseDto(Comment comment, PetPostMissing petPostMissing) {
         this.id = comment.getId();
         this.content = comment.getContent();
