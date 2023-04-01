@@ -44,7 +44,12 @@ public class CommentResponseDto {
         this.userNickName = comment.getMember().getNickname();
         this.createdAt = comment.getCreatedAt().toString();
         this.modifiedAt = comment.getModifiedAt().toString();
-        this.petPostMissingId = comment.getPetPostMissing().getId();
         this.profileImage = comment.getMember().getProfileImage();
+        if (comment.getPetPostCatch() != null) {
+            this.petPostCatchId = comment.getPetPostCatch().getId();
+        }
+        if (comment.getPetPostCatch() != null) {
+            this.petPostMissingId = comment.getPetPostMissing().getId();
+        }
     }
 }
