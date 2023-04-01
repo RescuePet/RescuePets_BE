@@ -48,7 +48,7 @@ public class CommentResponseDto {
         if (comment.getPetPostCatch() != null) {
             this.petPostCatchId = comment.getPetPostCatch().getId();
         }
-        if (comment.getPetPostCatch() != null) {
+        if (comment.getPetPostMissing() != null) {
             this.petPostMissingId = comment.getPetPostMissing().getId();
         }
     }
