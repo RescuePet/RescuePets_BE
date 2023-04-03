@@ -32,16 +32,16 @@ public class ChatRoomService {
     public ResponseEntity<ResponseDto> getRoomList(Member member) {
         List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByModifiedAtDesc(member.getId(), member.getId());
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
+
         for (ChatRoom room : roomList) {
             Member partner = getPartner(room, member);
-
-            ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder roomBuilder = ChatRoomListResponseDto
-                    .of(room, getRoomName(room), partner.getNickname(), partner.getProfileImage(), getPostId(room), getPostName(room), getSexCd(room));
+            ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder roomBuilder = ChatRoomListResponseDto.of(room, partner, getRoomName(room), getPostId(room), getPostName(room), getSexCd(room));
 
             if (room.getChatMessages().size() > 0) {
                 Chat lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1);
                 roomBuilder.lastChat(lastChat.getMessage()).time(Time.chatTime(lastChat.getCreatedAt()));
             }
+
             dto.add(roomBuilder.build());
         }
 
@@ -51,10 +51,8 @@ public class ChatRoomService {
     @Transactional
     public String createCatchRoom(Long postId, Member member) {
         PetPostCatch post = petPostCatchRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (post.getMember().getId().equals(member.getId())) {
-            throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
-        }
-        ChatRoom room = chatRoomRepository.findChatRoomByCatchPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(ChatRoom.of(post, member));
+        validateCreateChatroom(post.getMember(), member);
+        ChatRoom room = chatRoomRepository.findChatRoomByCatchPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
         chatRoomRepository.save(room);
 
         return room.getRoomId();
@@ -63,10 +61,8 @@ public class ChatRoomService {
     @Transactional
     public String createMissingRoom(Long postId, Member member) {
         PetPostMissing post = petPostMissingRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (post.getMember().getId().equals(member.getId())) {
-            throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
-        }
-        ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndHostIdAndGuestId(post.getId(), post.getMember().getId(), member.getId()).orElse(ChatRoom.of(post, member));
+        validateCreateChatroom(post.getMember(), member);
+        ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
         chatRoomRepository.save(room);
 
         return room.getRoomId();
@@ -90,5 +86,11 @@ public class ChatRoomService {
 
     private SexEnum getSexCd(ChatRoom room) {
         return room.getCatchPost() == null ? room.getMissingPost().getSexCd() : room.getCatchPost().getSexCd();
+    }
+
+    private void validateCreateChatroom(Member postAuthor, Member member) {
+        if (postAuthor.getId().equals(member.getId())) {
+            throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
+        }
     }
 }

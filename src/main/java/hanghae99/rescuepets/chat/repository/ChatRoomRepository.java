@@ -11,7 +11,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
 
     List<ChatRoom> findAllByHostIdOrGuestIdOrderByModifiedAtDesc(Long hostId, Long guestId);
 
-    Optional<ChatRoom> findChatRoomByCatchPostIdAndHostIdAndGuestId(Long postId, Long hostId, Long guestId);
+    Optional<ChatRoom> findChatRoomByCatchPostIdAndGuestId(Long postId, Long guestId);
 
-    Optional<ChatRoom> findChatRoomByMissingPostIdAndHostIdAndGuestId(Long postId, Long hostId, Long guestId);
+    Optional<ChatRoom> findChatRoomByMissingPostIdAndGuestId(Long postId, Long guestId);
 }
