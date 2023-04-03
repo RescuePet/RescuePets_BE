@@ -25,7 +25,6 @@ import org.springframework.web.cors.CorsUtils;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
     private final JwtAuthFilter jwtAuthFilter;
     private final CorsFilter corsFilter;
     private final JwtAccessDeniedHandler accessDeniedHandler;
@@ -34,6 +33,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
+//                .requestMatchers(PathRequest.toH2Console())
                 .mvcMatchers("/api-docs")
                 .mvcMatchers("/docs/**")
                 .mvcMatchers("/version")
@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET, "api/pets/petinfobyapi/**", "api/pets/catch/**","api/pets/missing","api/pets/missing/comments/**").permitAll()
                 .antMatchers(HttpMethod.GET, "api/chat/catchroom/**","api/chat/missingroom/**","chat/rooms","chat/rooms/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/pets/info-list/**","/api/pets/details/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/mypage/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/pets/api-compare-data/**","/api/pets/api-new-save/**").permitAll()
                 .antMatchers("/api/**").authenticated()
 

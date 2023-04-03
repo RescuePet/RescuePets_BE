@@ -53,7 +53,7 @@ public class PetPostMissing extends TimeStamped{
     @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
     @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
-    private List<Wish> wishList = new ArrayList<>();
+    private List<Scrap> scrapList = new ArrayList<>();
 
     public PetPostMissing(PetPostMissingRequestDto requestDto, Member member) {
         this.upkind = requestDto.getUpkind();
@@ -102,6 +102,12 @@ public class PetPostMissing extends TimeStamped{
     }
     public void setIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+    public Boolean getIsDeleted() {
+        if(isDeleted == null){
+            return false;
+        }
+        return isDeleted;
     }
 }
 

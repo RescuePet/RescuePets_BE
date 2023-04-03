@@ -64,18 +64,18 @@ public class PetPostMissingController {
     @Operation(summary = "PostMissing 게시글 작성하기", description = "PostMissing 게시글 하나를 작성합니다")
     public ResponseEntity<ResponseDto> createPetPostMissing(@ModelAttribute PetPostMissingRequestDto requestDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return petPostMissingService.create(requestDto, memberDetails.getMember());
+        return petPostMissingService.createPetPostMissing(requestDto, memberDetails.getMember());
     }
     @PutMapping(value = "/{petPostMissingId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "내가 작성한 특정 PostMissing 게시글 수정하기", description = "내가 작성한 PostMissing 게시글 하나를 수정합니다")
     public ResponseEntity<ResponseDto> updatePetPostMissing(@PathVariable Long petPostMissingId,
                                           @ModelAttribute PetPostMissingRequestDto requestDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return petPostMissingService.update(petPostMissingId, requestDto, memberDetails.getMember());
+        return petPostMissingService.updatePetPostMissing(petPostMissingId, requestDto, memberDetails.getMember());
     }
     @DeleteMapping("/{petPostMissingId}")
-    @Operation(summary = "내가 작성한 특정 PostMissing 게시글 삭제하기", description = "내가 작성한 PostMissing 게시글 하나를 삭제합니다")
-    public ResponseEntity<ResponseDto> deletePetPostMissing(@PathVariable Long petPostMissingId, @AuthenticationPrincipal MemberDetails userDetails) {
+    @Operation(summary = "내가 작성한 특정 PostMissing 게시글 즉시 삭제하기", description = "내가 작성한 PostMissing 게시글 하나를 삭제합니다")
+    public ResponseEntity<ResponseDto> deletePetPostMissing(@PathVariable Long petPostMissingId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return petPostMissingService.delete(petPostMissingId, userDetails.getMember());
     }
     @PostMapping(value = "/links/{petPostMissingId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

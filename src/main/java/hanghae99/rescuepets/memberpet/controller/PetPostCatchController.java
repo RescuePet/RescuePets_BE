@@ -60,7 +60,7 @@ public class PetPostCatchController {
     @Operation(summary = "PostCatch 게시글 작성하기", description = "PostCatch 게시글 하나를 작성합니다")
     public ResponseEntity<ResponseDto> createPetPostCatch(@ModelAttribute PetPostCatchRequestDto requestDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return petPostCatchService.create(requestDto, memberDetails.getMember());
+        return petPostCatchService.createPetPostCatch(requestDto, memberDetails.getMember());
     }
 
     @PutMapping(value = "/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -68,13 +68,18 @@ public class PetPostCatchController {
     public ResponseEntity<ResponseDto> updatePetPostCatch(@PathVariable Long petPostCatchId,
                                           @ModelAttribute PetPostCatchRequestDto requestDto,
                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return petPostCatchService.update(petPostCatchId, requestDto, memberDetails.getMember());
+        return petPostCatchService.updatePetPostCatch(petPostCatchId, requestDto, memberDetails.getMember());
     }
 
+//    @DeleteMapping("/{petPostCatchId}")
+//    @Operation(summary = "PostCatch 게시글 임시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
+//    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
+//        return petPostCatchService.softDeletePetPostCatch(petPostCatchId, userDetails.getMember());
+//    }
     @DeleteMapping("/{petPostCatchId}")
-    @Operation(summary = "내가 작성한 특정 PostCatch 게시글 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
-    public ResponseEntity<ResponseDto> deletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
-        return petPostCatchService.delete(petPostCatchId, userDetails.getMember());
+    @Operation(summary = "PostCatch 게시글 즉시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
+    public ResponseEntity<ResponseDto> deletePetPostCatch(@PathVariable Long petPostCatchId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
+        return petPostCatchService.deletePetPostCatch(petPostCatchId, userDetails.getMember());
     }
 
     @PostMapping(value = "/links/{petPostCatchId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

@@ -22,7 +22,6 @@ public class ChatController {
     private final ChatService chatService;
     private final SimpMessagingTemplate template;
 
-    //채팅
     @MessageMapping("/{roomId}")
     @SendTo("/sub/{roomId}")
     public void enter(@DestinationVariable String roomId, ChatRequestDto requestDto) {

@@ -7,13 +7,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class PetInfoByAPI extends TimeStamped{
+public class PetInfoByAPI extends TimeStamped implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -61,8 +64,12 @@ public class PetInfoByAPI extends TimeStamped{
     private String chargeNm;
     @Column
     private String officetel;
+    @Enumerated(value = EnumType.STRING)
     @Column
-    private String state;
+    private PetStateEnum petStateEnum;
+
+    @OneToMany(mappedBy = "petInfoByAPI", cascade = CascadeType.REMOVE)
+    private List<Scrap> scrapList = new ArrayList<>();
 
     public void update(PetInfoByAPI petInfo) {
         this.desertionNo = petInfo.desertionNo;
@@ -87,7 +94,7 @@ public class PetInfoByAPI extends TimeStamped{
         this.orgNm = petInfo.orgNm;
         this.chargeNm = petInfo.chargeNm;
         this.officetel = petInfo.officetel;
-        this.state = petInfo.state;
+        this.petStateEnum = petInfo.petStateEnum;
     }
 
 }

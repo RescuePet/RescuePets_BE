@@ -1,23 +1,26 @@
 package hanghae99.rescuepets.member.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
-import hanghae99.rescuepets.member.dto.EmailRequestDto;
-import hanghae99.rescuepets.member.dto.LoginRequestDto;
-import hanghae99.rescuepets.member.dto.NicknameRequestDto;
-import hanghae99.rescuepets.member.dto.SignupRequestDto;
+import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.service.MemberService;
+import hanghae99.rescuepets.memberpet.dto.PostLinkRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,7 +30,6 @@ public class MemberController {
     private final MemberService memberService;
     private final JwtUtil jwtUtil;
 
-    //회원가입
     @Operation(summary = "회원가입", description = "자세한 설명")
     @PostMapping("member/signup")
     public ResponseEntity<ResponseDto> signup(@RequestBody @Validated SignupRequestDto signupRequestDto) {
@@ -35,21 +37,18 @@ public class MemberController {
 
     }
 
-    // 이메일 중복 확인
     @Operation(summary = "이메일 중복 확인", description = "자세한 설명")
-    @GetMapping("member/email-duplicate")
+    @PostMapping("member/email-duplicate")
     public ResponseEntity<ResponseDto> checkEmail(@RequestBody EmailRequestDto emailRequestDto) {
         return memberService.checkEmail(emailRequestDto);
     }
 
-    // 닉네임 중복 확인
     @Operation(summary = "닉네임 욕설 포함여부 및 중복 확인", description = "자세한 설명")
     @PostMapping("member/nickName-duplicate")
     public ResponseEntity<ResponseDto> checkNickname(@RequestBody NicknameRequestDto nicknameRequestDto) {
         return memberService.checkNickname(nicknameRequestDto);
     }
 
-    // 로그인 하기
     @Operation(summary = "로그인", description = "자세한 설명")
     @PostMapping("/member/login")
     public ResponseEntity<ResponseDto> login(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response) {
@@ -73,5 +72,17 @@ public class MemberController {
     @PostMapping("/member/Withdrawal")
     public ResponseEntity<ResponseDto> Withdrawal(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.Withdrawal(memberDetails.getMember());
+    }
+
+    @Operation(summary = "회원정보수정")
+    @PutMapping(value = "/member/edit", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> memberEdit(@ModelAttribute UpdateRequestDto updateRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.memberEdit(updateRequestDto, memberDetails.getMember());
+    }
+
+    @Operation(summary = "프로필 이미지 기본값 변경")
+    @PutMapping(value = "/member/default-image")
+    public ResponseEntity<ResponseDto> setDefault(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.setDefault(memberDetails.getMember());
     }
 }

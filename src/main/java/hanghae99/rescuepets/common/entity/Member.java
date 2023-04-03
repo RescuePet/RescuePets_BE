@@ -53,4 +53,12 @@ public class Member {
         this.kakaoId = null;
         this.profileImage = null;
     }
+
+    public void updateImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 }

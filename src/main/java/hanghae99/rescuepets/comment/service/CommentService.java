@@ -34,7 +34,7 @@ public class CommentService {
         List<Comment> commentList = commentRepository.findAllByMemberId(member.getId());
         List<CommentResponseDto> comments = new ArrayList<>();
         for (Comment comment : commentList) {
-            comments.add(new CommentResponseDto(comment, member));
+            comments.add(new CommentResponseDto(comment));
         }
         return ResponseDto.toResponseEntity(MY_COMMENT_READING_SUCCESS, comments);
     }

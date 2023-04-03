@@ -11,7 +11,6 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity(name = "petPostCatch")
 @Getter
@@ -55,7 +54,7 @@ public class PetPostCatch extends TimeStamped{
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
     @OneToMany(mappedBy = "petPostCatch", cascade = CascadeType.REMOVE)
-    private List<Wish> wishList = new ArrayList<>();
+    private List<Scrap> scrapList = new ArrayList<>();
 
 
     public PetPostCatch(PetPostCatchRequestDto requestDto, Member member) {
@@ -103,7 +102,11 @@ public class PetPostCatch extends TimeStamped{
         this.contact = requestDto.getContact();
         this.openNickname = requestDto.getOpenNickname();
     }
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
+    public void setIsDeleted(Boolean isDeleted) { this.isDeleted = isDeleted; }
+    public Boolean getIsDeleted() {
+        if(isDeleted == null){
+            return false;
+        }
+        return isDeleted;
     }
 }
