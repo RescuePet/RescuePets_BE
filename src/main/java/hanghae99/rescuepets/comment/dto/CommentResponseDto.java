@@ -28,6 +28,7 @@ public class CommentResponseDto {
         this.petPostCatchId = petPostCatch.getId();
         this.profileImage = comment.getMember().getProfileImage();
     }
+
     public CommentResponseDto(Comment comment, PetPostMissing petPostMissing) {
         this.id = comment.getId();
         this.content = comment.getContent();
@@ -44,7 +45,12 @@ public class CommentResponseDto {
         this.userNickName = comment.getMember().getNickname();
         this.createdAt = comment.getCreatedAt().toString();
         this.modifiedAt = comment.getModifiedAt().toString();
-        this.petPostMissingId = comment.getPetPostMissing().getId();
         this.profileImage = comment.getMember().getProfileImage();
+        if (comment.getPetPostCatch() != null) {
+            this.petPostCatchId = comment.getPetPostCatch().getId();
+        }
+        if (comment.getPetPostMissing() != null) {
+            this.petPostMissingId = comment.getPetPostMissing().getId();
+        }
     }
 }
