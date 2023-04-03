@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -25,6 +26,12 @@ public class Member {
     private Long kakaoId;
 
     @Column
+    private Boolean stop;
+
+    @Column
+    private LocalDateTime reportdate;
+
+    @Column
     private String profileImage;
 
     @Builder
@@ -36,6 +43,7 @@ public class Member {
         this.address = address;
         this.kakaoId = kakaoId;
         this.profileImage = profileImage;
+        this.stop = false;
     }
 
     public void setKakao(Long kakaoId, String profileImage) {
@@ -57,5 +65,14 @@ public class Member {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void Stop(LocalDateTime localDateTime){
+        this.stop = true;
+        this.reportdate = localDateTime;
+    }
+
+    public void Start(){
+        this.stop = false;
     }
 }

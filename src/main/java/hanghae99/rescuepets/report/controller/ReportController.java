@@ -1,12 +1,14 @@
 package hanghae99.rescuepets.report.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.ReportEnum;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.report.dto.ReportIdRequestDto;
 import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
 import hanghae99.rescuepets.report.dto.ReportRequestDto;
 import hanghae99.rescuepets.report.service.ReportService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -28,7 +30,13 @@ public class ReportController {
         return reportService.reportMissing(reportRequestDto, userDetails.getMember());
     }
 
+    @GetMapping("/all")
+    @Operation(summary = "Report 전체 게시글을 페이징없이 불러오기", description = "Report를 페이징없이 불러옵니다")
+    public ResponseEntity<ResponseDto> getReportAll(@RequestParam(required = false, defaultValue = "createdAt") String sortBy
+                                                          ) {
 
+        return reportService.getReportAll(sortBy );
+    }
 
     @DeleteMapping(value = "/petMissing",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseDto> reportPetPostMissingDelete(@ModelAttribute ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails){

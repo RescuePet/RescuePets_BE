@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Report {
+public class Report extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,6 +27,7 @@ public class Report {
 
     @Column
     private String reportcode;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -55,5 +56,10 @@ public class Report {
         this.content = reportRequestDto.getContent();
         this.reportcode =reportRequestDto.getReportCode().getValue();
     }
+
+    public void updates(int count) {
+        this.count = count;
+    }
+
 }
 

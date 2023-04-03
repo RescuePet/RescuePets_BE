@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum SuccessMessage {
     TEST_SUCCESS(HttpStatus.CREATED, "테스트 성공."),
     SIGN_UP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료 되었습니다."),
+    TIMECHECK_SUCCESS(HttpStatus.CREATED, "아직정지 시간이 풀리지 않았습니다."),
 
     POST_WRITING_SUCCESS(HttpStatus.CREATED, "게시물 작성이 완료 되었습니다."),
     COMMENT_WRITING_SUCCESS(HttpStatus.CREATED, "댓글 작성이 완료 되었습니다."),

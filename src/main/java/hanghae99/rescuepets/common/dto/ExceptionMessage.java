@@ -26,11 +26,14 @@ public enum ExceptionMessage {
     UNAUTHORIZED_ADMIN(UNAUTHORIZED, "관리자가 아닙니다."),
     UNAUTHORIZED_UPDATE_OR_DELETE(UNAUTHORIZED,"작성자만 수정/삭제할 수 있습니다."),
 
+
     /* 403 FORBIDDEN : 권한 없음 */
     USER_FORBIDDEN(FORBIDDEN, "권한이 없습니다."),
     USER_STOP(FORBIDDEN,"정지"),
     CART_GOODS_DELETE_FORBIDDEN(FORBIDDEN,"해당 장바구니의 삭제 권한이 없습니다."),
     PROFANITY_CHECK(FORBIDDEN, "닉네임에는 비속어를 포함할 수 없습니다."),
+
+
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     POST_NOT_FOUND(NOT_FOUND, "대상 게시글을 찾을 수 없습니다."),
@@ -52,6 +55,8 @@ public enum ExceptionMessage {
     DUPLICATE_RESOURCE_PET_INFO_SCRAP(CONFLICT, "관심 유기동물에 이미 존재합니다"),
     DUPLICATE_RESOURCE_PET_INFO_INQUIRY(CONFLICT, "해당 유기동물에 문의한 내역이 존재합니다"),
     DUPLICATE_USER(CONFLICT,"중복된 사용자가 존재합니다."),
+
+
     DUPLICATE_GOODS(CONFLICT,"해당 상품의 이름은 이미 존재합니다."),
     DUPLICATE_NICKNAME(CONFLICT,"중복된 닉네임이 존재합니다."),
     DUPLICATE_EMAIL(CONFLICT,"중복된 이메일이 존재합니다."),
