@@ -27,40 +27,26 @@ public class ScrapController {
         return scrapService.getMyScrapList(page - 1, size, sortBy, memberDetails.getMember());
     }
 
-    @Operation(summary = "발견 게시글 관심 등록")
+    @Operation(summary = "게시글 스크랩 등록")
     @PostMapping("/{postId}")
     public ResponseEntity<ResponseDto> scrapPost(@PathVariable Long postId,
                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return scrapService.scrapPost(postId, memberDetails.getMember());
     }
 
-//    @Operation(summary = "실종 게시글 관심 등록")
-//    @PostMapping("/missing/{missingId}")
-//    public ResponseEntity<ResponseDto> scrapMissing(@PathVariable Long missingId,
-//                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return scrapService.scrapMissing(missingId, memberDetails.getMember());
-//    }
-
     @PostMapping("/public/{desertionNo}")
-    @Operation(summary = "유기동물 관심 등록")
+    @Operation(summary = "유기동물 스크랩 등록")
     public ResponseEntity<ResponseDto> scrapPetInfo(@PathVariable(value = "desertionNo") String desertionNo,
                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return scrapService.scrapPetInfo(desertionNo, memberDetails.getMember());
     }
 
-    @Operation(summary = "발견 게시글 관심 해제")
+    @Operation(summary = "게시글 스크랩 해제")
     @DeleteMapping("/{postId}")
     public ResponseEntity<ResponseDto> deletePostScrap(@PathVariable Long postId,
                                                        @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return scrapService.deletePostScrap(postId, memberDetails.getMember());
     }
-
-//    @Operation(summary = "실종 게시글 관심 해제")
-//    @DeleteMapping("/missing/{missingId}")
-//    public ResponseEntity<ResponseDto> deleteMissing(@PathVariable Long missingId,
-//                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return scrapService.deleteMissing(missingId, memberDetails.getMember());
-//    }
 
     @DeleteMapping("/public/{desertionNo}")
     @Operation(summary = "유기동물 관심 해제")

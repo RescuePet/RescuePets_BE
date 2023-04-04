@@ -34,9 +34,26 @@ public class ScrapService {
     private final PostRepository postRepository;
     private final PublicPetInfoRepository publicPetInfoRepository;
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<ResponseDto> getMyScrapList(int page, int size, String sortBy, Member member) {
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Scrap> scrapPages = scrapRepository.findByMemberId(member.getId(), pageable);
+        List<ScrapResponseDto> dtoList = new ArrayList<>();
+
+        for (Scrap scrapPage : scrapPages) {
+            if (scrapPage.getPetInfoByAPI() != null) {
+                dtoList.add(ScrapResponseDto.of("publicPet", scrapPage.getId(), scrapPage.getPetInfoByAPI()));
+            } else if (scrapPage.getPost() != null) {
+                dtoList.add(ScrapResponseDto.of(scrapPage.getId(), scrapPage.getPost()));
+            }
+        }
+        return ResponseDto.toResponseEntity(SCRAP_ALL_LIST_SUCCESS, ScrapListResponseDto.of(dtoList, scrapPages.isLast()));
+    }
+
     @Transactional
     public ResponseEntity<ResponseDto> scrapPost(Long postId, Member member) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
+        Post post = getPost(postId);
         Optional<Scrap> scrap = scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId());
         if (scrap.isPresent()) {
             throw new CustomException(ExceptionMessage.ALREADY_SCRAP);
@@ -59,7 +76,7 @@ public class ScrapService {
 
     @Transactional
     public ResponseEntity<ResponseDto> deletePostScrap(Long postId, Member member) {
-        Post post = postRepository.findById(postId).orElseThrow(NullPointerException::new);
+        Post post = getPost(postId);
         Optional<Scrap> scrap = scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId());
         if (scrap.isEmpty()) {
             throw new CustomException(ExceptionMessage.NOT_FOUND_SCRAP);
@@ -77,24 +94,11 @@ public class ScrapService {
         return ResponseDto.toResponseEntity(PET_INFO_SCRAP_DELETE_SUCCESS);
     }
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDto> getMyScrapList(int page, int size, String sortBy, Member member) {
-        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Scrap> scrapPages = scrapRepository.findByMemberId(member.getId(), pageable);
-        List<ScrapResponseDto> dtoList = new ArrayList<>();
-
-        for (Scrap scrapPage : scrapPages) {
-            if (scrapPage.getPetInfoByAPI() != null) {
-                dtoList.add(ScrapResponseDto.of("publicPet", scrapPage.getId(), scrapPage.getPetInfoByAPI()));
-            } else if (scrapPage.getPost() != null) {
-                dtoList.add(ScrapResponseDto.of("catch", scrapPage.getId(), scrapPage.getPost()));
-            }
-        }
-        return ResponseDto.toResponseEntity(SCRAP_ALL_LIST_SUCCESS, ScrapListResponseDto.of(dtoList, scrapPages.isLast()));
-    }
-
     private boolean publicPetIsScrap(String desertionNo, Long memberId) {
         return scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(memberId, desertionNo).isPresent();
+    }
+    private Post getPost(Long postId) {
+        return postRepository.findById(postId).orElseThrow(
+                () -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
     }
 }
