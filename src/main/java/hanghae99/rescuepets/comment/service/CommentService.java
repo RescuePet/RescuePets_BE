@@ -6,10 +6,8 @@ import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Comment;
 import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.PetPostCatch;
-import hanghae99.rescuepets.common.entity.PetPostMissing;
-import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
-import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
+import hanghae99.rescuepets.common.entity.Post;
+import hanghae99.rescuepets.memberpet.repository.PostRepository;
 import hanghae99.rescuepets.comment.dto.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +24,7 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 @RequiredArgsConstructor
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final PetPostMissingRepository petPostMissingRepository;
-    private final PetPostCatchRepository petPostCatchRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public ResponseEntity<ResponseDto> getCommentListByMember(Member member) {
@@ -39,34 +36,19 @@ public class CommentService {
         return ResponseDto.toResponseEntity(MY_COMMENT_READING_SUCCESS, comments);
     }
     @Transactional
-    public ResponseEntity<ResponseDto> getCommentCatchList(PetPostCatch petPostCatch) {
-        List<Comment> commentList = commentRepository.findAllByPetPostCatchId(petPostCatch.getId());
+    public ResponseEntity<ResponseDto> getCommentList(Post post) {
+        List<Comment> commentList = commentRepository.findAllByPostId(post.getId());
         List<CommentResponseDto> comments = new ArrayList<>();
         for (Comment comment : commentList) {
-            comments.add(new CommentResponseDto(comment, petPostCatch));
-        }
-        return ResponseDto.toResponseEntity(COMMENT_READING_SUCCESS, comments);
-    }
-    @Transactional
-    public ResponseEntity<ResponseDto> getCommentMissingList(PetPostMissing petPostMissing) {
-        List<Comment> commentList = commentRepository.findAllByPetPostMissingId(petPostMissing.getId());
-        List<CommentResponseDto> comments = new ArrayList<>();
-        for (Comment comment : commentList) {
-            comments.add(new CommentResponseDto(comment, petPostMissing));
+            comments.add(new CommentResponseDto(comment, post));
         }
         return ResponseDto.toResponseEntity(COMMENT_READING_SUCCESS, comments);
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> createCommentCatch(Long petPostCatchId, CommentRequestDto requestDto, Member member) {
-        PetPostCatch petPostCatch = petPostCatchRepository.findById(petPostCatchId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
-        commentRepository.save(new Comment(requestDto.getContent(), petPostCatch, member));
-        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS);
-    }
-    @Transactional
-    public ResponseEntity<ResponseDto> createCommentMissing(Long petPostMissingId, CommentRequestDto requestDto, Member member) {
-        PetPostMissing petPostMissing = petPostMissingRepository.findById(petPostMissingId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
-        commentRepository.save(new Comment(requestDto.getContent(), petPostMissing, member));
+    public ResponseEntity<ResponseDto> createComment(Long postId, CommentRequestDto requestDto, Member member) {
+        Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
+        commentRepository.save(new Comment(requestDto.getContent(), post, member));
         return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS);
     }
 

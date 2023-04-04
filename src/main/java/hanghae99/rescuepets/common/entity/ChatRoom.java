@@ -26,10 +26,7 @@ public class ChatRoom extends TimeStamped {
     List<Chat> chatMessages = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private PetPostCatch catchPost;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private PetPostMissing missingPost;
+    private Post post;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private Member host;
@@ -37,7 +34,7 @@ public class ChatRoom extends TimeStamped {
     @ManyToOne(fetch = FetchType.EAGER)
     private Member guest;
 
-    public static ChatRoom of(PetPostCatch post, Member member) {
+    public static ChatRoom of(Post post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
                 .catchPost(post)

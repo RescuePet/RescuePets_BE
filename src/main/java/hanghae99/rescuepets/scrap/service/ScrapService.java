@@ -5,8 +5,7 @@ import hanghae99.rescuepets.common.dto.ExceptionMessage;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.*;
-import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
-import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
+import hanghae99.rescuepets.memberpet.repository.PostRepository;
 import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
 import hanghae99.rescuepets.scrap.dto.ScrapListResponseDto;
 import hanghae99.rescuepets.scrap.dto.ScrapResponseDto;
@@ -32,14 +31,13 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 public class ScrapService {
 
     private final ScrapRepository scrapRepository;
-    private final PetPostCatchRepository petPostCatchRepository;
-    private final PetPostMissingRepository petPostMissingRepository;
+    private final PostRepository postRepository;
     private final PublicPetInfoRepository publicPetInfoRepository;
 
     @Transactional
-    public ResponseEntity<ResponseDto> scrapCatch(Long catchId, Member member) {
-        PetPostCatch post = petPostCatchRepository.findById(catchId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
-        Optional<Scrap> scrap = scrapRepository.findScrapByPetPostCatchIdAndMemberId(catchId, member.getId());
+    public ResponseEntity<ResponseDto> scrapPost(Long postId, Member member) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
+        Optional<Scrap> scrap = scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId());
         if (scrap.isPresent()) {
             throw new CustomException(ExceptionMessage.ALREADY_SCRAP);
         }
@@ -59,7 +57,7 @@ public class ScrapService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> scrapPublicPet(String desertionNo, Member member) {
+    public ResponseEntity<ResponseDto> scrapPetInfo(String desertionNo, Member member) {
         PetInfoByAPI petInfoByAPI = publicPetInfoRepository.findByDesertionNo(desertionNo).orElseThrow(
                 () -> new CustomException(NOT_FOUND_PET_INFO)
         );
@@ -71,9 +69,9 @@ public class ScrapService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> deleteCatch(Long catchId, Member member) {
-        PetPostCatch post = petPostCatchRepository.findById(catchId).orElseThrow(NullPointerException::new);
-        Optional<Scrap> scrap = scrapRepository.findScrapByPetPostCatchIdAndMemberId(catchId, member.getId());
+    public ResponseEntity<ResponseDto> deletePostScrap(Long postId, Member member) {
+        Post post = postRepository.findById(postId).orElseThrow(NullPointerException::new);
+        Optional<Scrap> scrap = scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId());
         if (scrap.isEmpty()) {
             throw new CustomException(ExceptionMessage.NOT_FOUND_SCRAP);
         }
@@ -111,10 +109,8 @@ public class ScrapService {
         for (Scrap scrapPage : scrapPages) {
             if (scrapPage.getPetInfoByAPI() != null) {
                 dtoList.add(ScrapResponseDto.of("publicPet", scrapPage.getId(), scrapPage.getPetInfoByAPI()));
-            } else if (scrapPage.getPetPostCatch() != null) {
-                dtoList.add(ScrapResponseDto.of("petCatch", scrapPage.getId(), scrapPage.getPetPostCatch()));
-            } else if (scrapPage.getPetPostMissing() != null) {
-                dtoList.add(ScrapResponseDto.of("petMissing", scrapPage.getId(), scrapPage.getPetPostMissing()));
+            } else if (scrapPage.getPost() != null) {
+                dtoList.add(ScrapResponseDto.of("catch", scrapPage.getId(), scrapPage.getPost()));
             }
         }
         return ResponseDto.toResponseEntity(SCRAP_ALL_LIST_SUCCESS, ScrapListResponseDto.of(dtoList, scrapPages.isLast()));

@@ -5,15 +5,13 @@ import hanghae99.rescuepets.comment.repository.CommentRepository;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.*;
-import hanghae99.rescuepets.memberpet.dto.PetPostCatchResponseDto;
 import hanghae99.rescuepets.report.dto.ReportIdRequestDto;
 import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
 import hanghae99.rescuepets.report.dto.ReportRequestDto;
 import hanghae99.rescuepets.report.dto.ResponseReportDto;
 import hanghae99.rescuepets.report.repository.ReportRepository;
 import hanghae99.rescuepets.member.repository.MemberRepository;
-import hanghae99.rescuepets.memberpet.repository.PetPostCatchRepository;
-import hanghae99.rescuepets.memberpet.repository.PetPostMissingRepository;
+import hanghae99.rescuepets.memberpet.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +29,7 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 public class ReportService {
     private final PetPostMissingRepository petPostMissingRepository;
     private final MemberRepository memberRepository;
-    private final PetPostCatchRepository petPostCatchRepository;
+    private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ReportRepository reportRepository;
 
@@ -80,26 +78,26 @@ public class ReportService {
 
 
     @Transactional
-    public ResponseEntity<ResponseDto> reportCatch(ReportRequestDto reportRequestDto, Member member) {
-        PetPostCatch petPostCatch = petPostCatchRepository.findById(reportRequestDto.getPetPostCatchId()).orElseThrow(
+    public ResponseEntity<ResponseDto> reportPost(ReportRequestDto reportRequestDto, Member member) {
+        Post post = postRepository.findById(reportRequestDto.getPostId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_PET_INFO)
         );
         // 중복 확인
-        if (reportRepository.findByMember_IdAndPetPostCatch_Id(member.getId(), reportRequestDto.getPetPostCatchId()).isPresent()) {
+        if (reportRepository.findByMemberIdAndPostId(member.getId(), reportRequestDto.getPostId()).isPresent()) {
             throw new CustomException(ALREADY_DECLARE);
         }
         Report report = Report.builder()
                 .reportcode(reportRequestDto.getReportCode().getValue())
                 .content(reportRequestDto.getContent())
-                .petPostCatch(petPostCatch)
+                .post(post)
                 .member(member)
                 .build();
 
         // 총개수 세기 필요 없을 수 도 있음 혹시 몰라서 써놓은 로직
-        int count = reportRepository.findByPetPostCatchId(reportRequestDto.getPetPostCatchId()).size()+1;
+        int count = reportRepository.findByPostId(reportRequestDto.getPostId()).size()+1;
         report.updates(count);
         if(count>15){
-            report.getPetPostCatch().getMember().Stop(LocalDateTime.now());
+            report.getPost().getMember().Stop(LocalDateTime.now());
         }
         reportRepository.save(report);
 
@@ -123,7 +121,7 @@ public class ReportService {
         Comment comment = commentRepository.findById(reportRequestDto.getCommentId()).orElseThrow(
                 () -> new CustomException(COMMENT_NOT_FOUND)
         );
-        if (reportRepository.findByMember_IdAndComment_Id(member.getId(), reportRequestDto.getCommentId()).isPresent()) {
+        if (reportRepository.findByMemberIdAndCommentId(member.getId(), reportRequestDto.getCommentId()).isPresent()) {
             throw new CustomException(ALREADY_DECLARE);
         }
         Report report = Report.builder()
@@ -143,7 +141,7 @@ public class ReportService {
 
 
     public ResponseEntity<ResponseDto> reportCommentDelete(ReportIdRequestDto reportIdRequestDto, Member member) {
-        Report report = reportRepository.findByMember_IdAndComment_Id(reportIdRequestDto.getMemberId(), reportIdRequestDto.getCommentId()).orElseThrow(
+        Report report = reportRepository.findByMemberIdAndCommentId(reportIdRequestDto.getMemberId(), reportIdRequestDto.getCommentId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_DECLARE)
         );
         if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
@@ -158,7 +156,7 @@ public class ReportService {
         Member member = memberRepository.findById(reportMemberRequestDto.getInformantId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_HUMAN)
         );
-        if (reportRepository.findByMember_IdAndRespondent_Id(reportMemberRequestDto.getInformantId(), respondent.getId()).isPresent()) {
+        if (reportRepository.findByMemberIdAndRespondentId(reportMemberRequestDto.getInformantId(), respondent.getId()).isPresent()) {
             throw new CustomException(ALREADY_DECLARE);
         }
         Report report = Report.builder()
@@ -180,7 +178,7 @@ public class ReportService {
     }
 
     public ResponseEntity<ResponseDto> reportMemberDelete(ReportMemberRequestDto reportMemberRequestDto, Member member) {
-        Report report = reportRepository.findByMember_IdAndRespondent_Id(reportMemberRequestDto.getInformantId(),reportMemberRequestDto.getRespondentId()).orElseThrow(
+        Report report = reportRepository.findByMemberIdAndRespondentId(reportMemberRequestDto.getInformantId(),reportMemberRequestDto.getRespondentId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_DECLARE)
         );
         if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){

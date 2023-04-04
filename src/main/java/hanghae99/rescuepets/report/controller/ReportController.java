@@ -78,11 +78,6 @@ public class ReportController {
         return reportService.reportMemberDelete(reportMemberRequestDto, memberDetails.getMember());
     }
 
-
-
-
-
-
     // value 값과 key 값 바꾸는 로직
     public class TempEnumConverter extends PropertyEditorSupport {
         public void setAsText(final String text) throws IllegalArgumentException {

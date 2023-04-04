@@ -7,13 +7,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReportRequestDto {
-
-
     private String content;
-    private Long petPostMissingId;
-
-    private Long petPostCatchId;
-
+    private Long postId;
     private Long CommentId;
     private ReportEnum reportCode;
 }

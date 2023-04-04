@@ -28,10 +28,10 @@ public class ScrapController {
     }
 
     @Operation(summary = "발견 게시글 관심 등록")
-    @PostMapping("/catch/{catchId}")
-    public ResponseEntity<ResponseDto> scrapCath(@PathVariable Long catchId,
+    @PostMapping("/{postId}")
+    public ResponseEntity<ResponseDto> scrapPost(@PathVariable Long postId,
                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return scrapService.scrapCatch(catchId, memberDetails.getMember());
+        return scrapService.scrapPost(postId, memberDetails.getMember());
     }
 
     @Operation(summary = "실종 게시글 관심 등록")
@@ -41,18 +41,18 @@ public class ScrapController {
         return scrapService.scrapMissing(missingId, memberDetails.getMember());
     }
 
-    @PostMapping("/scrap/{desertionNo}")
+    @PostMapping("/public/{desertionNo}")
     @Operation(summary = "유기동물 관심 등록")
-    public ResponseEntity<ResponseDto> petInfoScrap(@PathVariable(value = "desertionNo") String desertionNo,
+    public ResponseEntity<ResponseDto> scrapPetInfo(@PathVariable(value = "desertionNo") String desertionNo,
                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return scrapService.scrapPublicPet(desertionNo, memberDetails.getMember());
+        return scrapService.scrapPetInfo(desertionNo, memberDetails.getMember());
     }
 
     @Operation(summary = "발견 게시글 관심 해제")
-    @DeleteMapping("/catch/{catchId}")
-    public ResponseEntity<ResponseDto> deleteCatch(@PathVariable Long catchId,
-                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return scrapService.deleteCatch(catchId, memberDetails.getMember());
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ResponseDto> deletePostScrap(@PathVariable Long postId,
+                                                       @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return scrapService.deletePostScrap(postId, memberDetails.getMember());
     }
 
     @Operation(summary = "실종 게시글 관심 해제")
@@ -62,7 +62,7 @@ public class ScrapController {
         return scrapService.deleteMissing(missingId, memberDetails.getMember());
     }
 
-    @DeleteMapping("/scrap/{desertionNo}")
+    @DeleteMapping("/public/{desertionNo}")
     @Operation(summary = "유기동물 관심 해제")
     public ResponseEntity<ResponseDto> deletePetInfoScrap(@PathVariable(value = "desertionNo") String desertionNo,
                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {

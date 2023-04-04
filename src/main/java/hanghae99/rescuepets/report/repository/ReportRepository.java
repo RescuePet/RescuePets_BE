@@ -8,17 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
-    Optional<Report> findByMember_IdAndComment_Id(Long memberId, Long commentId);
+    Optional<Report> findByMemberIdAndCommentId(Long memberId, Long commentId);
 
-    Optional<Report> findByMember_IdAndRespondent_Id(Long MemberId, Long respondentId);
+    Optional<Report> findByMemberIdAndRespondentId(Long memberId, Long respondentId);
 
-    Optional<Report> findByMember_IdAndPetPostCatch_Id(Long id, Long id1);
+    Optional<Report> findByMemberIdAndPostId(Long memberId, Long postId);
 
-    Optional<Report> findByMemberIdAndPetPostMissingId(Long memberId, Long petPostMissingId);
+    List<Report> findByPostId(Long postId);
 
-    List<Report> findByPetPostMissing_Id(Long id);
-
-    List<Report> findByPetPostCatchId(Long id);
-
-    List<Report> findByCommentId(Long id);
+    List<Report> findByCommentId(Long commentId);
 }

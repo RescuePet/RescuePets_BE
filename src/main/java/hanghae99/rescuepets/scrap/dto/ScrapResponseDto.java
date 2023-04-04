@@ -1,8 +1,7 @@
 package hanghae99.rescuepets.scrap.dto;
 
 import hanghae99.rescuepets.common.entity.PetInfoByAPI;
-import hanghae99.rescuepets.common.entity.PetPostCatch;
-import hanghae99.rescuepets.common.entity.PetPostMissing;
+import hanghae99.rescuepets.common.entity.Post;
 import hanghae99.rescuepets.memberpet.dto.PostImageResponseDto;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,17 +36,17 @@ public class ScrapResponseDto {
                 .happenDt(petInfoByAPI.getHappenDt())
                 .build();
     }
-    public static ScrapResponseDto of(String postType, Long scrapId, PetPostCatch petPostCatch) {
+    public static ScrapResponseDto of(String postType, Long scrapId, Post post) {
         return ScrapResponseDto.builder()
                 .postType(postType)
                 .scrapId(scrapId)
-                .postId(petPostCatch.getId())
+                .postId(post.getId())
                 .state("목격")
-                .postImages(petPostCatch.getPostImages().stream().map(PostImageResponseDto::of).toList())
-                .kindCd(petPostCatch.getKindCd())
-                .sexCd(petPostCatch.getSexCd().getSex())
-                .author(petPostCatch.getMember().getNickname())
-                .happenDt(petPostCatch.getHappenDt())
+                .postImages(post.getPostImages().stream().map(PostImageResponseDto::of).toList())
+                .kindCd(post.getKindCd())
+                .sexCd(post.getSexCd().getSex())
+                .author(post.getMember().getNickname())
+                .happenDt(post.getHappenDt())
                 .build();
     }
     public static ScrapResponseDto of(String postType, Long scrapId, PetPostMissing petPostMissing) {

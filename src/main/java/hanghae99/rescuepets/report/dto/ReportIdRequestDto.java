@@ -6,9 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReportIdRequestDto {
-    private Long petPostMissingId;
-
-    private Long PetPostCatchId;
+    private Long PostId;
 
     private Long CommentId;
 

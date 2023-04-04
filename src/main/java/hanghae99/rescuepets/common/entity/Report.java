@@ -28,23 +28,18 @@ public class Report extends TimeStamped {
     @Column
     private String reportcode;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "petpostcatch_id")
-    private PetPostCatch petPostCatch;
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "petPostMissing_id")
-    private PetPostMissing petPostMissing;
-    
     @ManyToOne(fetch = FetchType.LAZY)
     private Member respondent;
 

@@ -7,11 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PostLinkRequestDto {
-    private PostTypeEnum postType;
     private Long linkedPostId;
 
-    public PostLinkRequestDto(PostTypeEnum postType, Long linkedPostId){
-        this.postType = postType;
+    public PostLinkRequestDto(Long linkedPostId){
         this.linkedPostId = linkedPostId;
     }
 }
