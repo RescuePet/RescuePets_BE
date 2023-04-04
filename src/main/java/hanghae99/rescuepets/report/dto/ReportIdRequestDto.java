@@ -11,4 +11,6 @@ public class ReportIdRequestDto {
     private Long PetPostCatchId;
 
     private Long CommentId;
+
+    private Long MemberId;
 }

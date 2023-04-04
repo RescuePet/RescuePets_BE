@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum SuccessMessage {
     TEST_SUCCESS(HttpStatus.CREATED, "테스트 성공."),
     SIGN_UP_SUCCESS(HttpStatus.CREATED, "회원가입이 완료 되었습니다."),
+    TIMECHECK_SUCCESS(HttpStatus.CREATED, "아직정지 시간이 풀리지 않았습니다."),
 
     POST_WRITING_SUCCESS(HttpStatus.CREATED, "게시물 작성이 완료 되었습니다."),
     COMMENT_WRITING_SUCCESS(HttpStatus.CREATED, "댓글 작성이 완료 되었습니다."),
@@ -45,7 +46,7 @@ public enum SuccessMessage {
     DELETE_POST_SCRAP_SUCCESS(HttpStatus.CREATED, "관심 유기동물 등록이 완료되었습니다."),
     WITHDRAWAL_SUCCESS(HttpStatus.OK,"회원탈퇴에 성공하였습니다"),
     DECLARE_PUT_SUCCESS(HttpStatus.OK,"신고수정이 완료되었습니다"),
-    DECLARE_DELETE_SUCCESS(HttpStatus.OK,"신고수정이 완료되었습니다"),
+    DECLARE_DELETE_SUCCESS(HttpStatus.OK,"신고삭제가 완료되었습니다"),
     DECLARE_SUCCESS(HttpStatus.OK,"신고가 완료되었습니다"),
 
     REISSUE_ACCESS_TOKEN(HttpStatus.OK, "Access 토큰 재발급 완료");
