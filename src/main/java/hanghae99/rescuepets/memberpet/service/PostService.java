@@ -60,17 +60,17 @@ public class PostService {
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
     @Transactional
-    public ResponseEntity<ResponseDto> getPostAll(Member member) {
+    public ResponseEntity<ResponseDto> getPostAll() {
         List<Post> postList = postRepository.findByOrderByCreatedAtDesc();
         List<PostResponseDto> dtoList = new ArrayList<>();
         for (Post post : postList) {
             if(post.getIsDeleted()){continue;}
             PostResponseDto dto = PostResponseDto.of(post);
-            dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
+
     @Transactional
     public ResponseEntity<ResponseDto> getPostListByMember(int page, int size, Member member) {
         Pageable pageable = PageRequest.of(page, size);
