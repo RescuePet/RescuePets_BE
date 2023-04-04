@@ -25,6 +25,7 @@ public enum SuccessMessage {
     ACCOUNT_CHECK_SUCCESS(HttpStatus.OK,"사용 가능한 아이디입니다."),
     EMAIL_CHECK_SUCCESS(HttpStatus.OK,"사용 가능한 이메일입니다."),
     LOGIN_SUCCESS(HttpStatus.OK,"로그인이 완료 되었습니다."),
+    MEMBER_LIST_SUCCESS(HttpStatus.OK, "회원목록 불러오기 성공"),
     MEMBER_EDIT_SUCCESS(HttpStatus.OK, "회원정보 수정이 완료되었습니다."),
     REISSUE_ACCESS_TOKEN(HttpStatus.OK, "Access 토큰 재발급 완료"),
     LOGOUT_SUCCESS(HttpStatus.OK,"로그아웃이 완료 되었습니다"),

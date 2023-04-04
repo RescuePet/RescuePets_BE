@@ -21,6 +21,7 @@ public enum ExceptionMessage {
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "해당 회원이 존재하지 않습니다."),
     UNAUTHORIZED_ADMIN(UNAUTHORIZED, "관리자가 아닙니다."),
+    UNAUTHORIZED_MANAGER(UNAUTHORIZED, "매니저가 아닙니다."),
     UNAUTHORIZED_UPDATE_OR_DELETE(UNAUTHORIZED,"작성자만 수정/삭제할 수 있습니다."),
 
 
