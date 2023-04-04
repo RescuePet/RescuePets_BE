@@ -10,7 +10,6 @@ import java.util.Optional;
 @Builder
 public class ResponseReportDto {
     private Long Id;
-    private Long InformantId;
     private Long PetPostCatchId;
     private Long PetPostMissingId;
     private Long CommentId;
@@ -18,11 +17,11 @@ public class ResponseReportDto {
     private Long RespondentId;
     private String Content;
     private int Count;
+    private String MemberRoleEnum;
     private String Reportcode;
     public static ResponseReportDto of(Report report) {
         return ResponseReportDto.builder()
                 .Id(report.getId())
-                .InformantId(Optional.ofNullable(report.getInformant()).map(Member::getId).orElse(null))
                 .PetPostCatchId(Optional.ofNullable(report.getPetPostCatch()).map(PetPostCatch::getId).orElse(null))
                 .PetPostMissingId(Optional.ofNullable(report.getPetPostMissing()).map(PetPostMissing::getId).orElse(null))
                 .CommentId(Optional.ofNullable(report.getComment()).map(Comment::getId).orElse(null))
@@ -30,9 +29,8 @@ public class ResponseReportDto {
                 .RespondentId(Optional.ofNullable(report.getRespondent()).map(Member::getId).orElse(null))
                 .Content(report.getContent())
                 .Count(report.getCount())
+                .MemberRoleEnum(report.getMember().getMemberRoleEnum().getMemberRole())
                 .Reportcode(report.getReportcode())
                 .build();
-
     }
-
 }

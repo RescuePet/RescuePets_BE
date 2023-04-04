@@ -34,8 +34,12 @@ public class Member {
     @Column
     private String profileImage;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column
+    private MemberRoleEnum memberRoleEnum;
+
     @Builder
-    public Member(Long id, String email, String nickname , String password, String address, Long kakaoId, String profileImage){
+    public Member(Long id, String email, String nickname , String password, String address, Long kakaoId, String profileImage,MemberRoleEnum memberRoleEnum){
         this.id = id;
         this.email = email;
         this.nickname = nickname;
@@ -43,6 +47,7 @@ public class Member {
         this.address = address;
         this.kakaoId = kakaoId;
         this.profileImage = profileImage;
+        this.memberRoleEnum = memberRoleEnum;
         this.stop = false;
     }
 

@@ -44,10 +44,7 @@ public class Report extends TimeStamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "petPostMissing_id")
     private PetPostMissing petPostMissing;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member informant;
-
+    
     @ManyToOne(fetch = FetchType.LAZY)
     private Member respondent;
 

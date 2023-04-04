@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.MemberRoleEnum;
 import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.entity.Report;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
@@ -54,6 +55,7 @@ public class MemberService {
                 .password(password)
                 .nickname(signupRequestDto.getNickname())
                 .profileImage(defaultImage)
+                .memberRoleEnum(MemberRoleEnum.MEMBER)
                 .build();
         memberRepository.save(member);
 
