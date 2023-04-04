@@ -27,6 +27,7 @@ public enum SuccessMessage {
     MY_POST_READING_SUCCESS(HttpStatus.OK,"내가 작성한 게시글 조회를 완료했습니다"),
     MY_COMMENT_READING_SUCCESS(HttpStatus.OK,"내가 작성한 댓글 조회를 완료했습니다"),
     USER_INFO_SUCCESS(HttpStatus.OK, "유저정보 불러오기 성공"),
+    USER_ENUM_CHANGE_SUCCESS(HttpStatus.OK, "유저 등급 변경 성공"),
     GOODS_DETAIL_SUCCESS(HttpStatus.OK, "상품 정보 불러오기 성공"),
     POST_SOFT_DELETE_SUCCESS(HttpStatus.OK,"게시글 임시삭제를 완료했습니다."),
     POST_DELETE_SUCCESS(HttpStatus.OK,"게시글 데이터 삭제를 완료했습니다."),

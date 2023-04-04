@@ -40,7 +40,9 @@ public class Member {
         this.kakaoId = kakaoId;
         this.profileImage = profileImage;
     }
-
+    public void setEnum(MemberRoleEnum memberRole){
+        this.memberRole = memberRole;
+    }
     public void setKakao(Long kakaoId, String profileImage) {
         this.kakaoId = kakaoId;
         this.profileImage = profileImage;
