@@ -1,12 +1,9 @@
 package hanghae99.rescuepets.comment.dto;
 
 import hanghae99.rescuepets.common.entity.Comment;
-import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.PetPostCatch;
-import hanghae99.rescuepets.common.entity.PetPostMissing;
+import hanghae99.rescuepets.common.entity.Post;
+import hanghae99.rescuepets.common.entity.PostTypeEnum;
 import lombok.Getter;
-
-import javax.persistence.Column;
 
 @Getter
 public class CommentResponseDto {
@@ -15,28 +12,19 @@ public class CommentResponseDto {
     private String userNickName;
     private String createdAt;
     private String modifiedAt;
-    private Long petPostCatchId;
-    private Long petPostMissingId;
+    private Long postId;
     private String profileImage;
+    private PostTypeEnum postType;
 
-    public CommentResponseDto(Comment comment, PetPostCatch petPostCatch) {
+    public CommentResponseDto(Comment comment, Post post) {
         this.id = comment.getId();
         this.content = comment.getContent();
         this.userNickName = comment.getMember().getNickname();
         this.createdAt = comment.getCreatedAt().toString();
         this.modifiedAt = comment.getModifiedAt().toString();
-        this.petPostCatchId = petPostCatch.getId();
+        this.postId = post.getId();
         this.profileImage = comment.getMember().getProfileImage();
-    }
-
-    public CommentResponseDto(Comment comment, PetPostMissing petPostMissing) {
-        this.id = comment.getId();
-        this.content = comment.getContent();
-        this.userNickName = comment.getMember().getNickname();
-        this.createdAt = comment.getCreatedAt().toString();
-        this.modifiedAt = comment.getModifiedAt().toString();
-        this.petPostMissingId = petPostMissing.getId();
-        this.profileImage = comment.getMember().getProfileImage();
+        this.postType = post.getPostType();
     }
 
     public CommentResponseDto(Comment comment) {
@@ -46,11 +34,7 @@ public class CommentResponseDto {
         this.createdAt = comment.getCreatedAt().toString();
         this.modifiedAt = comment.getModifiedAt().toString();
         this.profileImage = comment.getMember().getProfileImage();
-        if (comment.getPetPostCatch() != null) {
-            this.petPostCatchId = comment.getPetPostCatch().getId();
-        }
-        if (comment.getPetPostMissing() != null) {
-            this.petPostMissingId = comment.getPetPostMissing().getId();
-        }
+        this.postId = comment.getPost().getId();
+        this.postType = comment.getPost().getPostType();
     }
 }

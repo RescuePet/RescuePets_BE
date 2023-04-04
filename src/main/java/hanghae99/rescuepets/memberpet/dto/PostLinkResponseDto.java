@@ -19,7 +19,7 @@ public class PostLinkResponseDto {
 
     public static PostLinkResponseDto of (PostLink postLink) {
         return PostLinkResponseDto.builder()
-                .postType(postLink.getPostType())
+                .postType(postLink.getPost().getPostType())
                 .linkedPostId(postLink.getLinkedPostId())
                 .memberId(postLink.getMember().getId())
                 .build();

@@ -1,6 +1,7 @@
 package hanghae99.rescuepets.chat.dto;
 
 import hanghae99.rescuepets.common.entity.ChatRoom;
+import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.SexEnum;
 import lombok.Builder;
 import lombok.Getter;
@@ -8,26 +9,24 @@ import lombok.Getter;
 @Builder
 @Getter
 public class ChatRoomListResponseDto {
-
     private String roomId;
-    private String partner;
-    private String lastChat;
-    private String profileImage;
-    private String postName;
     private String roomName;
+    private String partner;
+    private String profileImage;
+    private String lastChat;
+    private String time;
     private Long postId;
+    private String postName;
     private SexEnum sexCd;
 
-    public static ChatRoomListResponseDto of(ChatRoom room, String partner, String lastChat, String profileImage, String postName, Long postId, String roomName, SexEnum sexCd) {
+    public static ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder of(ChatRoom room, Member partner) {
         return ChatRoomListResponseDto.builder()
                 .roomId(room.getRoomId())
-                .partner(partner)
-                .lastChat(lastChat)
-                .profileImage(profileImage)
-                .postName(postName)
-                .postId(postId)
-                .roomName(roomName)
-                .sexCd(sexCd)
-                .build();
+                .roomName(room.getPost().getKindCd())
+                .partner(partner.getNickname())
+                .profileImage(partner.getProfileImage())
+                .postId(room.getPost().getId())
+                .postName(room.getPost().getPostType().toString())
+                .sexCd(room.getPost().getSexCd());
     }
 }

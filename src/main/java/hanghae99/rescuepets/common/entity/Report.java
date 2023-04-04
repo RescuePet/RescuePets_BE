@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReportComment {
+public class Report extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,11 +33,25 @@ public class ReportComment {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private Comment comment;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member respondent;
+
+
     public void update(ReportRequestDto reportRequestDto) {
-        this.reportcode = reportRequestDto.getReportCode().getValue();
-        this.content =reportRequestDto.getContent();
+        this.content = reportRequestDto.getContent();
+        this.reportcode =reportRequestDto.getReportCode().getValue();
     }
+
+    public void updates(int count) {
+        this.count = count;
+    }
+
 }
+

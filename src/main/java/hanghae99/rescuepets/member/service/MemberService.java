@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.MemberRoleEnum;
 import hanghae99.rescuepets.common.entity.RefreshToken;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.profanityFilter.ProfanityFiltering;
@@ -11,6 +12,9 @@ import hanghae99.rescuepets.common.s3.S3Uploader;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
+
+import hanghae99.rescuepets.report.repository.ReportRepository;
+import hanghae99.rescuepets.report.service.SuspensionLogic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.time.Duration;
 import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
@@ -33,6 +38,7 @@ public class MemberService {
     private final KakaoService kakaoService;
     private final S3Uploader s3Uploader;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final ReportRepository reportRepository;
     private final String defaultImage = "https://heukwu.s3.ap-northeast-2.amazonaws.com/images/rescuepet/Component+43.png";
 
     public ResponseEntity<ResponseDto> signup(SignupRequestDto signupRequestDto) {
@@ -48,12 +54,13 @@ public class MemberService {
                 .password(password)
                 .nickname(signupRequestDto.getNickname())
                 .profileImage(defaultImage)
+                .memberRoleEnum(MemberRoleEnum.MEMBER)
                 .build();
         memberRepository.save(member);
 
         return ResponseDto.toResponseEntity(SIGN_UP_SUCCESS, new MemberResponseDto(member));
     }
-
+    @Transactional
     public ResponseEntity<ResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
@@ -62,6 +69,16 @@ public class MemberService {
         );
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw new CustomException(MEMBER_NOT_FOUND);
+        }
+        if(member.getStop()){
+            if(!SuspensionLogic.shouldSuspend(member.getReportDate())){
+                Duration timeLimit = SuspensionLogic.getTimeDifference(member.getReportDate());
+                String timeLimits = SuspensionLogic.toKoreanDuration(timeLimit);
+                return ResponseDto.toResponseEntity(TIMECHECK_SUCCESS,new TimeResponseDto(timeLimits));
+            }
+            else{
+                member.Start();
+            }
         }
         jwtUtil.createToken(response, member);
 

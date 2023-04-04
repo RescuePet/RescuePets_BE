@@ -5,8 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-
-import static hanghae99.rescuepets.common.entity.MemberRoleEnum.MEMBER;
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
@@ -25,13 +24,22 @@ public class Member {
     private String password;
     @Column
     private Long kakaoId;
+
+    @Column
+    private Boolean stop;
+
+    @Column
+    private LocalDateTime reportDate;
+
     @Column
     private String profileImage;
-    @Column(nullable = false)
+
     @Enumerated(value = EnumType.STRING)
-    private MemberRoleEnum memberRole = MEMBER;
+    @Column
+    private MemberRoleEnum memberRoleEnum;
+
     @Builder
-    public Member(Long id, String email, String nickname , String password, String address, Long kakaoId, String profileImage){
+    public Member(Long id, String email, String nickname , String password, String address, Long kakaoId, String profileImage,MemberRoleEnum memberRoleEnum){
         this.id = id;
         this.email = email;
         this.nickname = nickname;
@@ -39,10 +47,10 @@ public class Member {
         this.address = address;
         this.kakaoId = kakaoId;
         this.profileImage = profileImage;
+        this.memberRoleEnum = memberRoleEnum;
+        this.stop = false;
     }
-    public void setEnum(MemberRoleEnum memberRole){
-        this.memberRole = memberRole;
-    }
+
     public void setKakao(Long kakaoId, String profileImage) {
         this.kakaoId = kakaoId;
         this.profileImage = profileImage;
@@ -62,5 +70,14 @@ public class Member {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void Stop(LocalDateTime localDateTime){
+        this.stop = true;
+        this.reportDate = localDateTime;
+    }
+
+    public void Start(){
+        this.stop = false;
     }
 }

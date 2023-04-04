@@ -14,31 +14,17 @@ public class PostLink {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "petPostCatchId", nullable = true)
-    private PetPostCatch petPostCatch;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "petPostMissingId", nullable = true)
-    private PetPostMissing petPostMissing;
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private PostTypeEnum postType;
+    @JoinColumn(name = "post", nullable = true)
+    private Post post;
     @Column(nullable = false)
     private Long linkedPostId;
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
 
-    public PostLink(PetPostCatch petPostCatch, PostLinkRequestDto requestDto, Member member) {
-        this.petPostCatch = petPostCatch;
-        this.postType = requestDto.getPostType();
-        this.linkedPostId = requestDto.getLinkedPostId();
-        this.member = member;
-    }
-
-    public PostLink(PetPostMissing petPostMissing, PostLinkRequestDto requestDto, Member member) {
-        this.petPostMissing = petPostMissing;
-        this.postType = requestDto.getPostType();
-        this.linkedPostId = requestDto.getLinkedPostId();
+    public PostLink(Post post, Long linkedPostId, Member member) {
+        this.post = post;
+        this.linkedPostId = linkedPostId;
         this.member = member;
     }
 

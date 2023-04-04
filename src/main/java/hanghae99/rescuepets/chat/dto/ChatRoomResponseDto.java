@@ -14,11 +14,10 @@ public class ChatRoomResponseDto {
     private String roomName;
 
     public static ChatRoomResponseDto of(ChatRoom room) {
-        String postName = room.getCatchPost() == null ? "missing-room" : "catch-room";
 
         return ChatRoomResponseDto.builder()
                 .messages(room.getChatMessages().stream().map(ChatResponseDto::of).toList())
-                .roomName(postName)
+                .roomName(room.getPost().getPostType().toString())
                 .build();
     }
 }

@@ -1,25 +1,25 @@
 package hanghae99.rescuepets.common.entity;
 
-//import hanghae99.rescuepets.memberpet.dto.MemberPetRequestDto;
-//import hanghae99.rescuepets.memberpet.dto.PetPostMissingRequestDto;
-import hanghae99.rescuepets.memberpet.dto.PetPostMissingRequestDto;
+import hanghae99.rescuepets.memberpet.dto.PostRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+
+//import hanghae99.rescuepets.memberpet.dto.PetPostCatchRequestDto;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Entity(name = "petPostMissing")
+@Entity(name = "post")
 @Getter
 @NoArgsConstructor
-public class PetPostMissing extends TimeStamped{
+public class Post extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String kindCd;
-    private String petName;
     private String age;
     private String weight;
     private String colorCd;
@@ -32,35 +32,40 @@ public class PetPostMissing extends TimeStamped{
     private String content;
     private String gratuity;
     private String contact;
+    private Boolean openNickname;
     private Boolean isDeleted = false;
     private Date deletedDt;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private PostTypeEnum postType;
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UpkindEnum upkind;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private SexEnum sexCd;
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private NeuterEnum neuterYn;
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UpkindEnum upkind;
     @ManyToOne
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
-    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostLink> postLinkList = new ArrayList<>();
-    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
-    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
-    @OneToMany(mappedBy = "petPostMissing", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Scrap> scrapList = new ArrayList<>();
 
-    public PetPostMissing(PetPostMissingRequestDto requestDto, Member member) {
+
+    public Post(PostRequestDto requestDto, Member member) {
+        this.postType = PostTypeEnum.valueOf(requestDto.getPostType());
         this.upkind = requestDto.getUpkind();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
         this.kindCd = requestDto.getKindCd();
-        this.petName = requestDto.getPetName();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
@@ -74,19 +79,20 @@ public class PetPostMissing extends TimeStamped{
         this.gratuity = requestDto.getGratuity();
         this.contact = requestDto.getContact();
         this.member = member;
+        this.openNickname = requestDto.getOpenNickname();
     }
     public void addPostImage(PostImage postImage) {
         this.postImages.add(postImage);
-        if (!postImage.getPetPostMissing().equals(this)) {
+        if (!postImage.getPost().equals(this)) {
             postImage.setPostImage(this);
         }
     }
-    public void update(PetPostMissingRequestDto requestDto) {
+    public void update(PostRequestDto requestDto) {
+        this.postType = PostTypeEnum.valueOf(requestDto.getPostType());
         this.upkind = requestDto.getUpkind();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
         this.kindCd = requestDto.getKindCd();
-        this.petName = requestDto.getPetName();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
@@ -99,10 +105,9 @@ public class PetPostMissing extends TimeStamped{
         this.content = requestDto.getContent();
         this.gratuity = requestDto.getGratuity();
         this.contact = requestDto.getContact();
+        this.openNickname = requestDto.getOpenNickname();
     }
-    public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
-    }
+    public void setIsDeleted(Boolean isDeleted) { this.isDeleted = isDeleted; }
     public Boolean getIsDeleted() {
         if(isDeleted == null){
             return false;
@@ -110,4 +115,3 @@ public class PetPostMissing extends TimeStamped{
         return isDeleted;
     }
 }
-
