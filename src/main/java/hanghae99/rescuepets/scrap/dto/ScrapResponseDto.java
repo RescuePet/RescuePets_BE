@@ -16,11 +16,11 @@ public class ScrapResponseDto {
     private Long scrapId;
     private Long postId;
     private String state;
-    private String filename; //이미지
-    private String kindCd;//종류
+    private String filename;
+    private String kindCd;
     private String sexCd;
-    private String author; //보호소 이름 또는 작성자
-    private String happenDt; //발생 일자
+    private String author;
+    private String happenDt;
 
     public static ScrapResponseDto of(String postType, Long scrapId, PetInfoByAPI petInfoByAPI) {
         return ScrapResponseDto.builder()

@@ -43,7 +43,7 @@ public class ScrapService {
 
         for (Scrap scrapPage : scrapPages) {
             if (scrapPage.getPetInfoByAPI() != null) {
-                dtoList.add(ScrapResponseDto.of("publicPet", scrapPage.getId(), scrapPage.getPetInfoByAPI()));
+                dtoList.add(ScrapResponseDto.of("petInfo", scrapPage.getId(), scrapPage.getPetInfoByAPI()));
             } else if (scrapPage.getPost() != null) {
                 dtoList.add(ScrapResponseDto.of(scrapPage.getId(), scrapPage.getPost()));
             }
