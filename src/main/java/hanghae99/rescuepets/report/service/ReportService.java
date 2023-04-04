@@ -27,54 +27,12 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 @Service
 @RequiredArgsConstructor
 public class ReportService {
-    private final PetPostMissingRepository petPostMissingRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
     private final ReportRepository reportRepository;
 
 
-    @Transactional
-    public ResponseEntity<ResponseDto> reportMissing(ReportRequestDto reportRequestDto, Member member) {
-        PetPostMissing petPostMissing = petPostMissingRepository.findById(reportRequestDto.getPetPostMissingId()).orElseThrow(
-                () -> new CustomException(NOT_FOUND_PET_INFO)
-        );
-        // 중복 확인
-        if (reportRepository.findByMemberIdAndPetPostMissingId(member.getId(), reportRequestDto.getPetPostMissingId()).isPresent()) {
-            throw new CustomException(ALREADY_DECLARE);
-        }
-
-
-        Report report = Report.builder()
-                .reportcode(reportRequestDto.getReportCode().getValue())
-                .content(reportRequestDto.getContent())
-                .petPostMissing(petPostMissing)
-                .member(member)
-                .build();
-        // 총개수 세기 필요 없을 수 도 있음 혹시 몰라서 써놓은 로직
-        int count = reportRepository.findByPetPostMissing_Id(reportRequestDto.getPetPostMissingId()).size()+1;
-        report.updates(count);
-        if(count>15){
-            report.getPetPostMissing().getMember().Stop(LocalDateTime.now());
-        }
-        reportRepository.save(report);
-
-        return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
-    }
-
-
-
-    public ResponseEntity<ResponseDto> reportMissingDelete(ReportIdRequestDto reportIdRequestDto, Member member) {
-        Report report = reportRepository.findByMemberIdAndPetPostMissingId(reportIdRequestDto.getMemberId(), reportIdRequestDto.getPetPostMissingId()).orElseThrow(
-                () -> new CustomException(NOT_FOUND_DECLARE)
-        );
-        if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
-            throw new CustomException(UNAUTHORIZED_ADMIN);
-        }
-        reportRepository.deleteById(report.getId());
-
-        return ResponseDto.toResponseEntity(DECLARE_DELETE_SUCCESS);
-    }
 
 
     @Transactional
@@ -104,8 +62,8 @@ public class ReportService {
         return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
     }
 
-    public ResponseEntity<ResponseDto> reportCatchDelete(ReportIdRequestDto reportIdRequestDto, Member member) {
-        Report report = reportRepository.findByMember_IdAndPetPostCatch_Id(reportIdRequestDto.getMemberId(), reportIdRequestDto.getPetPostCatchId()).orElseThrow(
+    public ResponseEntity<ResponseDto> reportPostDelete(ReportIdRequestDto reportIdRequestDto, Member member) {
+        Report report = reportRepository.findByMemberIdAndPostId(reportIdRequestDto.getMemberId(), reportIdRequestDto.getPostId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_DECLARE)
         );
         if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){

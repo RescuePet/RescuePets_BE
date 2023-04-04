@@ -25,10 +25,6 @@ import java.beans.PropertyEditorSupport;
 @RestController
 public class ReportController {
     private final ReportService reportService;
-    @PostMapping(value = "/petMissing",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportPetPostMissing(@ModelAttribute ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportMissing(reportRequestDto, memberDetails.getMember());
-    }
 
     @GetMapping("/all")
     @Operation(summary = "Report 전체 게시글을 페이징없이 불러오기", description = "Report를 페이징없이 불러옵니다")
@@ -37,22 +33,16 @@ public class ReportController {
         return reportService.getReportAll(sortBy, memberDetails.getMember());
     }
 
-    @DeleteMapping(value = "/petMissing",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportPetPostMissingDelete(@ModelAttribute ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportMissingDelete(reportIdRequestDto,memberDetails.getMember());
-    }
-
-
-    @PostMapping(value = "/petcatch",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportPetPostCatch(@ModelAttribute ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportCatch(reportRequestDto, memberDetails.getMember());
+    @PostMapping(value = "/post",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> reportPost(@ModelAttribute ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportPost(reportRequestDto, memberDetails.getMember());
     }
 
 
 
-    @DeleteMapping(value = "/petcatch",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportPetPostCatchDelete(@ModelAttribute ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportCatchDelete(reportIdRequestDto,memberDetails.getMember());
+    @DeleteMapping(value = "/post",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> reportPostDelete(@ModelAttribute ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportPostDelete(reportIdRequestDto,memberDetails.getMember());
     }
 
 
