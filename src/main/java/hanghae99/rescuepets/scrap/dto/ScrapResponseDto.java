@@ -49,17 +49,4 @@ public class ScrapResponseDto {
                 .happenDt(post.getHappenDt())
                 .build();
     }
-    public static ScrapResponseDto of(String postType, Long scrapId, PetPostMissing petPostMissing) {
-        return ScrapResponseDto.builder()
-                .postType(postType)
-                .scrapId(scrapId)
-                .postId(petPostMissing.getId())
-                .state("실종")
-                .postImages(petPostMissing.getPostImages().stream().map(PostImageResponseDto::of).toList())
-                .kindCd(petPostMissing.getKindCd())
-                .sexCd(petPostMissing.getSexCd().getSex())
-                .author(petPostMissing.getMember().getNickname())
-                .happenDt(petPostMissing.getHappenDt())
-                .build();
-    }
 }

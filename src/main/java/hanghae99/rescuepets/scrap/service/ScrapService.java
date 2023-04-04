@@ -46,17 +46,6 @@ public class ScrapService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> scrapMissing(Long missingId, Member member) {
-        PetPostMissing post = petPostMissingRepository.findById(missingId).orElseThrow(NullPointerException::new);
-        Optional<Scrap> scrap = scrapRepository.findScrapByPetPostMissingIdAndMemberId(missingId, member.getId());
-        if (scrap.isPresent()) {
-            throw new CustomException(ExceptionMessage.ALREADY_SCRAP);
-        }
-        scrapRepository.save(new Scrap(member, post));
-        return ResponseDto.toResponseEntity(SuccessMessage.POST_SCRAP_SUCCESS);
-    }
-
-    @Transactional
     public ResponseEntity<ResponseDto> scrapPetInfo(String desertionNo, Member member) {
         PetInfoByAPI petInfoByAPI = publicPetInfoRepository.findByDesertionNo(desertionNo).orElseThrow(
                 () -> new CustomException(NOT_FOUND_PET_INFO)
@@ -76,17 +65,6 @@ public class ScrapService {
             throw new CustomException(ExceptionMessage.NOT_FOUND_SCRAP);
         }
         scrapRepository.deleteScrapByPetPostCatchIdAndMemberId(post.getId(), member.getId());
-        return ResponseDto.toResponseEntity(SuccessMessage.DELETE_POST_SCRAP_SUCCESS);
-    }
-
-    @Transactional
-    public ResponseEntity<ResponseDto> deleteMissing(Long missingId, Member member) {
-        PetPostMissing post = petPostMissingRepository.findById(missingId).orElseThrow(NullPointerException::new);
-        Optional<Scrap> scrap = scrapRepository.findScrapByPetPostMissingIdAndMemberId(missingId, member.getId());
-        if (scrap.isEmpty()) {
-            throw new CustomException(ExceptionMessage.NOT_FOUND_SCRAP);
-        }
-        scrapRepository.deleteScrapByPetPostMissingIdAndMemberId(post.getId(), member.getId());
         return ResponseDto.toResponseEntity(SuccessMessage.DELETE_POST_SCRAP_SUCCESS);
     }
 

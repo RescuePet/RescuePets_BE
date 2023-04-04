@@ -34,12 +34,12 @@ public class ScrapController {
         return scrapService.scrapPost(postId, memberDetails.getMember());
     }
 
-    @Operation(summary = "실종 게시글 관심 등록")
-    @PostMapping("/missing/{missingId}")
-    public ResponseEntity<ResponseDto> scrapMissing(@PathVariable Long missingId,
-                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return scrapService.scrapMissing(missingId, memberDetails.getMember());
-    }
+//    @Operation(summary = "실종 게시글 관심 등록")
+//    @PostMapping("/missing/{missingId}")
+//    public ResponseEntity<ResponseDto> scrapMissing(@PathVariable Long missingId,
+//                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+//        return scrapService.scrapMissing(missingId, memberDetails.getMember());
+//    }
 
     @PostMapping("/public/{desertionNo}")
     @Operation(summary = "유기동물 관심 등록")
@@ -55,12 +55,12 @@ public class ScrapController {
         return scrapService.deletePostScrap(postId, memberDetails.getMember());
     }
 
-    @Operation(summary = "실종 게시글 관심 해제")
-    @DeleteMapping("/missing/{missingId}")
-    public ResponseEntity<ResponseDto> deleteMissing(@PathVariable Long missingId,
-                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return scrapService.deleteMissing(missingId, memberDetails.getMember());
-    }
+//    @Operation(summary = "실종 게시글 관심 해제")
+//    @DeleteMapping("/missing/{missingId}")
+//    public ResponseEntity<ResponseDto> deleteMissing(@PathVariable Long missingId,
+//                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+//        return scrapService.deleteMissing(missingId, memberDetails.getMember());
+//    }
 
     @DeleteMapping("/public/{desertionNo}")
     @Operation(summary = "유기동물 관심 해제")
