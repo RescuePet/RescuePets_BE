@@ -24,6 +24,7 @@ public class CommentResponseDto {
         this.modifiedAt = comment.getModifiedAt().toString();
         this.postId = post.getId();
         this.profileImage = comment.getMember().getProfileImage();
+        this.postType = post.getPostType();
     }
 
     public CommentResponseDto(Comment comment) {
