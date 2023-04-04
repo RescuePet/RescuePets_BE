@@ -46,13 +46,11 @@ public class PostService {
         return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS, post.getId());
     }
     @Transactional
-    public ResponseEntity<ResponseDto> getPostList(int page, int size, String sortBy, Member member) {
-        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Post> PetPostCatchPage = postRepository.findAll(pageable);
-        List<Post> posts = PetPostCatchPage.getContent();
+    public ResponseEntity<ResponseDto> getPostList(int page, int size, String postType, Member member) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = postRepository.findByPostTypeOrderByCreatedAtDesc(PostTypeEnum.valueOf(postType), pageable);
         List<PostShortResponseDto> dtoList = new ArrayList<>();
-        for (Post post : posts) {
+        for (Post post : postPage) {
             if(post.getIsDeleted()){continue;}
             PostShortResponseDto dto = PostShortResponseDto.of(post);
             dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
@@ -61,9 +59,8 @@ public class PostService {
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
     @Transactional
-    public ResponseEntity<ResponseDto> getPostAll(String sortBy, Member member) {
-        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        List<Post> postList = postRepository.findAll(sort);
+    public ResponseEntity<ResponseDto> getPostAll(String postType, Member member) {
+        List<Post> postList = postRepository.findByPostTypeOrderByCreatedAtDesc(PostTypeEnum.valueOf(postType));
         List<PostResponseDto> dtoList = new ArrayList<>();
         for (Post post : postList) {
             if(post.getIsDeleted()){continue;}
@@ -74,12 +71,11 @@ public class PostService {
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
     @Transactional
-    public ResponseEntity<ResponseDto> getPostListByMember(int page, int size, String sortBy, Member member) {
-        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        Pageable pageable = PageRequest.of(page, size, sort);
-        Page<Post> PetPostCatchPage = postRepository.findByMemberId(member.getId(), pageable);
+    public ResponseEntity<ResponseDto> getPostListByMember(int page, int size, Member member) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = postRepository.findByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
         List<PostShortResponseDto> dtoList = new ArrayList<>();
-        for (Post post : PetPostCatchPage) {
+        for (Post post : postPage) {
             if(post.getIsDeleted()){continue;}
             PostShortResponseDto dto = PostShortResponseDto.of(post);
             dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());

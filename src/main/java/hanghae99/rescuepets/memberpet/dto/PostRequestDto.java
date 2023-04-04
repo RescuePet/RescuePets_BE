@@ -5,12 +5,14 @@ import hanghae99.rescuepets.common.entity.NeuterEnum;
 import hanghae99.rescuepets.common.entity.PostTypeEnum;
 import hanghae99.rescuepets.common.entity.SexEnum;
 import hanghae99.rescuepets.common.entity.UpkindEnum;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
+@AllArgsConstructor
 public class PostRequestDto {
     private String postType;
     private UpkindEnum upkind;
