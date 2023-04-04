@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +36,8 @@ public class PostService {
         List<String> postImageURLs = new ArrayList<>();
         if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
             postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
+        } else {
+            throw new CustomException(NOT_FOUND_IMAGE);
         }
         Post post = new Post(requestDto, member);
         for (String postImageURL : postImageURLs) {
@@ -85,26 +86,30 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> getPost(Long petPostCatchId, Member member) {
-        Post post = postRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+    public ResponseEntity<ResponseDto> getPost(Long postId, Member member) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if(post.getIsDeleted()){throw new CustomException(
                 POST_ALREADY_DELETED);
         }
         PostResponseDto responseDto = PostResponseDto.of(post);
         responseDto.setLinked(postLinkRepository.findByPostId(post.getId()).isPresent());
-        responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(petPostCatchId, member.getId()).isPresent());
-        responseDto.setWishedCount(scrapRepository.countByPostId(petPostCatchId));
-        return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
+        responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId()).isPresent());
+        responseDto.setWishedCount(scrapRepository.countByPostId(postId));
+        return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseDto);
     }
 
     @Transactional
     public ResponseEntity<ResponseDto> updatePost(Long postId, PostRequestDto requestDto, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (member.getNickname().equals(post.getMember().getNickname())) {
-            List<String> postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
-            post.getPostImages().clear();
-            for (String postImageURL : postImageURLs) {
-                post.addPostImage(new PostImage(post, postImageURL));
+            if (requestDto.getPostImages() != null && !requestDto.getPostImages().isEmpty()) {
+                List<String> postImageURLs = s3Uploader.uploadMulti(requestDto.getPostImages());
+                post.getPostImages().clear();
+                for (String postImageURL : postImageURLs) {
+                    post.addPostImage(new PostImage(post, postImageURL));
+                }
+            } else {
+                throw new CustomException(NOT_FOUND_IMAGE);
             }
             post.update(requestDto);
             return ResponseDto.toResponseEntity(POST_MODIFYING_SUCCESS);

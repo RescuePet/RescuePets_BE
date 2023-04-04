@@ -6,7 +6,6 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.MemberRoleEnum;
 import hanghae99.rescuepets.common.entity.RefreshToken;
-import hanghae99.rescuepets.common.entity.Report;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.profanityFilter.ProfanityFiltering;
 import hanghae99.rescuepets.common.s3.S3Uploader;
@@ -72,10 +71,10 @@ public class MemberService {
             throw new CustomException(MEMBER_NOT_FOUND);
         }
         if(member.getStop()){
-            if(!SuspensionLogic.shouldSuspend(member.getReportdate())){
-                Duration timelim = SuspensionLogic.getTimeDifference(member.getReportdate());
-                String timelims = SuspensionLogic.toKoreanDuration(timelim);
-                return ResponseDto.toResponseEntity(TIMECHECK_SUCCESS,new TimeResponseDto(timelims));
+            if(!SuspensionLogic.shouldSuspend(member.getReportDate())){
+                Duration timeLimit = SuspensionLogic.getTimeDifference(member.getReportDate());
+                String timeLimits = SuspensionLogic.toKoreanDuration(timeLimit);
+                return ResponseDto.toResponseEntity(TIMECHECK_SUCCESS,new TimeResponseDto(timeLimits));
             }
             else{
                 member.Start();

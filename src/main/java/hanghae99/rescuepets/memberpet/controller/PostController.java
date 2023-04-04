@@ -36,30 +36,26 @@ public class PostController {
                                                    @RequestParam int size,
                                                    @PathVariable String postType,
                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        Member member = memberDetails.getMember();
-        return postService.getPostList(page-1, size, postType, member);
+        return postService.getPostList(page-1, size, postType, memberDetails.getMember());
     }
     @GetMapping("/all/{postType}")
     @Operation(summary = "전체 게시글 페이징없이 불러오기(지도용)", description = "PostMissing 전체 게시글을 페이징없이 불러옵니다")
     public ResponseEntity<ResponseDto> getPostAll(@PathVariable String postType,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        Member member = memberDetails.getMember();
-        return postService.getPostAll(postType, member);
+        return postService.getPostAll(postType, memberDetails.getMember());
     }
     @GetMapping("/member")
     @Operation(summary = "내가 작성한 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPostListByMember(@RequestParam int page,
                                                            @RequestParam int size,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        Member member = memberDetails.getMember();
-        return postService.getPostListByMember(page-1, size, member);
+        return postService.getPostListByMember(page-1, size, memberDetails.getMember());
     }
 
     @GetMapping("/{postId}")
     @Operation(summary = "특정 게시글 조회하기", description = "URI에 명시된 PostId를 기반으로 특정 게시글을 조회합니다")
     public ResponseEntity<ResponseDto> getPost(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        Member member = memberDetails.getMember();
-        return postService.getPost(postId, member);
+        return postService.getPost(postId, memberDetails.getMember());
     }
 
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})

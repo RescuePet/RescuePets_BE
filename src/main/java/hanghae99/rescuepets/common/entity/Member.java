@@ -29,7 +29,7 @@ public class Member {
     private Boolean stop;
 
     @Column
-    private LocalDateTime reportdate;
+    private LocalDateTime reportDate;
 
     @Column
     private String profileImage;
@@ -74,7 +74,7 @@ public class Member {
 
     public void Stop(LocalDateTime localDateTime){
         this.stop = true;
-        this.reportdate = localDateTime;
+        this.reportDate = localDateTime;
     }
 
     public void Start(){

@@ -42,7 +42,7 @@ public class ReportService {
         );
         // 중복 확인
         if (reportRepository.findByMemberIdAndPostId(member.getId(), reportRequestDto.getPostId()).isPresent()) {
-            throw new CustomException(ALREADY_DECLARE);
+            throw new CustomException(ALREADY_REPORT);
         }
         Report report = Report.builder()
                 .reportcode(reportRequestDto.getReportCode().getValue())
@@ -59,19 +59,19 @@ public class ReportService {
         }
         reportRepository.save(report);
 
-        return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
+        return ResponseDto.toResponseEntity(REPORT_SUCCESS);
     }
 
     public ResponseEntity<ResponseDto> reportPostDelete(ReportIdRequestDto reportIdRequestDto, Member member) {
         Report report = reportRepository.findByMemberIdAndPostId(reportIdRequestDto.getMemberId(), reportIdRequestDto.getPostId()).orElseThrow(
-                () -> new CustomException(NOT_FOUND_DECLARE)
+                () -> new CustomException(NOT_FOUND_REPORT)
         );
         if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
         reportRepository.deleteById(report.getId());
 
-        return ResponseDto.toResponseEntity(DECLARE_DELETE_SUCCESS);
+        return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);
     }
 
     @Transactional
@@ -80,7 +80,7 @@ public class ReportService {
                 () -> new CustomException(COMMENT_NOT_FOUND)
         );
         if (reportRepository.findByMemberIdAndCommentId(member.getId(), reportRequestDto.getCommentId()).isPresent()) {
-            throw new CustomException(ALREADY_DECLARE);
+            throw new CustomException(ALREADY_REPORT);
         }
         Report report = Report.builder()
                 .comment(comment)
@@ -94,28 +94,28 @@ public class ReportService {
             report.getComment().getMember().Stop(LocalDateTime.now());
         }
         reportRepository.save(report);
-        return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
+        return ResponseDto.toResponseEntity(REPORT_SUCCESS);
     }
 
 
     public ResponseEntity<ResponseDto> reportCommentDelete(ReportIdRequestDto reportIdRequestDto, Member member) {
         Report report = reportRepository.findByMemberIdAndCommentId(reportIdRequestDto.getMemberId(), reportIdRequestDto.getCommentId()).orElseThrow(
-                () -> new CustomException(NOT_FOUND_DECLARE)
+                () -> new CustomException(NOT_FOUND_REPORT)
         );
         if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
         reportRepository.deleteById(report.getId());
 
-        return ResponseDto.toResponseEntity(DECLARE_DELETE_SUCCESS);
+        return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);
     }
     @Transactional
     public ResponseEntity<ResponseDto> reportMember(ReportMemberRequestDto reportMemberRequestDto, Member respondent) {
         Member member = memberRepository.findById(reportMemberRequestDto.getInformantId()).orElseThrow(
-                () -> new CustomException(NOT_FOUND_HUMAN)
+                () -> new CustomException(UNAUTHORIZED_MEMBER)
         );
         if (reportRepository.findByMemberIdAndRespondentId(reportMemberRequestDto.getInformantId(), respondent.getId()).isPresent()) {
-            throw new CustomException(ALREADY_DECLARE);
+            throw new CustomException(ALREADY_REPORT);
         }
         Report report = Report.builder()
                 .member(member)
@@ -132,19 +132,19 @@ public class ReportService {
         reportRepository.save(report);
 
 
-        return ResponseDto.toResponseEntity(DECLARE_SUCCESS);
+        return ResponseDto.toResponseEntity(REPORT_SUCCESS);
     }
 
     public ResponseEntity<ResponseDto> reportMemberDelete(ReportMemberRequestDto reportMemberRequestDto, Member member) {
         Report report = reportRepository.findByMemberIdAndRespondentId(reportMemberRequestDto.getInformantId(),reportMemberRequestDto.getRespondentId()).orElseThrow(
-                () -> new CustomException(NOT_FOUND_DECLARE)
+                () -> new CustomException(NOT_FOUND_REPORT)
         );
         if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
         reportRepository.deleteById(report.getId());
 
-        return ResponseDto.toResponseEntity(DECLARE_DELETE_SUCCESS);
+        return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);
     }
 
     public ResponseEntity<ResponseDto> getReportAll(String sortBy,Member member) {

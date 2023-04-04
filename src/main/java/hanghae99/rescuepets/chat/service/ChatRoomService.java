@@ -43,7 +43,7 @@ public class ChatRoomService {
             dto.add(roomBuilder.build());
         }
 
-        return ResponseDto.toResponseEntity(SuccessMessage.Chat_Room_List_SUCCESS, dto);
+        return ResponseDto.toResponseEntity(SuccessMessage.CHAT_ROOM_LIST_SUCCESS, dto);
     }
 
     @Transactional

@@ -38,6 +38,6 @@ public class ChatService {
     public ResponseEntity<ResponseDto> getMessages(String roomId) {
         ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
 
-        return ResponseDto.toResponseEntity(SuccessMessage.Chat_List_SUCCESS, ChatRoomResponseDto.of(chatRoom));
+        return ResponseDto.toResponseEntity(SuccessMessage.CHAT_HISTORY_SUCCESS, ChatRoomResponseDto.of(chatRoom));
     }
 }
