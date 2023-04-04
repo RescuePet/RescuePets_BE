@@ -37,16 +37,7 @@ public class ChatRoom extends TimeStamped {
     public static ChatRoom of(Post post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
-                .catchPost(post)
-                .host(post.getMember())
-                .guest(member)
-                .build();
-    }
-
-    public static ChatRoom of(PetPostMissing post, Member member) {
-        return ChatRoom.builder()
-                .roomId(UUID.randomUUID().toString())
-                .missingPost(post)
+                .post(post)
                 .host(post.getMember())
                 .guest(member)
                 .build();

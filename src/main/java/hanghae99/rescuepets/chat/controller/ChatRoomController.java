@@ -23,15 +23,9 @@ public class ChatRoomController {
         return chatRoomService.getRoomList(memberDetails.getMember());
     }
 
-    @Operation(summary = "catch 채팅방 생성")
-    @PostMapping("/catch-room/{catchPostId}")
-    public String createCatchRoom(@PathVariable Long catchPostId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return chatRoomService.createCatchRoom(catchPostId, memberDetails.getMember());
-    }
-
-    @Operation(summary = "missing 채팅방 생성")
-    @PostMapping("/missing-room/{missingPostId}")
-    public String createMissingRoom(@PathVariable Long missingPostId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return chatRoomService.createMissingRoom(missingPostId, memberDetails.getMember());
+    @Operation(summary = "채팅방 생성")
+    @PostMapping("/room/{postId}")
+    public String createCatchRoom(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return chatRoomService.createChatRoom(postId, memberDetails.getMember());
     }
 }

@@ -64,7 +64,7 @@ public class ScrapService {
         if (scrap.isEmpty()) {
             throw new CustomException(ExceptionMessage.NOT_FOUND_SCRAP);
         }
-        scrapRepository.deleteScrapByPetPostCatchIdAndMemberId(post.getId(), member.getId());
+        scrapRepository.deleteScrapByPostIdAndMemberId(post.getId(), member.getId());
         return ResponseDto.toResponseEntity(SuccessMessage.DELETE_POST_SCRAP_SUCCESS);
     }
 

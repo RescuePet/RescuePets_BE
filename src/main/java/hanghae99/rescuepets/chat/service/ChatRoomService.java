@@ -33,7 +33,7 @@ public class ChatRoomService {
 
         for (ChatRoom room : roomList) {
             Member partner = getPartner(room, member);
-            ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder roomBuilder = ChatRoomListResponseDto.of(room, partner, getRoomName(room), getPostId(room), getPostName(room), getSexCd(room));
+            ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder roomBuilder = ChatRoomListResponseDto.of(room, partner);
 
             if (room.getChatMessages().size() > 0) {
                 Chat lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1);
@@ -58,39 +58,7 @@ public class ChatRoomService {
         return room.getRoomId();
     }
 
-    @Transactional
-    public String createMissingRoom(Long postId, Member member) {
-        PetPostMissing post = petPostMissingRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        validateCreateChatroom(post.getMember(), member);
-        ChatRoom room = chatRoomRepository.findChatRoomByMissingPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
-        chatRoomRepository.save(room);
-
-        return room.getRoomId();
-    }
-
     private Member getPartner(ChatRoom room, Member member) {
         return room.getHost().getId().equals(member.getId()) ? room.getGuest() : room.getHost();
-    }
-
-    private String getPostName(ChatRoom room) {
-        return room.getCatchPost() == null ? "missing-room" : "catch-room";
-    }
-
-    private Long getPostId(ChatRoom room) {
-        return room.getCatchPost() == null ? room.getMissingPost().getId() : room.getCatchPost().getId();
-    }
-
-    private String getRoomName(ChatRoom room) {
-        return room.getCatchPost() == null ? room.getMissingPost().getKindCd() : room.getCatchPost().getKindCd();
-    }
-
-    private SexEnum getSexCd(ChatRoom room) {
-        return room.getCatchPost() == null ? room.getMissingPost().getSexCd() : room.getCatchPost().getSexCd();
-    }
-
-    private void validateCreateChatroom(Member postAuthor, Member member) {
-        if (postAuthor.getId().equals(member.getId())) {
-            throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
-        }
     }
 }

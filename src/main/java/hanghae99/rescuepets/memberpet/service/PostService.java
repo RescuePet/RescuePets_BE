@@ -49,13 +49,13 @@ public class PostService {
     public ResponseEntity<ResponseDto> getPostList(int page, int size, String sortBy, Member member) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findAll(pageable);
-        List<PetPostCatch> PetPostCatches = PetPostCatchPage.getContent();
-        List<PetPostCatchShortResponseDto> dtoList = new ArrayList<>();
-        for (PetPostCatch petPostCatch : PetPostCatches) {
-            if(petPostCatch.getIsDeleted()){continue;}
-            PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
-            dto.setWished(scrapRepository.findScrapByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+        Page<Post> PetPostCatchPage = postRepository.findAll(pageable);
+        List<Post> posts = PetPostCatchPage.getContent();
+        List<PostShortResponseDto> dtoList = new ArrayList<>();
+        for (Post post : posts) {
+            if(post.getIsDeleted()){continue;}
+            PostShortResponseDto dto = PostShortResponseDto.of(post);
+            dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
@@ -63,12 +63,12 @@ public class PostService {
     @Transactional
     public ResponseEntity<ResponseDto> getPostAll(String sortBy, Member member) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-        List<PetPostCatch> petPostCatchList = petPostCatchRepository.findAll(sort);
-        List<PetPostCatchResponseDto> dtoList = new ArrayList<>();
-        for (PetPostCatch petPostCatch : petPostCatchList) {
-            if(petPostCatch.getIsDeleted()){continue;}
-            PetPostCatchResponseDto dto = PetPostCatchResponseDto.of(petPostCatch);
-            dto.setWished(scrapRepository.findScrapByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+        List<Post> postList = postRepository.findAll(sort);
+        List<PostResponseDto> dtoList = new ArrayList<>();
+        for (Post post : postList) {
+            if(post.getIsDeleted()){continue;}
+            PostResponseDto dto = PostResponseDto.of(post);
+            dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
@@ -77,12 +77,12 @@ public class PostService {
     public ResponseEntity<ResponseDto> getPostListByMember(int page, int size, String sortBy, Member member) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
-        Page<PetPostCatch> PetPostCatchPage = petPostCatchRepository.findByMemberId(member.getId(), pageable);
-        List<PetPostCatchShortResponseDto> dtoList = new ArrayList<>();
-        for (PetPostCatch petPostCatch : PetPostCatchPage) {
-            if(petPostCatch.getIsDeleted()){continue;}
-            PetPostCatchShortResponseDto dto = PetPostCatchShortResponseDto.of(petPostCatch);
-            dto.setWished(scrapRepository.findScrapByPetPostCatchIdAndMemberId(petPostCatch.getId(), member.getId()).isPresent());
+        Page<Post> PetPostCatchPage = postRepository.findByMemberId(member.getId(), pageable);
+        List<PostShortResponseDto> dtoList = new ArrayList<>();
+        for (Post post : PetPostCatchPage) {
+            if(post.getIsDeleted()){continue;}
+            PostShortResponseDto dto = PostShortResponseDto.of(post);
+            dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(MY_POST_READING_SUCCESS, dtoList);
@@ -94,10 +94,10 @@ public class PostService {
         if(post.getIsDeleted()){throw new CustomException(
                 POST_ALREADY_DELETED);
         }
-        PetPostCatchResponseDto responseDto = PetPostCatchResponseDto.of(petPostCatch);
-        responseDto.setLinked(postLinkRepository.findByPetPostCatchId(petPostCatch.getId()).isPresent());
-        responseDto.setWished(scrapRepository.findScrapByPetPostCatchIdAndMemberId(petPostCatchId, member.getId()).isPresent());
-        responseDto.setWishedCount(scrapRepository.countByPetPostCatchId(petPostCatchId));
+        PostResponseDto responseDto = PostResponseDto.of(post);
+        responseDto.setLinked(postLinkRepository.findByPostId(post.getId()).isPresent());
+        responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(petPostCatchId, member.getId()).isPresent());
+        responseDto.setWishedCount(scrapRepository.countByPostId(petPostCatchId));
         return ResponseDto.toResponseEntity(POST_READING_SUCCESS, responseDto);
     }
 

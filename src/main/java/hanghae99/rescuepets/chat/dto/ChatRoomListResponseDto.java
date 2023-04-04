@@ -19,14 +19,14 @@ public class ChatRoomListResponseDto {
     private String postName;
     private SexEnum sexCd;
 
-    public static ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder of(ChatRoom room, Member partner, String roomName, Long postId, String postName, SexEnum sexCd) {
+    public static ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder of(ChatRoom room, Member partner) {
         return ChatRoomListResponseDto.builder()
                 .roomId(room.getRoomId())
-                .roomName(roomName)
+                .roomName(room.getPost().getKindCd())
                 .partner(partner.getNickname())
                 .profileImage(partner.getProfileImage())
-                .postId(postId)
-                .postName(postName)
-                .sexCd(sexCd);
+                .postId(room.getPost().getId())
+                .postName(room.getPost().getPostType().toString())
+                .sexCd(room.getPost().getSexCd());
     }
 }
