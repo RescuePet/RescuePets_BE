@@ -1,9 +1,6 @@
 package hanghae99.rescuepets.memberpet.dto;
 
-import hanghae99.rescuepets.common.entity.NeuterEnum;
-import hanghae99.rescuepets.common.entity.Post;
-import hanghae99.rescuepets.common.entity.SexEnum;
-import hanghae99.rescuepets.common.entity.UpkindEnum;
+import hanghae99.rescuepets.common.entity.*;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -24,6 +21,7 @@ public class PostShortResponseDto {
     private String happenDt;
     private String createdAt;
     private String modifiedAt;
+    private PostTypeEnum postType;
     private Boolean isWished;
     private List<PostImageResponseDto> postImages;
 
@@ -42,6 +40,7 @@ public class PostShortResponseDto {
                 .createdAt(post.getCreatedAt().toString())
                 .modifiedAt(post.getModifiedAt().toString())
                 .postImages(post.getPostImages().stream().map(PostImageResponseDto::of).toList())
+                .postType(post.getPostType())
                 .build();
     }
     public void setWished(Boolean isWished) {

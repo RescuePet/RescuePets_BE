@@ -38,11 +38,10 @@ public class PostController {
                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.getPostList(page-1, size, postType, memberDetails.getMember());
     }
-    @GetMapping("/all/{postType}")
+    @GetMapping("/all")
     @Operation(summary = "전체 게시글 페이징없이 불러오기(지도용)", description = "PostMissing 전체 게시글을 페이징없이 불러옵니다")
-    public ResponseEntity<ResponseDto> getPostAll(@PathVariable String postType,
-                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return postService.getPostAll(postType, memberDetails.getMember());
+    public ResponseEntity<ResponseDto> getPostAll(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.getPostAll(memberDetails.getMember());
     }
     @GetMapping("/member")
     @Operation(summary = "내가 작성한 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")

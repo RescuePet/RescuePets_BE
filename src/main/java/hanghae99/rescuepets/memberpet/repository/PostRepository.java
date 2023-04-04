@@ -11,7 +11,7 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     List<Post> findAllByMemberId(Long memberId);
     Page<Post> findByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
     Page<Post> findByPostTypeOrderByCreatedAtDesc(PostTypeEnum postType, Pageable pageable);
-    List<Post> findByPostTypeOrderByCreatedAtDesc(PostTypeEnum postType);
+    List<Post> findByOrderByCreatedAtDesc();
     Integer countByMemberId(Long memberId);
 
 }

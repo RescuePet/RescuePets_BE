@@ -60,8 +60,8 @@ public class PostService {
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
     @Transactional
-    public ResponseEntity<ResponseDto> getPostAll(String postType, Member member) {
-        List<Post> postList = postRepository.findByPostTypeOrderByCreatedAtDesc(PostTypeEnum.valueOf(postType));
+    public ResponseEntity<ResponseDto> getPostAll(Member member) {
+        List<Post> postList = postRepository.findByOrderByCreatedAtDesc();
         List<PostResponseDto> dtoList = new ArrayList<>();
         for (Post post : postList) {
             if(post.getIsDeleted()){continue;}
