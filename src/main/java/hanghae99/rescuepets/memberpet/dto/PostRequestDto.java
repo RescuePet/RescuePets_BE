@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @AllArgsConstructor
 public class PostRequestDto {
-    private String postType;
+    private PostTypeEnum postType;
     private UpkindEnum upkind;
     private SexEnum sexCd;
     private NeuterEnum neuterYn;

@@ -24,14 +24,14 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "게시글 작성하기", description = "PostCatch 게시글 하나를 작성합니다")
+    @Operation(summary = "게시글 작성하기", description = "게시글 하나를 작성합니다")
     public ResponseEntity<ResponseDto> createPost(@ModelAttribute PostRequestDto requestDto,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.createPost(requestDto, memberDetails.getMember());
     }
-    @PostMapping("/posters/{postId}")
+    @PostMapping(value = "/posters/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "실종 게시글 포스터png URL 저장하기", description = "실종 게시글 포스터 이미지 파일의 URL을 저장합니다")
-    public ResponseEntity<ResponseDto> setPostPoster(@RequestBody MissingPosterRequestDto requestDto,
+    public ResponseEntity<ResponseDto> setPostPoster(@ModelAttribute MissingPosterRequestDto requestDto,
                                                      @PathVariable Long postId,
                                                      @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.setPostPoster(requestDto, postId, memberDetails.getMember());
@@ -39,7 +39,7 @@ public class PostController {
 
 //    @ApiOperation(value = "게시글 목록 조회", notes = "page, size, sortBy로 페이징 후 조회")
     @GetMapping("/list/{postType}")
-    @Operation(summary = "전체 게시글 페이징해서 불러오기", description = "PostCatch 전체 게시글을 페이징하여 불러옵니다")
+    @Operation(summary = "전체 게시글 페이징해서 불러오기", description = "카테고리를 지정하여 전체 게시글을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPostList(@RequestParam int page,
                                                    @RequestParam int size,
                                                    @PathVariable String postType,
