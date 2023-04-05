@@ -62,7 +62,7 @@ public class Post extends TimeStamped{
 
 
     public Post(PostRequestDto requestDto, Member member) {
-        this.postType = PostTypeEnum.valueOf(requestDto.getPostType());
+        this.postType = requestDto.getPostType();
         this.upkind = requestDto.getUpkind();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
@@ -89,7 +89,7 @@ public class Post extends TimeStamped{
         }
     }
     public void update(PostRequestDto requestDto) {
-        this.postType = PostTypeEnum.valueOf(requestDto.getPostType());
+        this.postType = requestDto.getPostType();
         this.upkind = requestDto.getUpkind();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();

@@ -57,7 +57,7 @@ public class PostService {
             throw new CustomException(POST_TYPE_INCORRECT);
         }
         if(member.getNickname() == post.getMember().getNickname()){
-            post.setMissingPosterImageURL(requestDto.getImageURL());
+            post.setMissingPosterImageURL(s3Uploader.uploadSingle(requestDto.getPostPoster()));
             return ResponseDto.toResponseEntity(POSTER_SAVING_SUCCESS);
         }else{
             throw new CustomException(UNAUTHORIZED_SAVE);
