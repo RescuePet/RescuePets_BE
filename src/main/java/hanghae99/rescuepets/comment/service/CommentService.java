@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.comment.service;
 
+import hanghae99.rescuepets.comment.dto.CommentByMemberResponseDto;
 import hanghae99.rescuepets.comment.repository.CommentRepository;
 import hanghae99.rescuepets.comment.dto.CommentRequestDto;
 import hanghae99.rescuepets.common.dto.CustomException;
@@ -7,9 +8,13 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Comment;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.Post;
+import hanghae99.rescuepets.common.entity.PostTypeEnum;
 import hanghae99.rescuepets.memberpet.repository.PostRepository;
 import hanghae99.rescuepets.comment.dto.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -27,17 +32,19 @@ public class CommentService {
     private final PostRepository postRepository;
 
     @Transactional
-    public ResponseEntity<ResponseDto> getCommentListByMember(Member member) {
-        List<Comment> commentList = commentRepository.findAllByMemberId(member.getId());
-        List<CommentResponseDto> comments = new ArrayList<>();
+    public ResponseEntity<ResponseDto> getCommentListByMember(int page, int size, Member member) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Comment> commentList = commentRepository.findAllByMemberId(member.getId(), pageable);
+        List<CommentByMemberResponseDto> comments = new ArrayList<>();
         for (Comment comment : commentList) {
-            comments.add(new CommentResponseDto(comment));
+            comments.add(new CommentByMemberResponseDto(comment));
         }
         return ResponseDto.toResponseEntity(MY_COMMENT_READING_SUCCESS, comments);
     }
     @Transactional
-    public ResponseEntity<ResponseDto> getCommentList(Post post) {
-        List<Comment> commentList = commentRepository.findAllByPostId(post.getId());
+    public ResponseEntity<ResponseDto> getCommentList(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
+        List<Comment> commentList = commentRepository.findAllByPostId(postId);
         List<CommentResponseDto> comments = new ArrayList<>();
         for (Comment comment : commentList) {
             comments.add(new CommentResponseDto(comment, post));
