@@ -20,6 +20,7 @@ public class Post extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String kindCd;
+    private String petName = "";
     private String age;
     private String weight;
     private String colorCd;
@@ -32,7 +33,7 @@ public class Post extends TimeStamped{
     private String content;
     private String gratuity;
     private String contact;
-    private Boolean openNickname;
+    private Boolean openNickname = true;
     private Boolean isDeleted = false;
     private Date deletedDt;
     private String missingPosterImageURL = "#";
@@ -118,4 +119,5 @@ public class Post extends TimeStamped{
     public void setMissingPosterImageURL(String imageURL){
         this.missingPosterImageURL = imageURL;
     }
+
 }

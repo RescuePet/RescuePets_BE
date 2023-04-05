@@ -26,6 +26,6 @@ public class CommentByMemberResponseDto {
         this.profileImage = comment.getMember().getProfileImage();
         this.postId = comment.getPost().getId();
         this.postType = comment.getPost().getPostType();
-        this.postImageURL = comment.getPost().getPostImages().get(0).getImageURL();
+        this.postImageURL = comment.getPost().getPostImages().get(1).getImageURL();
     }
 }

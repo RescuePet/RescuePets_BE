@@ -7,7 +7,6 @@ import hanghae99.rescuepets.common.entity.SexEnum;
 import hanghae99.rescuepets.common.entity.UpkindEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,6 +18,7 @@ public class PostRequestDto {
     private SexEnum sexCd;
     private NeuterEnum neuterYn;
     private String kindCd;
+    private String petName;
     private String age;
     private String weight;
     private String colorCd;
