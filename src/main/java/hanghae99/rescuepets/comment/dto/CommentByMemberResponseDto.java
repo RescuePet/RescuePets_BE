@@ -15,7 +15,7 @@ public class CommentByMemberResponseDto {
     private Long postId;
     private String profileImage;
     private PostTypeEnum postType;
-    private PostImage postImage;
+    private String postImageURL;
 
     public CommentByMemberResponseDto(Comment comment) {
         this.id = comment.getId();
@@ -26,6 +26,6 @@ public class CommentByMemberResponseDto {
         this.profileImage = comment.getMember().getProfileImage();
         this.postId = comment.getPost().getId();
         this.postType = comment.getPost().getPostType();
-        this.postImage = comment.getPost().getPostImages().get(1);
+        this.postImageURL = comment.getPost().getPostImages().get(1).getImageURL();
     }
 }
