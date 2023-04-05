@@ -61,6 +61,7 @@ public class PostResponseDto {
                 .createdAt(post.getCreatedAt().toString())
                 .modifiedAt(post.getModifiedAt().toString())
                 .postImages(post.getPostImages().stream().map(PostImageResponseDto::of).toList())
+                .openNickname(post.getOpenNickname())
                 .postType(post.getPostType())
                 .build();
     }

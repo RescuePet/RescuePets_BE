@@ -10,6 +10,8 @@ import lombok.Getter;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.Column;
+
 @Getter
 @AllArgsConstructor
 public class PostRequestDto {
