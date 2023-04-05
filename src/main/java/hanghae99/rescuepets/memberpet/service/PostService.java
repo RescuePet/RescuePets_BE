@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -153,8 +154,10 @@ public class PostService {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
+
+    // true false
     @Transactional
-    public ResponseEntity<ResponseDto> softDeletePetPostCatch(Long postId, Member member) {
+    public ResponseEntity<ResponseDto> softDeletePost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (member.getNickname().equals(post.getMember().getNickname())) {
             post.setIsDeleted(true);
@@ -163,6 +166,8 @@ public class PostService {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
+
+    // 즉시 삭제
     @Transactional
     public ResponseEntity<ResponseDto> deletePost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -171,17 +176,16 @@ public class PostService {
             return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
         } else {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
+
         }
     }
+
+    //하루에 한번씩 post repo 하루 마다 isDeleted true 것을 확인 후 1년이 지난 것들은 삭제 20초 테스트
+    @Scheduled(cron = "0 0/3 * * * *")
     @Transactional
-    public ResponseEntity<ResponseDto> periodicDeletePetPostCatch(Long postId, Member member) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (member.getNickname().equals(post.getMember().getNickname())) {
-            postRepository.deleteById(postId);
-            return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
-        } else {
-            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
-        }
+    public void periodicDeletePost() {
+            List<Post> posts = postRepository.findALlByIsDeletedTrue();
+            postRepository.deleteAll(posts);
     }
 
     @Transactional

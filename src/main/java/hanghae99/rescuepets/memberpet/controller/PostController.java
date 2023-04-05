@@ -80,11 +80,11 @@ public class PostController {
         return postService.updatePost(postId, requestDto, memberDetails.getMember());
     }
 
-//    @DeleteMapping("/{petPostCatchId}")
-//    @Operation(summary = "PostCatch 게시글 임시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
-//    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
-//        return petPostCatchService.softDeletePetPostCatch(petPostCatchId, userDetails.getMember());
-//    }
+    @DeleteMapping("/temporary/{postId}")
+    @Operation(summary = "PostCatch 게시글 임시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
+    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long postId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
+        return postService.softDeletePost(postId, userDetails.getMember());
+    }
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 즉시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
     public ResponseEntity<ResponseDto> deletePost(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
