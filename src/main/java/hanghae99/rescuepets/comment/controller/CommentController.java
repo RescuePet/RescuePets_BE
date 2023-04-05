@@ -30,7 +30,7 @@ public class CommentController {
     public ResponseEntity<ResponseDto> getCommentListByMember(@RequestParam int page,
                                                               @RequestParam int size,
                                                               @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails){
-        return commentService.getCommentListByMember(page, size, userDetails.getMember());
+        return commentService.getCommentListByMember(page-1, size, userDetails.getMember());
     }
 
     @GetMapping("/{postId}")
