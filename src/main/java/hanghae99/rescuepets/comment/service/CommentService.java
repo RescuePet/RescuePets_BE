@@ -51,7 +51,7 @@ public class CommentService {
     public ResponseEntity<ResponseDto> createComment(Long postId, CommentRequestDto requestDto, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
         commentRepository.save(new Comment(requestDto.getContent(), post, member));
-        mailService.send(post.getMember(), member.getNickname());
+        mailService.send(post, member.getNickname(), requestDto.getContent());
         return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS);
     }
 
