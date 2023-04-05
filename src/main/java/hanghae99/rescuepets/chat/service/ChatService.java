@@ -1,6 +1,7 @@
 package hanghae99.rescuepets.chat.service;
 
 import hanghae99.rescuepets.chat.dto.ChatRequestDto;
+import hanghae99.rescuepets.chat.dto.ChatResponseDto;
 import hanghae99.rescuepets.chat.dto.ChatRoomResponseDto;
 import hanghae99.rescuepets.chat.repository.ChatRepository;
 import hanghae99.rescuepets.chat.repository.ChatRoomRepository;
@@ -14,6 +15,7 @@ import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,6 +27,7 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
+    private final SimpMessagingTemplate template;
 
     @Transactional
     public void createChat(String roomId, ChatRequestDto dto) {
@@ -33,6 +36,7 @@ public class ChatService {
         Chat message = Chat.of(dto, room, sender);
 
         chatRepository.save(message);
+        template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(dto, sender));
     }
 
     public ResponseEntity<ResponseDto> getMessages(String roomId) {

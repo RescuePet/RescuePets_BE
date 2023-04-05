@@ -8,13 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatRequestDto {
-
-    public enum MessageType {
-        ENTER,
-        TALK
-    }
-
-    private MessageType type;
     private String roomId;
     private String message;
     private String sender;
