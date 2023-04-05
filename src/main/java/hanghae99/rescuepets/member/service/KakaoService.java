@@ -8,6 +8,7 @@ import hanghae99.rescuepets.common.dto.ExceptionMessage;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.MemberRoleEnum;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
@@ -121,6 +122,7 @@ public class KakaoService {
                         .email(email)
                         .kakaoId(kakaoId)
                         .profileImage(profileImage)
+                        .memberRoleEnum(MemberRoleEnum.MEMBER)
                         .build();
             }
             memberRepository.save(kakaoUser);
