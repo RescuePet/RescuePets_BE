@@ -7,6 +7,7 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Comment;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.Post;
+import hanghae99.rescuepets.mail.service.MailService;
 import hanghae99.rescuepets.memberpet.repository.PostRepository;
 import hanghae99.rescuepets.comment.dto.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final MailService mailService;
 
     @Transactional
     public ResponseEntity<ResponseDto> getCommentListByMember(Member member) {
@@ -49,6 +51,7 @@ public class CommentService {
     public ResponseEntity<ResponseDto> createComment(Long postId, CommentRequestDto requestDto, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
         commentRepository.save(new Comment(requestDto.getContent(), post, member));
+        mailService.send(post.getMember(), member.getNickname());
         return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS);
     }
 
