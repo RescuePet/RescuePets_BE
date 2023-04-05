@@ -30,7 +30,7 @@ public class PostResponseDto {
     private String nickname = "익명";
     private String createdAt;
     private String modifiedAt;
-    private Boolean openNickname;
+    private Boolean openNickname = true;
     private PostTypeEnum postType;
     private Boolean isWished = false;
     private Integer wishedCount = 0;
