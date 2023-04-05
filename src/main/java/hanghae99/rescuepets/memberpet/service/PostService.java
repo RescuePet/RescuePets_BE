@@ -111,8 +111,10 @@ public class PostService {
         responseDto.setLinked(postLinkRepository.findByPostId(post.getId()).isPresent());
         responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId()).isPresent());
         responseDto.setWishedCount(scrapRepository.countByPostId(postId));
-        if(post.getOpenNickname()){
-            responseDto.setNickname(post.getMember().getNickname());
+        if(post.getOpenNickname() != null){
+            if(post.getOpenNickname() == true){
+                responseDto.setNickname(post.getMember().getNickname());
+            }
         }
         return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseDto);
     }
