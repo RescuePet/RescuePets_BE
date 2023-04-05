@@ -14,6 +14,7 @@ public class PostShortResponseDto {
     private SexEnum sexCd;
     private NeuterEnum neuterYn;
     private String kindCd;
+    private String petName;
     private String age;
     private String weight;
     private String colorCd;
@@ -32,6 +33,7 @@ public class PostShortResponseDto {
                 .sexCd(post.getSexCd())
                 .neuterYn(post.getNeuterYn())
                 .kindCd(post.getKindCd())
+                .petName(post.getPetName())
                 .age(post.getAge())
                 .weight(post.getWeight())
                 .colorCd(post.getColorCd())

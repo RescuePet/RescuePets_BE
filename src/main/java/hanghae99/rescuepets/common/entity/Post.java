@@ -119,4 +119,5 @@ public class Post extends TimeStamped{
     public void setMissingPosterImageURL(String imageURL){
         this.missingPosterImageURL = imageURL;
     }
+
 }

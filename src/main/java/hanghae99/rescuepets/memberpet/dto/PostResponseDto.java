@@ -27,7 +27,7 @@ public class PostResponseDto {
     private String content;
     private String gratuity;
     private String contact;
-    private String nickname;
+    private String nickname = "익명";
     private String createdAt;
     private String modifiedAt;
     private Boolean openNickname;
@@ -71,4 +71,5 @@ public class PostResponseDto {
     public void setLinked(Boolean isLinked) {
         this.isLinked = isLinked;
     }
+    public void setNickname(String nickname) {this.nickname = nickname;}
 }

@@ -1,6 +1,5 @@
 package hanghae99.rescuepets.memberpet.service;
 
-
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.*;
@@ -112,6 +111,9 @@ public class PostService {
         responseDto.setLinked(postLinkRepository.findByPostId(post.getId()).isPresent());
         responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId()).isPresent());
         responseDto.setWishedCount(scrapRepository.countByPostId(postId));
+        if(post.getOpenNickname()){
+            responseDto.setNickname(post.getMember().getNickname());
+        }
         return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseDto);
     }
     @Transactional
