@@ -14,4 +14,8 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     List<Post> findByOrderByCreatedAtDesc();
     Integer countByMemberId(Long memberId);
 
+    List<Post> findALlByIsDeletedTrue();
+
+
+
 }
