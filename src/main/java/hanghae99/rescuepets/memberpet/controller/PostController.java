@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "사용자 게시물 작성")
 @RequestMapping("/api/post")
@@ -31,7 +30,7 @@ public class PostController {
     }
     @PostMapping(value = "/posters/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "실종 게시글 포스터png URL 저장하기", description = "실종 게시글 포스터 이미지 파일의 URL을 저장합니다")
-    public ResponseEntity<ResponseDto> setPostPoster(@ModelAttribute MultipartFile requestDto,
+    public ResponseEntity<ResponseDto> setPostPoster(@ModelAttribute MissingPosterRequestDto requestDto,
                                                      @PathVariable Long postId,
                                                      @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.setPostPoster(requestDto, postId, memberDetails.getMember());
