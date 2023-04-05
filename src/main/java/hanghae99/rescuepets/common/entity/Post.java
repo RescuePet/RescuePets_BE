@@ -35,6 +35,7 @@ public class Post extends TimeStamped{
     private Boolean openNickname;
     private Boolean isDeleted = false;
     private Date deletedDt;
+    private String missingPosterImageURL = "#";
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private PostTypeEnum postType;
@@ -113,5 +114,8 @@ public class Post extends TimeStamped{
             return false;
         }
         return isDeleted;
+    }
+    public void setMissingPosterImageURL(String imageURL){
+        this.missingPosterImageURL = imageURL;
     }
 }

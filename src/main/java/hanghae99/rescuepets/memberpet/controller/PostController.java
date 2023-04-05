@@ -3,6 +3,7 @@ package hanghae99.rescuepets.memberpet.controller;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.security.MemberDetails;
+import hanghae99.rescuepets.memberpet.dto.MissingPosterRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PostRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PostLinkRequestDto;
 import hanghae99.rescuepets.memberpet.service.PostService;
@@ -23,10 +24,17 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "PostCatch 게시글 작성하기", description = "PostCatch 게시글 하나를 작성합니다")
+    @Operation(summary = "게시글 작성하기", description = "PostCatch 게시글 하나를 작성합니다")
     public ResponseEntity<ResponseDto> createPost(@ModelAttribute PostRequestDto requestDto,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.createPost(requestDto, memberDetails.getMember());
+    }
+    @PostMapping("/posters/{postId}")
+    @Operation(summary = "실종 게시글 포스터png URL 저장하기", description = "실종 게시글 포스터 이미지 파일의 URL을 저장합니다")
+    public ResponseEntity<ResponseDto> setPostPoster(@RequestBody MissingPosterRequestDto requestDto,
+                                                     @PathVariable Long postId,
+                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.setPostPoster(requestDto, postId, memberDetails.getMember());
     }
 
 //    @ApiOperation(value = "게시글 목록 조회", notes = "page, size, sortBy로 페이징 후 조회")
@@ -59,8 +67,14 @@ public class PostController {
         return postService.getPost(postId, memberDetails.getMember());
     }
 
+    @GetMapping("/posters/{postId}")
+    @Operation(summary = "실종 게시글 포스터png 내려받기", description = "누구든 특정 실종 게시글의 포스터를 내려받습니다")
+    public ResponseEntity<ResponseDto> getPostPoster(@PathVariable Long postId) {
+        return postService.getPostPoster(postId);
+    }
+
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "내가 작성한 특정 게시글 수정하기", description = "내가 작성한 PostCatch 게시글 하나를 수정합니다")
+    @Operation(summary = "게시글 수정하기", description = "내가 작성한 게시글 하나를 수정합니다")
     public ResponseEntity<ResponseDto> updatePost(@PathVariable Long postId,
                                                   @ModelAttribute PostRequestDto requestDto,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {

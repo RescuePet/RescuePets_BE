@@ -22,6 +22,7 @@ import java.util.List;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
+import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +46,22 @@ public class PostService {
         }
         postRepository.save(post);
         return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS, post.getId());
+    }
+    @Transactional
+    public ResponseEntity<ResponseDto> setPostPoster(MissingPosterRequestDto requestDto, Long postId, Member member) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(post.getIsDeleted()){
+            throw new CustomException(POST_ALREADY_DELETED);
+        }
+        if(post.getPostType() != MISSING){
+            throw new CustomException(POST_TYPE_INCORRECT);
+        }
+        if(member.getNickname() == post.getMember().getNickname()){
+            post.setMissingPosterImageURL(requestDto.getImageURL());
+            return ResponseDto.toResponseEntity(POSTER_SAVING_SUCCESS);
+        }else{
+            throw new CustomException(UNAUTHORIZED_SAVE);
+        }
     }
     @Transactional
     public ResponseEntity<ResponseDto> getPostList(int page, int size, String postType, Member member) {
@@ -88,14 +105,29 @@ public class PostService {
     @Transactional
     public ResponseEntity<ResponseDto> getPost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(post.getIsDeleted()){throw new CustomException(
-                POST_ALREADY_DELETED);
+        if(post.getIsDeleted()){
+            throw new CustomException(POST_ALREADY_DELETED);
         }
         PostResponseDto responseDto = PostResponseDto.of(post);
         responseDto.setLinked(postLinkRepository.findByPostId(post.getId()).isPresent());
         responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId()).isPresent());
         responseDto.setWishedCount(scrapRepository.countByPostId(postId));
         return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseDto);
+    }
+    @Transactional
+    public ResponseEntity<ResponseDto> getPostPoster(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(post.getIsDeleted()){
+            throw new CustomException(POST_ALREADY_DELETED);
+        }
+        if(post.getPostType() == MISSING){
+            if(post.getMissingPosterImageURL() == null){
+                throw new CustomException(NOT_FOUND_IMAGE);
+            }
+            return ResponseDto.toResponseEntity(POSTER_READING_SUCCESS, post.getMissingPosterImageURL());
+        }else{
+            throw new CustomException(POST_TYPE_INCORRECT);
+        }
     }
 
     @Transactional
