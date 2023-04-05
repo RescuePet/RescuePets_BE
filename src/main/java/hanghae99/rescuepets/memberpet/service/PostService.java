@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class PostService {
         return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS, post.getId());
     }
     @Transactional
-    public ResponseEntity<ResponseDto> setPostPoster(MissingPosterRequestDto requestDto, Long postId, Member member) {
+    public ResponseEntity<ResponseDto> setPostPoster(MultipartFile file, Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if(post.getIsDeleted()){
             throw new CustomException(POST_ALREADY_DELETED);
@@ -57,7 +58,7 @@ public class PostService {
             throw new CustomException(POST_TYPE_INCORRECT);
         }
         if(member.getNickname().equals(post.getMember().getNickname())){
-            post.setMissingPosterImageURL(s3Uploader.uploadSingle(requestDto.getPostPoster()));
+            post.setMissingPosterImageURL(s3Uploader.uploadSingle(file));
             return ResponseDto.toResponseEntity(POSTER_SAVING_SUCCESS);
         }else{
             throw new CustomException(UNAUTHORIZED_SAVE);
