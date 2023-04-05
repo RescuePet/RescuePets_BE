@@ -1,7 +1,6 @@
 package hanghae99.rescuepets.memberpet.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.memberpet.dto.MissingPosterRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PostRequestDto;
