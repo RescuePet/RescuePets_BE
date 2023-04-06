@@ -34,7 +34,7 @@ public class ChatController {
 
     @GetMapping("/room/{roomId}")
     @Operation(summary = "채팅 조회")
-    public ResponseEntity<ResponseDto> chat(@PathVariable String roomId) {
-        return chatService.getMessages(roomId);
+    public ResponseEntity<ResponseDto> chat(@PathVariable String roomId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return chatService.getMessages(roomId, memberDetails.getMember());
     }
 }
