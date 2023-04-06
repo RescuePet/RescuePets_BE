@@ -2,6 +2,7 @@ package hanghae99.rescuepets.mail.service;
 
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ExceptionMessage;
+import hanghae99.rescuepets.common.entity.MailType;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.Post;
 import hanghae99.rescuepets.common.entity.PostTypeEnum;
@@ -22,7 +23,7 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
 
-    public void send(Post post, String commenter, String comment) {
+    public void send(Post post, String commenter, String comment, MailType mailType) {
 
         MimeMessage message = javaMailSender.createMimeMessage();
 
