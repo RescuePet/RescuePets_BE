@@ -30,7 +30,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "SELECT * FROM post WHERE post.post_type = :postType AND post.upkind LIKE :searchValue ORDER BY post.created_at DESC", nativeQuery = true)
     Page<Post> findPostsByUpkind(@Param("postType") String postType, @Param("searchValue") String searchValue, Pageable pageable);
 
-    @Query(value = "SELECT * FROM post WHERE post.post_type = :postType AND post.kind_cd LIKE :searchValue ORDER BY post.created_at DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM post WHERE post.post_type = :postType AND post.kind_cd LIKE :searchValue ", nativeQuery = true)
     Page<Post> findPostsByKindCd(@Param("postType") String postType, @Param("searchValue") String searchValue, Pageable pageable);
 
     @Query(value = "SELECT * FROM post WHERE post.post_type = :postType AND post.upkind LIKE :searchValue AND ST_DISTANCE_SPHERE(POINT(:memberLatitude, :memberLongitude), POINT(post.happen_longitude, post.happen_latitude)) <= :distance ORDER BY post.created_at DESC", nativeQuery = true)

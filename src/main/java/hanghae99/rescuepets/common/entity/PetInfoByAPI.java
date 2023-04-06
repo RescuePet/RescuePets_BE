@@ -65,9 +65,9 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
     @Column
     private String officetel;
     @Column
-    private double latitude;
+    private Double latitude;
     @Column
-    private double longitude;
+    private Double longitude;
     @Enumerated(value = EnumType.STRING)
     @Column
     private PetStateEnum petStateEnum;
