@@ -23,17 +23,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findALlByIsDeletedTrue();
 
-//    @Query("SELECT p FROM post p WHERE ST_DISTANCE_SPHERE(POINT(:userLatitude, :userLongitude), POINT(p.happenLatitude, p.happenLongitude)) <= 100000")
-//    List<Post> findPostsByDistance(@Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude, @Param("happenLongitude") Double happenLongitude, @Param("happenLatitude") Double happenLatitude);
+    @Query(value = "SELECT * FROM post WHERE post.post_type = :postType AND ST_DISTANCE_SPHERE(POINT(:memberLatitude, :memberLongitude), POINT(post.happen_longitude, post.happen_latitude)) <= :distance ORDER BY post.created_at DESC", nativeQuery = true)
+    Page<Post> findPostsByDistance(@Param("postType") String postType, @Param("memberLatitude") Double memberLatitude, @Param("memberLongitude") Double memberLongitude, @Param("distance") Double distance, Pageable pageable);
 
-//    @Query("SELECT p FROM post p WHERE ST_DISTANCE_SPHERE(POINT(:userLatitude, :userLongitude), POINT(p.happenLatitude, p.happenLongitude)) <= :distance")
-//    List<Post> findPostsByDistance(@Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude, @Param("distance") Double distance);
+    @Query(value = "SELECT * FROM post WHERE post.post_type = :postType AND post.:searchKeyword = :searchValue AND ST_DISTANCE_SPHERE(POINT(:memberLatitude, :memberLongitude), POINT(post.happen_longitude, post.happen_latitude)) <= :distance ORDER BY post.created_at DESC", nativeQuery = true)
+    Page<Post> findPostsByDistance(@Param("postType") String postType, @Param("memberLatitude") Double userLatitude, @Param("memberLongitude") Double memberLongitude, @Param("distance") Double distance, @Param("searchKeyword") String searchKeyword, @Param("searchValue") String searchValue, Pageable pageable);
 
-    @Query("SELECT p FROM post p WHERE ST_DISTANCE_SPHERE(POINT(:userLatitude, :userLongitude), POINT(p.happenLongitude, p.happenLatitude)) <= :distance")
-    List<Post> findPostsByDistance(@Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude, @Param("distance") Double distance);
-
-//    @Query("SELECT p FROM post p WHERE ST_DISTANCE_SPHERE(POINT(:userLatitude, :userLongitude), POINT(p.happenLongitude, p.happenLatitude)) <= 100000")
-//    List<Post> findPostsByDistance(@Param("userLatitude") Double userLatitude, @Param("userLongitude") Double userLongitude);
+    @Query(value = "SELECT * FROM post WHERE post.post_type = :postType AND post.:searchKeyword = :searchValue ORDER BY post.created_at DESC", nativeQuery = true)
+    Page<Post> findPostsByDistance(@Param("postType") String postType, @Param("searchKeyword") String searchKeyword, @Param("searchValue") String searchValue, Pageable pageable);
 
 
 }

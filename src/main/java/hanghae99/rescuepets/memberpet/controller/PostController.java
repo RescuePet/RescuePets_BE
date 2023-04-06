@@ -28,6 +28,7 @@ public class PostController {
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.createPost(requestDto, memberDetails.getMember());
     }
+
     @PostMapping(value = "/posters/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "실종 게시글 포스터png URL 저장하기", description = "실종 게시글 포스터 이미지 파일의 URL을 저장합니다")
     public ResponseEntity<ResponseDto> setPostPoster(@ModelAttribute MissingPosterRequestDto requestDto,
@@ -42,8 +43,9 @@ public class PostController {
                                                    @RequestParam int size,
                                                    @PathVariable String postType,
                                                    @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return postService.getPostList(page-1, size, postType, memberDetails.getMember());
+        return postService.getPostList(page - 1, size, postType, memberDetails.getMember());
     }
+
     @GetMapping("/all")
     @Operation(summary = "전체 게시글 페이징없이 불러오기(지도용)", description = "카테고리 구분 없이 전체 게시글을 페이징없이 불러옵니다")
     public ResponseEntity<ResponseDto> getPostAll() {
@@ -56,7 +58,7 @@ public class PostController {
     public ResponseEntity<ResponseDto> getPostListByMember(@RequestParam int page,
                                                            @RequestParam int size,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return postService.getPostListByMember(page-1, size, memberDetails.getMember());
+        return postService.getPostListByMember(page - 1, size, memberDetails.getMember());
     }
 
     @GetMapping("/{postId}")
@@ -72,11 +74,17 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "postType 구분X 거리 기준 게시글 페이징없이 불러오기", description = "ex)memberLongitude(126.972828), memberLatitude(37.556817),description(100000)/서울역(위도,경도),100km")
-    public ResponseEntity<ResponseDto> getPostListByDistance(@RequestParam(value = "memberLongitude") Double memberLongitude,
-                                                             @RequestParam(value = "memberLatitude") Double memberLatitude,
-                                                             @RequestParam(value = "description") Double description) {
-        return postService.getPostListByDistance(memberLongitude, memberLatitude, description);
+    @Operation(summary = "검색", description = "ex)memberLongitude(126.972828), memberLatitude(37.556817),description(100000)/서울역(위도,경도),100km")
+    public ResponseEntity<ResponseDto> getPostListByDistance(@RequestParam int page,
+                                                             @RequestParam int size,
+                                                             @RequestParam(value = "postType") String postType,
+                                                             @RequestParam(value = "memberLongitude",required = false) Double memberLongitude,
+                                                             @RequestParam(value = "memberLatitude",required = false) Double memberLatitude,
+                                                             @RequestParam(value = "description",required = false) Double description,
+                                                             @RequestParam(value = "searchKeyword",required = false) String searchKeyword,
+                                                             @RequestParam(value = "searchValue",required = false) String searchValue,
+                                                             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.getPostListByDistance(page, size, postType, memberLongitude, memberLatitude, description,searchKeyword,searchValue, memberDetails.getMember());
     }
 
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
@@ -89,9 +97,10 @@ public class PostController {
 
     @DeleteMapping("/temporary/{postId}")
     @Operation(summary = "PostCatch 게시글 임시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
-    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long postId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
+    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return postService.softDeletePost(postId, userDetails.getMember());
     }
+
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 즉시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
     public ResponseEntity<ResponseDto> deletePost(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
@@ -105,16 +114,18 @@ public class PostController {
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.createLink(postId, requestDto, memberDetails.getMember());
     }
+
     @GetMapping(value = "/links/{postId}")
     @Operation(summary = "게시글에서 생성된 링크들을 조회합니다", description = "해당 게시글에서 생성된 링크들을 조회합니다. 게시글에서 생성된 링크가 전혀 없는지, 하나라도 있는지 사용자에게 표시해줍니다.")
     public ResponseEntity<ResponseDto> getLink(@PathVariable Long postId,
-                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+                                               @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.getLink(postId, memberDetails.getMember());
     }
+
     @DeleteMapping(value = "/links/{postId}")
     @Operation(summary = "게시글에서 내가 만든 링크를 삭제합니다", description = "해당 게시글에서 생성된 링크 중, 내가 생성한 링크를 일괄 삭제합니다. 연결한 반대편 게시글에서도 링크가 같이 삭제됩니다.")
     public ResponseEntity<ResponseDto> deleteLink(@PathVariable Long postId,
-                                               @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.deleteLink(postId, memberDetails.getMember());
     }
 

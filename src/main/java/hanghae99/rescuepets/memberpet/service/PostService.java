@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -49,57 +50,80 @@ public class PostService {
         postRepository.save(post);
         return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS, post.getId());
     }
+
     @Transactional
     public ResponseEntity<ResponseDto> setPostPoster(MissingPosterRequestDto requestDto, Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(post.getIsDeleted()){
+        if (post.getIsDeleted()) {
             throw new CustomException(POST_ALREADY_DELETED);
         }
-        if(post.getPostType() != MISSING){
+        if (post.getPostType() != MISSING) {
             throw new CustomException(POST_TYPE_INCORRECT);
         }
-        if(member.getNickname().equals(post.getMember().getNickname())){
+        if (member.getNickname().equals(post.getMember().getNickname())) {
             post.setMissingPosterImageURL(s3Uploader.uploadSingle(requestDto.getPostPoster()));
             return ResponseDto.toResponseEntity(POSTER_SAVING_SUCCESS);
-        }else{
+        } else {
             throw new CustomException(UNAUTHORIZED_SAVE);
         }
     }
+
     @Transactional
     public ResponseEntity<ResponseDto> getPostList(int page, int size, String postType, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage = postRepository.findByPostTypeOrderByCreatedAtDesc(PostTypeEnum.valueOf(postType), pageable);
         List<PostShortResponseDto> dtoList = new ArrayList<>();
         for (Post post : postPage) {
-            if(post.getIsDeleted()){continue;}
+            if (post.getIsDeleted()) {
+                continue;
+            }
             PostShortResponseDto dto = PostShortResponseDto.of(post);
             dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<ResponseDto> getPostListByDistance(int page, int size, String postType,
+                                                             Double memberLongitude, Double memberLatitude, Double description,
+                                                             String searchkeyword, String searchValue, Member member) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage;
+        if (memberLatitude != null && searchkeyword == null) {
+            postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, pageable);
+        } else if (searchkeyword != null && memberLatitude != null) {
+            postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, searchkeyword, searchValue, pageable);
+        } else if (searchkeyword != null && memberLatitude == null) {
+            postPage = postRepository.findPostsByDistance(postType, searchkeyword, "%" + searchValue + "%", pageable);
+
+        } else {
+            throw new CustomException(TEST);
+        }
+        List<PostShortResponseDto> postListByDistance = new ArrayList<>();
+        for (Post post : postPage) {
+            if (post.getIsDeleted()) {
+                continue;
+            }
+            PostShortResponseDto dto = PostShortResponseDto.of(post);
+            dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
+            postListByDistance.add(dto);
+        }
+        return ResponseDto.toResponseEntity(TEST_SUCCESS, postListByDistance);
+    }
+
     @Transactional
     public ResponseEntity<ResponseDto> getPostAll() {
         List<Post> postList = postRepository.findByOrderByCreatedAtDesc();
         List<PostResponseDto> dtoList = new ArrayList<>();
         for (Post post : postList) {
-            if(post.getIsDeleted()){continue;}
+            if (post.getIsDeleted()) {
+                continue;
+            }
             PostResponseDto dto = PostResponseDto.of(post);
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
-    }
-
-    @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDto> getPostListByDistance(Double memberLongitude, Double memberLatitude, Double description) {
-        List<Post> postList = postRepository.findPostsByDistance(memberLongitude, memberLatitude, description);
-        List<PostResponseDto> postListByDistance = new ArrayList<>();
-        for (Post post : postList) {
-            if(post.getIsDeleted()){continue;}
-            PostResponseDto dto = PostResponseDto.of(post);
-            postListByDistance.add(dto);
-        }
-        return ResponseDto.toResponseEntity(TEST_SUCCESS, postListByDistance);
     }
 
     @Transactional
@@ -108,7 +132,9 @@ public class PostService {
         Page<Post> postPage = postRepository.findByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
         List<PostShortResponseDto> dtoList = new ArrayList<>();
         for (Post post : postPage) {
-            if(post.getIsDeleted()){continue;}
+            if (post.getIsDeleted()) {
+                continue;
+            }
             PostShortResponseDto dto = PostShortResponseDto.of(post);
             dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
             dtoList.add(dto);
@@ -119,32 +145,33 @@ public class PostService {
     @Transactional
     public ResponseEntity<ResponseDto> getPost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(post.getIsDeleted()){
+        if (post.getIsDeleted()) {
             throw new CustomException(POST_ALREADY_DELETED);
         }
         PostResponseDto responseDto = PostResponseDto.of(post);
         responseDto.setLinked(postLinkRepository.findByPostId(post.getId()).isPresent());
         responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId()).isPresent());
         responseDto.setWishedCount(scrapRepository.countByPostId(postId));
-        if(post.getOpenNickname() != null){
-            if(post.getOpenNickname() == true){
+        if (post.getOpenNickname() != null) {
+            if (post.getOpenNickname() == true) {
                 responseDto.setNickname(post.getMember().getNickname());
             }
         }
         return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseDto);
     }
+
     @Transactional
     public ResponseEntity<ResponseDto> getPostPoster(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(post.getIsDeleted()){
+        if (post.getIsDeleted()) {
             throw new CustomException(POST_ALREADY_DELETED);
         }
-        if(post.getPostType() == MISSING){
-            if(post.getMissingPosterImageURL() == null){
+        if (post.getPostType() == MISSING) {
+            if (post.getMissingPosterImageURL() == null) {
                 throw new CustomException(NOT_FOUND_IMAGE);
             }
             return ResponseDto.toResponseEntity(POSTER_READING_SUCCESS, post.getMissingPosterImageURL());
-        }else{
+        } else {
             throw new CustomException(POST_TYPE_INCORRECT);
         }
     }
@@ -198,50 +225,51 @@ public class PostService {
     @Scheduled(cron = "0 0 11 * * *")
     @Transactional
     public void periodicDeletePost() {
-            List<Post> posts = postRepository.findALlByIsDeletedTrue();
-            LocalDateTime currentDate = LocalDateTime.now();
-            for(Post post : posts){
-                if(ChronoUnit.DAYS.between(post.getModifiedAt(), currentDate)>=365){
-                    postRepository.delete(post);
-                }
+        List<Post> posts = postRepository.findALlByIsDeletedTrue();
+        LocalDateTime currentDate = LocalDateTime.now();
+        for (Post post : posts) {
+            if (ChronoUnit.DAYS.between(post.getModifiedAt(), currentDate) >= 365) {
+                postRepository.delete(post);
             }
+        }
     }
 
 
     @Transactional
     public ResponseEntity<ResponseDto> createLink(Long postId, PostLinkRequestDto requestDto, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
-        PostLink postLink = new PostLink(post,requestDto.getLinkedPostId(),member);
-        if((postLinkRepository.findByPostAndMemberIdAndLinkedPostId(post,member.getId(),requestDto.getLinkedPostId())).isPresent()){
+        PostLink postLink = new PostLink(post, requestDto.getLinkedPostId(), member);
+        if ((postLinkRepository.findByPostAndMemberIdAndLinkedPostId(post, member.getId(), requestDto.getLinkedPostId())).isPresent()) {
             throw new NullPointerException("이미 존재하지롱");
         }
         postLinkRepository.save(postLink);
         PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(postId);
-        if(postId == requestDto.getLinkedPostId()){
+        if (postId == requestDto.getLinkedPostId()) {
             //사실 프론트 단에서 이런일은 미연에 방지할 것입니다. 넣을지 말지 고민 중
             throw new NullPointerException("자기 자신한테는 연결할 수 없지롱");
         }
         Post postTemp = postRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("3단계에서 막힘ㅋ"));
-        postLinkRepository.save(new PostLink(postTemp,requestDtoTemp.getLinkedPostId(),member));
+        postLinkRepository.save(new PostLink(postTemp, requestDtoTemp.getLinkedPostId(), member));
         return ResponseDto.toResponseEntity(POST_LINKING_SUCCESS);
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> getLink(Long petPostCatchId, Member member){
+    public ResponseEntity<ResponseDto> getLink(Long petPostCatchId, Member member) {
         Post post = postRepository.findById(petPostCatchId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         List<PostLink> postLinkList = postLinkRepository.findAllByPost(post);
         List<PostLinkResponseDto> dtoList = new ArrayList<>();
         for (PostLink postLink : postLinkList) {
             PostLinkResponseDto responseDto = PostLinkResponseDto.of(postLink);
-            if(member.getNickname().equals(postLink.getMember().getNickname())){
+            if (member.getNickname().equals(postLink.getMember().getNickname())) {
                 responseDto.setLinkedByMe(true);
             }
             dtoList.add(responseDto);
         }
         return ResponseDto.toResponseEntity(POST_LINK_READING_SUCCESS, dtoList);
     }
+
     @Transactional
-    public ResponseEntity<ResponseDto> deleteLink(Long postId, Member member){
+    public ResponseEntity<ResponseDto> deleteLink(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         List<PostLink> postLinkList = postLinkRepository.findAllByPostAndMemberId(post, member.getId());
         for (PostLink postLink : postLinkList) {
