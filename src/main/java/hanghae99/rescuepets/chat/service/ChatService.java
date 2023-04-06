@@ -36,10 +36,19 @@ public class ChatService {
         Chat message = Chat.of(dto, room, sender);
         chatRepository.save(message);
         template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(dto, sender));
+        reEnterRoom(room, sender);
     }
 
     public ResponseEntity<ResponseDto> getMessages(String roomId) {
         ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
         return ResponseDto.toResponseEntity(SuccessMessage.CHAT_HISTORY_SUCCESS, ChatRoomResponseDto.of(chatRoom));
+    }
+
+    private void reEnterRoom(ChatRoom room, Member sender) {
+        if (room.getHost().getId().equals(sender.getId())) {
+            room.setGuestExited(false);
+        } else if (room.getGuest().getId().equals(sender.getId())) {
+            room.setHostExited(false);
+        }
     }
 }
