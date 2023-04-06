@@ -33,37 +33,37 @@ public class ReportController {
         return reportService.getReportAll(sortBy, memberDetails.getMember());
     }
 
-    @PostMapping(value = "/post",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/post")
     public ResponseEntity<ResponseDto> reportPost(@RequestBody ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportPost(reportRequestDto, memberDetails.getMember());
     }
 
 
 
-    @DeleteMapping(value = "/post",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @DeleteMapping(value = "/post")
     public ResponseEntity<ResponseDto> reportPostDelete(@RequestBody ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportPostDelete(reportIdRequestDto,memberDetails.getMember());
     }
 
 
-    @PostMapping(value = "/comment",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/comment")
     public ResponseEntity<ResponseDto> reportComment(@RequestBody ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return  reportService.reportComment(reportRequestDto,memberDetails.getMember());
     }
 
 
 
-    @DeleteMapping(value = "/comment",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @DeleteMapping(value = "/comment")
     public ResponseEntity<ResponseDto> reportCommentDelete(@RequestBody ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportCommentDelete(reportIdRequestDto, memberDetails.getMember());
     }
 
-    @PostMapping(value = "/member",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/member")
     public ResponseEntity<ResponseDto> reportMember(@RequestBody ReportMemberRequestDto reportMemberRequestDto,  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportMember(reportMemberRequestDto,memberDetails.getMember());
     }
 
-    @DeleteMapping(value = "/member",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @DeleteMapping(value = "/member")
     public ResponseEntity<ResponseDto> reportMemberDelete(@RequestBody ReportMemberRequestDto reportMemberRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportMemberDelete(reportMemberRequestDto, memberDetails.getMember());
     }
