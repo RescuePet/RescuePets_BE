@@ -34,6 +34,10 @@ public class ChatRoom extends TimeStamped {
     @ManyToOne(fetch = FetchType.EAGER)
     private Member guest;
 
+    private boolean isHostExited;
+
+    private boolean isGuestExited;
+
     public static ChatRoom of(Post post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
@@ -41,5 +45,13 @@ public class ChatRoom extends TimeStamped {
                 .host(post.getMember())
                 .guest(member)
                 .build();
+    }
+
+    public void setHostExited(boolean hostExited) {
+        this.isHostExited = hostExited;
+    }
+
+    public void setGuestExited(boolean guestExited) {
+        this.isGuestExited = guestExited;
     }
 }

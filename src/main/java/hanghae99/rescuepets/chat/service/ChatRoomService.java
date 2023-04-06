@@ -3,6 +3,7 @@ package hanghae99.rescuepets.chat.service;
 import hanghae99.rescuepets.chat.dto.ChatRoomListResponseDto;
 import hanghae99.rescuepets.chat.repository.ChatRoomRepository;
 import hanghae99.rescuepets.common.dto.CustomException;
+import hanghae99.rescuepets.common.dto.ExceptionMessage;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.*;
@@ -32,9 +33,12 @@ public class ChatRoomService {
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
 
         for (ChatRoom room : roomList) {
-            ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder roomBuilder = ChatRoomListResponseDto.of(room, getPartner(room, member));
+            if (isLeaved(member, room)) {
+                continue;
+            }
 
-            if (room.getChatMessages().size() > 0) {
+            ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder roomBuilder = ChatRoomListResponseDto.of(room, getPartner(room, member));
+            if (!room.getChatMessages().isEmpty()) {
                 Chat lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1);
                 roomBuilder.lastChat(lastChat.getMessage()).time(Time.chatTime(lastChat.getCreatedAt()));
             }
@@ -59,7 +63,33 @@ public class ChatRoomService {
         return room.getRoomId();
     }
 
+    @Transactional
+    public ResponseEntity<ResponseDto> exitRoom(String roomId, Member member) {
+        ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.CHATROOM_NOT_FOUND));
+        exitRoom(member, room);
+
+        return ResponseDto.toResponseEntity(SuccessMessage.CHAT_ROOM_EXIT_SUCCESS);
+    }
+
     private Member getPartner(ChatRoom room, Member member) {
         return room.getHost().getId().equals(member.getId()) ? room.getGuest() : room.getHost();
     }
+
+    private void exitRoom(Member member, ChatRoom room) {
+        if (room.getHost().getId().equals(member.getId())) {
+            room.setHostExited(true);
+        } else {
+            room.setGuestExited(true);
+        }
+        if (room.isHostExited() && room.isGuestExited()) {
+            chatRoomRepository.deleteById(room.getId());
+        }
+    }
+
+    private boolean isLeaved(Member member, ChatRoom room) {
+        return (member.getId().equals(room.getHost().getId()) && room.isHostExited()) ||
+                (member.getId().equals(room.getGuest().getId()) && room.isGuestExited());
+    }
 }
+
+
