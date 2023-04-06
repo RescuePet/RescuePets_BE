@@ -10,7 +10,9 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long>{
     List<Post> findAllByMemberId(Long memberId);
     Page<Post> findByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
+    List<Post> findTop5ByMemberIdOrderByCreatedAtDesc(Long memberId);
     Page<Post> findByPostTypeOrderByCreatedAtDesc(PostTypeEnum postType, Pageable pageable);
+    List<Post> findTop50ByOrderByCreatedAtDesc();
     List<Post> findByOrderByCreatedAtDesc();
     Integer countByMemberId(Long memberId);
 
