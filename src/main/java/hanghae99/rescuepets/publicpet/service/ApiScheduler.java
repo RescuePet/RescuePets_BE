@@ -1,5 +1,7 @@
 package hanghae99.rescuepets.publicpet.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hanghae99.rescuepets.common.entity.PetInfoByAPI;
 import hanghae99.rescuepets.common.entity.PetInfoCompare;
 import hanghae99.rescuepets.common.entity.PetStateEnum;
@@ -10,9 +12,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,9 +31,7 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static hanghae99.rescuepets.common.entity.PetStateEnum.*;
 
@@ -35,9 +43,10 @@ public class ApiScheduler {
     private String publicApiKey;
     private final PublicPetInfoRepository publicPetInfoRepository;
     private final PetInfoCompareRepository petInfoCompareRepository;
+    @Value("${kakao.api.keys}")
+    private String kakaoMapKey;
 
-
-    @Scheduled(cron = "0 0/30 * * * *")
+    @Scheduled(cron = "0 0/7 * * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
@@ -127,7 +136,11 @@ public class ApiScheduler {
             List<String> compareDataList = new ArrayList<>();
             if (petInfoByAPIOptional.isEmpty()) {
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
-                publicPetInfoRepository.save(petInfo);
+                Map<String, Double> latitudeandlongitude  = getLatLng(petInfo.getCareAddr());
+                double latitude = latitudeandlongitude.get("latitude");
+                double longitude =latitudeandlongitude.get("longitude");
+                petInfo.updates(latitude,longitude);
+                publicPetInfoRepository.saveAndFlush(petInfo);
             } else {
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.get();
                 Field[] fields = petInfoByAPI.getClass().getDeclaredFields();
@@ -162,6 +175,7 @@ public class ApiScheduler {
                     petInfoCompareRepository.save(entityPetInfo);
 
                     PetInfoByAPI petInfoByUpdate = buildPetInfo(itemObject, state);
+
                     petInfoByAPI.update(petInfoByUpdate);
                     PetInfoCompare petInfoEntity = buildPetInfoApi(itemObject, state, compareDataKey);
 
@@ -262,4 +276,49 @@ public class ApiScheduler {
                 .compareDataKey(compareDataKey)
                 .build();
     }
+    public  Map<String, Double> getLatLng(String address) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "KakaoAK " + kakaoMapKey);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("query", address);
+
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(parameters, headers);
+
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                "https://dapi.kakao.com/v2/local/search/address.json",
+                entity,
+                String.class
+        );
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode rootNode = objectMapper.readTree(response.getBody());
+            JsonNode documentsNode = rootNode.path("documents");
+            if(!documentsNode.isArray() || documentsNode.size() == 0) {
+                Map<String, Double> result = new HashMap<>();
+                result.put("latitude", 1.0);
+                result.put("longitude", 1.0);
+                return result;
+            }
+            if (documentsNode.isArray() && documentsNode.size() > 0) {
+                JsonNode firstDocumentNode = documentsNode.get(0);
+                double latitude = firstDocumentNode.path("y").asDouble();
+                double longitude = firstDocumentNode.path("x").asDouble();
+
+                Map<String, Double> result = new HashMap<>();
+                result.put("latitude", latitude);
+                result.put("longitude", longitude);
+                return result;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 }

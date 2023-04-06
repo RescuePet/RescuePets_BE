@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class Time {
-
     public static String chatTime(LocalDateTime time) {
         long between = ChronoUnit.SECONDS.between(LocalDateTime.now(), time);
         String timeStr;
