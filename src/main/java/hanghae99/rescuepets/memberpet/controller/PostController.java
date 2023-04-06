@@ -71,6 +71,14 @@ public class PostController {
         return postService.getPostPoster(postId);
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "postType 구분X 거리 기준 게시글 페이징없이 불러오기", description = "ex)memberLongitude(126.972828), memberLatitude(37.556817),description(100000)/서울역(위도,경도),100km")
+    public ResponseEntity<ResponseDto> getPostListByDistance(@RequestParam(value = "memberLongitude") Double memberLongitude,
+                                                             @RequestParam(value = "memberLatitude") Double memberLatitude,
+                                                             @RequestParam(value = "description") Double description) {
+        return postService.getPostListByDistance(memberLongitude, memberLatitude, description);
+    }
+
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "게시글 수정하기", description = "내가 작성한 게시글 하나를 수정합니다")
     public ResponseEntity<ResponseDto> updatePost(@PathVariable Long postId,
