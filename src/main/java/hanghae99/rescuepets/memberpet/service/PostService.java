@@ -195,6 +195,7 @@ public class PostService {
             }
     }
 
+
     @Transactional
     public ResponseEntity<ResponseDto> createLink(Long postId, PostLinkRequestDto requestDto, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
