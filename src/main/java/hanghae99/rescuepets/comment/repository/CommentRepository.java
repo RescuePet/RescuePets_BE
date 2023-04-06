@@ -8,8 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findAllByMemberId(Long memberId);
-    Page<Comment> findAllByMemberId(Long memberId, Pageable pageable);
-    List<Comment> findAllByPostId(Long postId);
+    List<Comment> findByMemberId(Long memberId);
+    List<Comment> findTop10ByMemberIdOrderByCreatedAtDesc(Long memberId);
+    List<Comment> findTop50ByOrderByCreatedAtDesc();
+    Page<Comment> findByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
+    List<Comment> findByPostId(Long postId);
     Integer countByMemberId(Long memberId);
 }

@@ -89,7 +89,6 @@ public class MemberService {
         if (memberRepository.findByEmail(emailRequestDto.getEmail()).isPresent()) {
             throw new CustomException(DUPLICATE_EMAIL);
         }
-
         return ResponseDto.toResponseEntity(ACCOUNT_CHECK_SUCCESS);
     }
 

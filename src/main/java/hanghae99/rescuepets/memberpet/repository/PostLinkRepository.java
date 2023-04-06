@@ -10,9 +10,7 @@ public interface PostLinkRepository extends JpaRepository<PostLink, Long> {
     List<PostLink> findAllByPost(Post post);
     List<PostLink> findAllByPostAndMemberId(Post post, Long memberId);
     void deleteByPostAndMemberId(Post post, Long memberId);
-    void deleteByPostAndMemberIdAndLinkedPostId
-            (Post post, Long memberId, Long linkedPostId);
+    void deleteByPostAndMemberIdAndLinkedPostId(Post post, Long memberId, Long linkedPostId);
     Optional<PostLink> findByPostId(Long postId);
-    Optional<PostLink> findByPostAndMemberIdAndLinkedPostId
-            (Post post, Long memberId, Long linkedPostId);
+    Optional<PostLink> findByPostAndMemberIdAndLinkedPostId(Post post, Long memberId, Long linkedPostId);
 }
