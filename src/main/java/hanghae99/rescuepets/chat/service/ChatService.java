@@ -34,14 +34,12 @@ public class ChatService {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.CHATROOM_NOT_FOUND));
         Member sender = memberRepository.findByNickname(dto.getSender()).orElseThrow(() -> new CustomException(ExceptionMessage.UNAUTHORIZED_MEMBER));
         Chat message = Chat.of(dto, room, sender);
-
         chatRepository.save(message);
         template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(dto, sender));
     }
 
     public ResponseEntity<ResponseDto> getMessages(String roomId) {
         ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
-
         return ResponseDto.toResponseEntity(SuccessMessage.CHAT_HISTORY_SUCCESS, ChatRoomResponseDto.of(chatRoom));
     }
 }
