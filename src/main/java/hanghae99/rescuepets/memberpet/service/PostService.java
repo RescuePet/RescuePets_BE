@@ -15,8 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -88,6 +88,18 @@ public class PostService {
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<ResponseDto> getPostListByDistance(Double memberLongitude, Double memberLatitude, Double description) {
+        List<Post> postList = postRepository.findPostsByDistance(memberLongitude, memberLatitude, description);
+        List<PostResponseDto> postListByDistance = new ArrayList<>();
+        for (Post post : postList) {
+            if(post.getIsDeleted()){continue;}
+            PostResponseDto dto = PostResponseDto.of(post);
+            postListByDistance.add(dto);
+        }
+        return ResponseDto.toResponseEntity(TEST_SUCCESS, postListByDistance);
     }
 
     @Transactional
