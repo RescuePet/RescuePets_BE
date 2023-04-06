@@ -111,7 +111,7 @@ public class ReportService {
     }
     @Transactional
     public ResponseEntity<ResponseDto> reportMember(ReportMemberRequestDto reportMemberRequestDto, Member respondent) {
-        Member member = memberRepository.findById(reportMemberRequestDto.getInformantId()).orElseThrow(
+        Member member = memberRepository.findByNickname(reportMemberRequestDto.getNickname()).orElseThrow(
                 () -> new CustomException(UNAUTHORIZED_MEMBER)
         );
         if (reportRepository.findByMemberIdAndRespondentId(reportMemberRequestDto.getInformantId(), respondent.getId()).isPresent()) {
@@ -136,7 +136,7 @@ public class ReportService {
     }
 
     public ResponseEntity<ResponseDto> reportMemberDelete(ReportMemberRequestDto reportMemberRequestDto, Member member) {
-        Report report = reportRepository.findByMemberIdAndRespondentId(reportMemberRequestDto.getInformantId(),reportMemberRequestDto.getRespondentId()).orElseThrow(
+        Report report = reportRepository.findByMemberNicknameAndMemberId(reportMemberRequestDto.getNickname(),reportMemberRequestDto.getInformantId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_REPORT)
         );
         if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
