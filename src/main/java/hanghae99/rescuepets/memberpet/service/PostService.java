@@ -17,6 +17,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,11 +183,16 @@ public class PostService {
     }
 
     //하루에 한번씩 post repo 하루 마다 isDeleted true 것을 확인 후 1년이 지난 것들은 삭제 20초 테스트
-    @Scheduled(cron = "0 0/3 * * * *")
+    @Scheduled(cron = "0 0 11 * * *")
     @Transactional
     public void periodicDeletePost() {
             List<Post> posts = postRepository.findALlByIsDeletedTrue();
-            postRepository.deleteAll(posts);
+            LocalDateTime currentDate = LocalDateTime.now();
+            for(Post post : posts){
+                if(ChronoUnit.DAYS.between(post.getModifiedAt(), currentDate)>=365){
+                    postRepository.delete(post);
+                }
+            }
     }
 
     @Transactional
