@@ -78,13 +78,13 @@ public class PostController {
     public ResponseEntity<ResponseDto> getPostListByDistance(@RequestParam int page,
                                                              @RequestParam int size,
                                                              @RequestParam(value = "postType") String postType,
-                                                             @RequestParam(value = "memberLongitude",required = false) Double memberLongitude,
-                                                             @RequestParam(value = "memberLatitude",required = false) Double memberLatitude,
-                                                             @RequestParam(value = "description",required = false) Double description,
-                                                             @RequestParam(value = "searchKeyword",required = false) String searchKeyword,
-                                                             @RequestParam(value = "searchValue",required = false) String searchValue,
+                                                             @RequestParam(value = "memberLongitude", required = false) Double memberLongitude,
+                                                             @RequestParam(value = "memberLatitude", required = false) Double memberLatitude,
+                                                             @RequestParam(value = "description", required = false) Double description,
+                                                             @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                                             @RequestParam(value = "searchValue", required = false) String searchValue,
                                                              @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return postService.getPostListByDistance(page, size, postType, memberLongitude, memberLatitude, description,searchKeyword,searchValue, memberDetails.getMember());
+        return postService.getPostListByDistance(page, size - 1, postType, memberLongitude, memberLatitude, description, searchKeyword, searchValue, memberDetails.getMember());
     }
 
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
