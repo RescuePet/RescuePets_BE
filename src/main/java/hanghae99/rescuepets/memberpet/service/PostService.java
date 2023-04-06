@@ -9,6 +9,7 @@ import hanghae99.rescuepets.memberpet.repository.PostRepository;
 import hanghae99.rescuepets.memberpet.repository.PostLinkRepository;
 import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +28,7 @@ import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -87,16 +89,29 @@ public class PostService {
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getPostListByDistance(int page, int size, String postType,
                                                              Double memberLongitude, Double memberLatitude, Double description,
-                                                             String searchkeyword, String searchValue, Member member) {
+                                                             String searchKeyword, String searchValue, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage;
-        if (memberLatitude != null && searchkeyword == null) {
+        String test = "%" + searchValue + "%";
+        if (memberLatitude != null && searchKeyword == null) {
             postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, pageable);
-        } else if (searchkeyword != null && memberLatitude != null) {
-            postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, searchkeyword, searchValue, pageable);
-        } else if (searchkeyword != null && memberLatitude == null) {
-            postPage = postRepository.findPostsByDistance(postType, searchkeyword, "%" + searchValue + "%", pageable);
-
+            log.info("1");
+        } else if (searchKeyword != null && memberLatitude == null) {
+            if (searchKeyword.equals("upkind")){
+                postPage = postRepository.findPostsByUpkind(postType, "%" + searchValue + "%", pageable);
+                log.info("2");
+            }else {//kindCd
+                postPage = postRepository.findPostsByKindCd(postType, "%" + searchValue + "%", pageable);
+                log.info("3");
+            }
+        } else if (searchKeyword != null && memberLatitude != null) {
+            if (searchKeyword.equals("upkind")){
+                postPage = postRepository.findPostsByDistanceAndUpkind(postType, memberLongitude, memberLatitude, description, "%" + searchValue + "%", pageable);
+                log.info("4");
+            }else {//kindCd
+                postPage = postRepository.findPostsByDistanceAndKindCd(postType, memberLongitude, memberLatitude, description, "%" + searchValue + "%", pageable);
+                log.info("5");
+            }
         } else {
             throw new CustomException(TEST);
         }

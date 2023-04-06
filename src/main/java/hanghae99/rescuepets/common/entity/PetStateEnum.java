@@ -2,9 +2,8 @@ package hanghae99.rescuepets.common.entity;
 
 public enum PetStateEnum {
     NOTICE("공고중"),
-    PROTECT("보호중"),
+    PROTECT("portect"),
     END("종료");
-
     private final String korean;
 
     PetStateEnum(String korean) {
