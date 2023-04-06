@@ -2,6 +2,8 @@ package hanghae99.rescuepets.comment.controller;
 
 import hanghae99.rescuepets.comment.dto.CommentRequestDto;
 import hanghae99.rescuepets.comment.service.CommentService;
+import hanghae99.rescuepets.common.dto.CustomException;
+import hanghae99.rescuepets.common.dto.ExceptionMessage;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Post;
 import hanghae99.rescuepets.common.security.MemberDetails;
@@ -14,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
+
 @Tag(name = "코멘트 작성 CRUD API")
 @RequestMapping("/api/comments")
 @RestController
@@ -23,15 +27,16 @@ public class CommentController {
     private final PostRepository postRepository;
     @GetMapping("/member")
     @Operation(summary = "내가 쓴 댓글 불러오기", description = "")
-    public ResponseEntity<ResponseDto> getCommentListByMember(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails){
-        return commentService.getCommentListByMember(userDetails.getMember());
+    public ResponseEntity<ResponseDto> getCommentListByMember(@RequestParam int page,
+                                                              @RequestParam int size,
+                                                              @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails){
+        return commentService.getCommentListByMember(page-1, size, userDetails.getMember());
     }
 
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 하나 댓글 불러오기", description = "")
     public ResponseEntity<ResponseDto> getCommentList(@PathVariable Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(()->new NullPointerException("게시글이 없는데용"));
-        return commentService.getCommentList(post);
+        return commentService.getCommentList(postId);
     }
 
     @PostMapping("/{postId}")

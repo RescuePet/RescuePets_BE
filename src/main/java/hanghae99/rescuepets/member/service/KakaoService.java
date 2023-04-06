@@ -8,6 +8,7 @@ import hanghae99.rescuepets.common.dto.ExceptionMessage;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.MemberRoleEnum;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
@@ -50,7 +51,7 @@ public class KakaoService {
         forceLogin(kakaoMember);
         jwtUtil.createToken(response, kakaoMember);
 
-        return ResponseDto.toResponseEntity(SuccessMessage.LOGIN_SUCCESS, new MemberResponseDto(kakaoMember.getId(), kakaoMember.getNickname(), kakaoMember.getEmail(), kakaoMember.getProfileImage()));
+        return ResponseDto.toResponseEntity(SuccessMessage.LOGIN_SUCCESS, new MemberResponseDto(kakaoMember));
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -59,7 +60,7 @@ public class KakaoService {
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", kakaoApiKey); //Rest API 키
+        body.add("client_id", kakaoApiKey);
         body.add("redirect_uri", "https://rescuepets.co.kr/kakaologin");
         body.add("code", code);
 
@@ -95,37 +96,36 @@ public class KakaoService {
         return new KakaoUserInfoDto(id, nickname, email, profileImage);
     }
 
-
     private Member registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
         Long kakaoId = kakaoUserInfo.getId();
-        Member kakaoUser = memberRepository.findByKakaoId(kakaoId).orElse(null);
+        Member kakaoUser = memberRepository.findByKakaoId(kakaoUserInfo.getId()).orElse(null);
 
         if (kakaoUser == null) {
-            String kakaoEmail = kakaoUserInfo.getEmail();
-            Member sameEmailUser = memberRepository.findByEmail(kakaoEmail).orElse(null);
+            Member sameEmailUser = memberRepository.findByEmail(kakaoUserInfo.getEmail()).orElse(null);
+
             if (sameEmailUser != null) {
                 kakaoUser = sameEmailUser;
-
                 kakaoUser.setKakao(kakaoId, kakaoUserInfo.getProfileImage());
             } else {
-                String nickname = kakaoUserInfo.getNickname();
-                int i = memberRepository.countByNickname(nickname);
-                nickname = i == 0 ? nickname : nickname + "(" + i + ")";
-                String password = UUID.randomUUID().toString();
-                String encodedPassword = passwordEncoder.encode(password);
-                String email = kakaoUserInfo.getEmail();
-                String profileImage = kakaoUserInfo.getProfileImage();
-
-                kakaoUser = Member.builder().nickname(nickname)
-                        .password(encodedPassword)
-                        .email(email)
+                kakaoUser = Member.builder()
+                        .nickname(getNickname(kakaoUserInfo))
+                        .password(passwordEncoder.encode(UUID.randomUUID().toString()))
+                        .email(kakaoUserInfo.getEmail())
                         .kakaoId(kakaoId)
-                        .profileImage(profileImage)
+                        .profileImage(kakaoUserInfo.getProfileImage())
+                        .memberRoleEnum(MemberRoleEnum.MEMBER)
                         .build();
             }
             memberRepository.save(kakaoUser);
         }
+
         return kakaoUser;
+    }
+
+    private String getNickname(KakaoUserInfoDto kakaoUserInfo) {
+        String nickname = kakaoUserInfo.getNickname();
+        int i = memberRepository.countByNickname(nickname);
+        return i == 0 ? nickname : nickname + "(" + i + ")";
     }
 
     private void forceLogin(Member kakaoUser) {

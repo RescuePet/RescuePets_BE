@@ -1,6 +1,5 @@
 package hanghae99.rescuepets.memberpet.service;
 
-
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.*;
@@ -14,14 +13,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
+import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +50,22 @@ public class PostService {
         return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS, post.getId());
     }
     @Transactional
+    public ResponseEntity<ResponseDto> setPostPoster(MissingPosterRequestDto requestDto, Long postId, Member member) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(post.getIsDeleted()){
+            throw new CustomException(POST_ALREADY_DELETED);
+        }
+        if(post.getPostType() != MISSING){
+            throw new CustomException(POST_TYPE_INCORRECT);
+        }
+        if(member.getNickname().equals(post.getMember().getNickname())){
+            post.setMissingPosterImageURL(s3Uploader.uploadSingle(requestDto.getPostPoster()));
+            return ResponseDto.toResponseEntity(POSTER_SAVING_SUCCESS);
+        }else{
+            throw new CustomException(UNAUTHORIZED_SAVE);
+        }
+    }
+    @Transactional
     public ResponseEntity<ResponseDto> getPostList(int page, int size, String postType, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage = postRepository.findByPostTypeOrderByCreatedAtDesc(PostTypeEnum.valueOf(postType), pageable);
@@ -60,17 +79,17 @@ public class PostService {
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
     @Transactional
-    public ResponseEntity<ResponseDto> getPostAll(Member member) {
+    public ResponseEntity<ResponseDto> getPostAll() {
         List<Post> postList = postRepository.findByOrderByCreatedAtDesc();
         List<PostResponseDto> dtoList = new ArrayList<>();
         for (Post post : postList) {
             if(post.getIsDeleted()){continue;}
             PostResponseDto dto = PostResponseDto.of(post);
-            dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
+
     @Transactional
     public ResponseEntity<ResponseDto> getPostListByMember(int page, int size, Member member) {
         Pageable pageable = PageRequest.of(page, size);
@@ -88,14 +107,34 @@ public class PostService {
     @Transactional
     public ResponseEntity<ResponseDto> getPost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(post.getIsDeleted()){throw new CustomException(
-                POST_ALREADY_DELETED);
+        if(post.getIsDeleted()){
+            throw new CustomException(POST_ALREADY_DELETED);
         }
         PostResponseDto responseDto = PostResponseDto.of(post);
         responseDto.setLinked(postLinkRepository.findByPostId(post.getId()).isPresent());
         responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId()).isPresent());
         responseDto.setWishedCount(scrapRepository.countByPostId(postId));
+        if(post.getOpenNickname() != null){
+            if(post.getOpenNickname() == true){
+                responseDto.setNickname(post.getMember().getNickname());
+            }
+        }
         return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseDto);
+    }
+    @Transactional
+    public ResponseEntity<ResponseDto> getPostPoster(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(post.getIsDeleted()){
+            throw new CustomException(POST_ALREADY_DELETED);
+        }
+        if(post.getPostType() == MISSING){
+            if(post.getMissingPosterImageURL() == null){
+                throw new CustomException(NOT_FOUND_IMAGE);
+            }
+            return ResponseDto.toResponseEntity(POSTER_READING_SUCCESS, post.getMissingPosterImageURL());
+        }else{
+            throw new CustomException(POST_TYPE_INCORRECT);
+        }
     }
 
     @Transactional
@@ -117,8 +156,10 @@ public class PostService {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
+
+    // true false
     @Transactional
-    public ResponseEntity<ResponseDto> softDeletePetPostCatch(Long postId, Member member) {
+    public ResponseEntity<ResponseDto> softDeletePost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (member.getNickname().equals(post.getMember().getNickname())) {
             post.setIsDeleted(true);
@@ -127,6 +168,8 @@ public class PostService {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
+
+    // 즉시 삭제
     @Transactional
     public ResponseEntity<ResponseDto> deletePost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
@@ -135,17 +178,21 @@ public class PostService {
             return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
         } else {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
+
         }
     }
+
+    //하루에 한번씩 post repo 하루 마다 isDeleted true 것을 확인 후 1년이 지난 것들은 삭제 20초 테스트
+    @Scheduled(cron = "0 0 11 * * *")
     @Transactional
-    public ResponseEntity<ResponseDto> periodicDeletePetPostCatch(Long postId, Member member) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (member.getNickname().equals(post.getMember().getNickname())) {
-            postRepository.deleteById(postId);
-            return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
-        } else {
-            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
-        }
+    public void periodicDeletePost() {
+            List<Post> posts = postRepository.findALlByIsDeletedTrue();
+            LocalDateTime currentDate = LocalDateTime.now();
+            for(Post post : posts){
+                if(ChronoUnit.DAYS.between(post.getModifiedAt(), currentDate)>=365){
+                    postRepository.delete(post);
+                }
+            }
     }
 
     @Transactional

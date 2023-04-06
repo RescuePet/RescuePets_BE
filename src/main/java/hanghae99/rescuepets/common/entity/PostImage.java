@@ -16,7 +16,7 @@ public class PostImage {
     private Long id;
     private String imageURL;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "petPostCatchId", nullable = true)
+    @JoinColumn(name = "postId")
     private Post post;
     public PostImage(Post post, String imageURL) {
         this.post = post;

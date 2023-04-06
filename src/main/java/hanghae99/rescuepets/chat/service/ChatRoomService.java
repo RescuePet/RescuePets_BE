@@ -32,8 +32,7 @@ public class ChatRoomService {
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
 
         for (ChatRoom room : roomList) {
-            Member partner = getPartner(room, member);
-            ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder roomBuilder = ChatRoomListResponseDto.of(room, partner);
+            ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder roomBuilder = ChatRoomListResponseDto.of(room, getPartner(room, member));
 
             if (room.getChatMessages().size() > 0) {
                 Chat lastChat = room.getChatMessages().get(room.getChatMessages().size() - 1);
@@ -49,9 +48,11 @@ public class ChatRoomService {
     @Transactional
     public String createChatRoom(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+
         if (post.getMember().getId().equals(member.getId())) {
             throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
         }
+
         ChatRoom room = chatRoomRepository.findChatRoomByPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
         chatRoomRepository.save(room);
 

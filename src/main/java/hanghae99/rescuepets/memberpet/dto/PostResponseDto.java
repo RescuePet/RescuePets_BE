@@ -14,6 +14,7 @@ public class PostResponseDto {
     private SexEnum sexCd;
     private NeuterEnum neuterYn;
     private String kindCd;
+    private String petName;
     private String age;
     private String weight;
     private String colorCd;
@@ -26,10 +27,10 @@ public class PostResponseDto {
     private String content;
     private String gratuity;
     private String contact;
-    private String nickname;
+    private String nickname = "익명";
     private String createdAt;
     private String modifiedAt;
-    private Boolean openNickname;
+    private Boolean openNickname = true;
     private PostTypeEnum postType;
     private Boolean isWished = false;
     private Integer wishedCount = 0;
@@ -43,6 +44,7 @@ public class PostResponseDto {
                 .sexCd(post.getSexCd())
                 .neuterYn(post.getNeuterYn())
                 .kindCd(post.getKindCd())
+                .petName(post.getPetName())
                 .age(post.getAge())
                 .weight(post.getWeight())
                 .colorCd(post.getColorCd())
@@ -59,6 +61,7 @@ public class PostResponseDto {
                 .createdAt(post.getCreatedAt().toString())
                 .modifiedAt(post.getModifiedAt().toString())
                 .postImages(post.getPostImages().stream().map(PostImageResponseDto::of).toList())
+                .openNickname(post.getOpenNickname())
                 .postType(post.getPostType())
                 .build();
     }
@@ -69,4 +72,5 @@ public class PostResponseDto {
     public void setLinked(Boolean isLinked) {
         this.isLinked = isLinked;
     }
+    public void setNickname(String nickname) {this.nickname = nickname;}
 }

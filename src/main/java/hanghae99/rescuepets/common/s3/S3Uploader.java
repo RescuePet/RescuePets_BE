@@ -36,7 +36,7 @@ public class S3Uploader {
                     .withCannedAcl(CannedAccessControlList.PublicRead));
             return amazonS3Client.getUrl(bucket+"/images/rescuepet", fileName).toString();
         } catch(IOException e) {
-            throw new IllegalArgumentException("이미지 업로드에 실페하였습니다");
+            throw new IllegalArgumentException("이미지 업로드에 실패하였습니다");
         }
     }
     public List<String> uploadMulti(List<MultipartFile> multipartFile) {
@@ -54,7 +54,7 @@ public class S3Uploader {
                         .withCannedAcl(CannedAccessControlList.PublicRead));
                 imgUrlList.add(amazonS3Client.getUrl(bucket+"/images/rescuepet", fileName).toString());
             } catch(IOException e) {
-                throw new IllegalArgumentException("이미지 업로드에 실페하였습니다");
+                throw new IllegalArgumentException("이미지 업로드에 실패하였습니다");
             }
         }
         return imgUrlList;
@@ -68,7 +68,7 @@ public class S3Uploader {
     // 파일 유효성 검사
     private String getFileExtension(String fileName) {
         if (fileName.length() == 0) {
-            throw new IllegalArgumentException("유효성 검사에 통과하지 못하였습니다");
+            throw new IllegalArgumentException("유효성 검사에 통과하지 못했습니다");
         }
         ArrayList<String> fileValidate = new ArrayList<>();
         fileValidate.add(".jpg");
