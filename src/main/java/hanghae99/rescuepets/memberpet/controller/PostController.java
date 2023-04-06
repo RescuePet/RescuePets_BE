@@ -36,7 +36,6 @@ public class PostController {
         return postService.setPostPoster(requestDto, postId, memberDetails.getMember());
     }
 
-//    @ApiOperation(value = "게시글 목록 조회", notes = "page, size, sortBy로 페이징 후 조회")
     @GetMapping("/list/{postType}")
     @Operation(summary = "전체 게시글 페이징해서 불러오기", description = "카테고리를 지정하여 전체 게시글을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPostList(@RequestParam int page,
