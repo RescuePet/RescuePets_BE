@@ -32,7 +32,7 @@ public class ChatRoomController {
     }
 
     @Operation(summary = "채팅방 나가기")
-    @PostMapping("/room/exit/{roomId}")
+    @DeleteMapping("/room/exit/{roomId}")
     public ResponseEntity<ResponseDto> exitRoom(@PathVariable String roomId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return chatRoomService.exitRoom(roomId, memberDetails.getMember());
     }
