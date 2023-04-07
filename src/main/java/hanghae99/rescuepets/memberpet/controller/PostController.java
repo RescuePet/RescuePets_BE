@@ -72,7 +72,7 @@ public class PostController {
     }
 
     @GetMapping("/search")
-    @Operation(summary = "검색", description = "ex)memberLongitude(126.972828), memberLatitude(37.556817),description(100000)/서울역(위도,경도),100km")
+    @Operation(summary = "검색", description = "ex)memberLongitude(126.972828), memberLatitude(37.556817),description(100000)/서울역(위도,경도),100km/upkind=DOG,CAT,ETC")
     public ResponseEntity<ResponseDto> getPostListByDistance(@RequestParam int page,
                                                              @RequestParam int size,
                                                              @RequestParam(value = "postType") String postType,
@@ -82,7 +82,7 @@ public class PostController {
                                                              @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
                                                              @RequestParam(value = "searchValue", required = false) String searchValue,
                                                              @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return postService.getPostListByDistance(page, size - 1, postType, memberLongitude, memberLatitude, description, searchKeyword, searchValue, memberDetails.getMember());
+        return postService.getPostListByDistance(page -1, size, postType, memberLongitude, memberLatitude, description, searchKeyword, searchValue, memberDetails.getMember());
     }
 
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
