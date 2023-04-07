@@ -4,6 +4,7 @@ import hanghae99.rescuepets.comment.dto.*;
 import hanghae99.rescuepets.comment.repository.CommentRepository;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Comment;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.Post;
@@ -38,8 +39,9 @@ public class CommentService {
             throw new CustomException(TOO_FREQUENT_COMMENT);
         }
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
-        commentRepository.save(new Comment(requestDto.getContent(), post, member));
-        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS);
+        Comment comment = new Comment(requestDto.getContent(), post, member);
+        commentRepository.save(comment);
+        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS, new CommentResponseDto(comment));
     }
 
     private Boolean checkFrequency(Long memberId) {
@@ -87,7 +89,7 @@ public class CommentService {
     public ResponseEntity<ResponseDto> getCommentList(int page, int size, Long postId) {
         Pageable pageable = PageRequest.of(page, size);
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
-        Page<Comment> commentPage = commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId, pageable);
+        Page<Comment> commentPage = commentRepository.findAllByPostIdOrderByCreatedAtDesc(post.getId(), pageable);
         List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment comment : commentPage) {
             if(comment!=null) {
@@ -118,5 +120,4 @@ public class CommentService {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
-
 }
