@@ -46,7 +46,7 @@ public class ApiScheduler {
     @Value("${kakao.api.keys}")
     private String kakaoMapKey;
 
-    @Scheduled(cron = "20 06 15 * * *")
+    @Scheduled(cron = "0 30 * * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
