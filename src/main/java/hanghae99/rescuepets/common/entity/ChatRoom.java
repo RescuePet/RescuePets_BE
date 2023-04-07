@@ -34,6 +34,14 @@ public class ChatRoom extends TimeStamped {
     @ManyToOne(fetch = FetchType.EAGER)
     private Member guest;
 
+    private boolean isHostExited;
+
+    private boolean isGuestExited;
+
+    private int hostChatCount;
+
+    private int guestChatCount;
+
     public static ChatRoom of(Post post, Member member) {
         return ChatRoom.builder()
                 .roomId(UUID.randomUUID().toString())
@@ -43,11 +51,31 @@ public class ChatRoom extends TimeStamped {
                 .build();
     }
 
-    public boolean isHost(Member member) {
-        return getHost().getId().equals(member.getId());
+    public void setHostExited(boolean hostExited) {
+        this.isHostExited = hostExited;
     }
 
-    public void readChat(Member member) {
-        member.initChatCount();
+    public void setGuestExited(boolean guestExited) {
+        this.isGuestExited = guestExited;
+    }
+
+    public void setHostChatCount() {
+        this.hostChatCount++;
+    }
+
+    public void setGuestChatCount() {
+        this.guestChatCount++;
+    }
+
+    public void initHostChatCount() {
+        this.hostChatCount = 0;
+    }
+
+    public void initGuestChatCount() {
+        this.guestChatCount = 0;
+    }
+
+    public boolean isHost(Member member) {
+        return getHost().getId().equals(member.getId());
     }
 }

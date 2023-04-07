@@ -38,10 +38,6 @@ public class Member {
     @Column
     private MemberRoleEnum memberRoleEnum;
 
-    private int chatCount;
-
-    private boolean isExited;
-
     @Builder
     public Member(Long id, String email, String nickname , String password, String address, Long kakaoId, String profileImage,MemberRoleEnum memberRoleEnum){
         this.id = id;
@@ -66,18 +62,6 @@ public class Member {
         this.address = "탈퇴한 회원";
         this.kakaoId = null;
         this.profileImage = null;
-    }
-
-    public void exitRoom(boolean isExited) {
-        this.isExited = isExited;
-    }
-
-    public void setChatCount() {
-        this.chatCount++;
-    }
-
-    public void initChatCount() {
-        this.chatCount = 0;
     }
 
     public void updateImage(String profileImage) {

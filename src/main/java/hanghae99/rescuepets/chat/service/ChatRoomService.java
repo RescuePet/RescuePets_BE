@@ -8,7 +8,6 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.common.util.Time;
-import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.memberpet.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,8 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.CREATE_CHAT_ROOM_EXCEPTION;
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +26,6 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional
     public ResponseEntity<ResponseDto> getRoomList(Member member) {
@@ -55,9 +54,7 @@ public class ChatRoomService {
         }
         ChatRoom room = chatRoomRepository.findChatRoomByPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
         chatRoomRepository.save(room);
-        member = getMember(member, room);
-        room.readChat(member);
-
+        readChat(room.isHost(member), room);
         return room.getRoomId();
     }
 
@@ -75,32 +72,29 @@ public class ChatRoomService {
 
     private void exitRoom(boolean isHost, ChatRoom room) {
         if (isHost) {
-            room.getHost().exitRoom(true);
+            room.setHostExited(true);
         } else {
-            room.getHost().exitRoom(true);
+            room.setGuestExited(true);
         }
-        if (room.getHost().isExited() && room.getGuest().isExited()) {
+        if (room.isHostExited() && room.isGuestExited()) {
             chatRoomRepository.deleteById(room.getId());
         }
     }
 
     private boolean isLeaved(boolean isHost, ChatRoom room) {
-        return (isHost && room.getHost().isExited()) ||
-                (!isHost && room.getGuest().isExited());
+        return (isHost && room.isHostExited()) ||
+                (!isHost && room.isGuestExited());
     }
 
     private int getUnreadChat(boolean isHost, ChatRoom room) {
-        return isHost ? room.getGuest().getChatCount() : room.getHost().getChatCount();
+        return isHost ? room.getGuestChatCount() : room.getHostChatCount();
     }
 
-    private Member getMember(Member member, ChatRoom room) {
-        if (room.isHost(member)) {
-            member = memberRepository.findById(room.getGuest().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+    private void readChat(boolean isHost, ChatRoom room) {
+        if (isHost) {
+            room.initGuestChatCount();
         } else {
-            member = memberRepository.findById(room.getHost().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+            room.initHostChatCount();
         }
-        return member;
     }
 }
-
-
