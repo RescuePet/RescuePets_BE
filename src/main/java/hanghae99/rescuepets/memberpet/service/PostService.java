@@ -120,9 +120,8 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDto> getPostListByDistance(int page, int size, String postType,
-                                                             Double memberLongitude, Double memberLatitude, Double description,
-                                                             String searchKeyword, String searchValue, Member member) {
+    public ResponseEntity<ResponseDto> getPostListByDistance(int page, int size, String postType, Double memberLongitude, Double memberLatitude,
+                                                             Double description, String searchKeyword, String searchValue, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage;
         if (memberLatitude != null && searchKeyword == null) {
