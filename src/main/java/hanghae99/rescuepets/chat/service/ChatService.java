@@ -38,38 +38,29 @@ public class ChatService {
         Chat message = Chat.of(dto, room, sender);
         chatRepository.save(message);
         template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(dto, sender));
-        setChatCount(isHost, room);
+        setChatCount(room, isHost);
         reEnterRoom(isHost, room);
-        readChat(isHost, room);
     }
 
     public ResponseEntity<ResponseDto> getMessages(String roomId, Member member) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
-        readChat(room.isHost(member), room);
+        room.readChat(room.isHost(member));
         return ResponseDto.toResponseEntity(SuccessMessage.CHAT_HISTORY_SUCCESS, ChatRoomResponseDto.of(room));
     }
 
     private void reEnterRoom(boolean isHost, ChatRoom room) {
         if (isHost) {
-            room.setHostExited(false);
+            room.getHost().exitRoom(false);
         } else {
-            room.setGuestExited(false);
+            room.getHost().exitRoom(false);
         }
     }
 
-    private void setChatCount(boolean isHost, ChatRoom room) {
+    private void setChatCount(ChatRoom room, boolean isHost) {
         if (isHost) {
-            room.setHostChatCount();
+            room.getHost().setChatCount();
         } else {
-            room.setGuestChatCount();
-        }
-    }
-
-    private void readChat(boolean isHost, ChatRoom room) {
-        if (isHost) {
-            room.initGuestChatCount();
-        } else {
-            room.initHostChatCount();
+            room.getGuest().setChatCount();
         }
     }
 }

@@ -54,6 +54,7 @@ public class ChatRoomService {
         }
         ChatRoom room = chatRoomRepository.findChatRoomByPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
         chatRoomRepository.save(room);
+        room.readChat(room.isHost(member));
 
         return room.getRoomId();
     }
@@ -72,22 +73,22 @@ public class ChatRoomService {
 
     private void exitRoom(boolean isHost, ChatRoom room) {
         if (isHost) {
-            room.setHostExited(true);
+            room.getHost().exitRoom(true);
         } else {
-            room.setGuestExited(true);
+            room.getHost().exitRoom(true);
         }
-        if (room.isHostExited() && room.isGuestExited()) {
+        if (room.getHost().isExited() && room.getGuest().isExited()) {
             chatRoomRepository.deleteById(room.getId());
         }
     }
 
     private boolean isLeaved(boolean isHost, ChatRoom room) {
-        return (isHost && room.isHostExited()) ||
-                (!isHost && room.isGuestExited());
+        return (isHost && room.getHost().isExited()) ||
+                (!isHost && room.getGuest().isExited());
     }
 
     private int getUnreadChat(boolean isHost, ChatRoom room) {
-        return isHost ? room.getGuestChatCount() : room.getHostChatCount();
+        return isHost ? room.getGuest().getChatCount() : room.getHost().getChatCount();
     }
 }
 
