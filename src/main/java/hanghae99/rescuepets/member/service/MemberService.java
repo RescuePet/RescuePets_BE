@@ -161,49 +161,49 @@ public class MemberService {
 
         return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
     }
-
-    @Transactional
-    public ResponseEntity<ResponseDto> getMemberList(int page, int size, Member member) {
-        List<MemberResponseDto> dtoList = new ArrayList<>();
-        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Member> memberList = memberRepository.findAllOrderByCreatedAtDesc(pageable);
-            for (Member memberTemp : memberList) {
-                MemberResponseDto dto = new MemberResponseDto(memberTemp);
-                dtoList.add(dto);
-            }
-        } else {
-            throw new CustomException(UNAUTHORIZED_MANAGER);
-        }
-        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
-    }
-
-    @Transactional
-    public ResponseEntity<ResponseDto> findMember(int page, int size, String keyword, Member member) {
-        List<MemberResponseDto> dtoList = new ArrayList<>();
-        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<Member> memberList = memberRepository.findByNickNameContaining(keyword, pageable);
-            for (Member memberTemp : memberList) {
-                MemberResponseDto dto = new MemberResponseDto(memberTemp);
-                dtoList.add(dto);
-            }
-        } else {
-            throw new CustomException(UNAUTHORIZED_MANAGER);
-        }
-        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
-    }
-
-    @Transactional
-    public ResponseEntity<ResponseDto> memberRoleChange(MemberRoleRequestDto memberRoleRequestDto, Member member) {
-        Member memberTemp = memberRepository.findById(memberRoleRequestDto.getMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
-        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
-            memberTemp.setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
-        }else{
-            throw new CustomException(UNAUTHORIZED_MANAGER);
-        }
-//    변수명 바꿀 예정
-        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
-    }
+//
+//    @Transactional
+//    public ResponseEntity<ResponseDto> getMemberList(int page, int size, Member member) {
+//        List<MemberResponseDto> dtoList = new ArrayList<>();
+//        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
+//            Pageable pageable = PageRequest.of(page, size);
+//            Page<Member> memberList = memberRepository.findAllOrderByCreatedAtDesc(pageable);
+//            for (Member memberTemp : memberList) {
+//                MemberResponseDto dto = new MemberResponseDto(memberTemp);
+//                dtoList.add(dto);
+//            }
+//        } else {
+//            throw new CustomException(UNAUTHORIZED_MANAGER);
+//        }
+//        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
+//    }
+//
+//    @Transactional
+//    public ResponseEntity<ResponseDto> findMember(int page, int size, String keyword, Member member) {
+//        List<MemberResponseDto> dtoList = new ArrayList<>();
+//        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
+//            Pageable pageable = PageRequest.of(page, size);
+//            Page<Member> memberList = memberRepository.findByNicknameContaining(keyword, pageable);
+//            for (Member memberTemp : memberList) {
+//                MemberResponseDto dto = new MemberResponseDto(memberTemp);
+//                dtoList.add(dto);
+//            }
+//        } else {
+//            throw new CustomException(UNAUTHORIZED_MANAGER);
+//        }
+//        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
+//    }
+//
+//    @Transactional
+//    public ResponseEntity<ResponseDto> memberRoleChange(MemberRoleRequestDto memberRoleRequestDto, Member member) {
+//        Member memberTemp = memberRepository.findById(memberRoleRequestDto.getMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
+//        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
+//            memberTemp.setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
+//        }else{
+//            throw new CustomException(UNAUTHORIZED_MANAGER);
+//        }
+////    변수명 바꿀 예정
+//        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
+//    }
 }
 

@@ -11,7 +11,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmail(String email);
     Optional<Member> findByNickname(String nickname);
     Optional<Member> findByKakaoId(Long kakaoId);
-    Page<Member> findAllOrderByCreatedAtDesc(Pageable pageable);
-    Page<Member> findByNickNameContaining(String keyword, Pageable pageable);
+//    Page<Member> findAllOrderByCreatedAtDesc(Pageable pageable);
+    Page<Member> findByNicknameContaining(String keyword, Pageable pageable);
     int countByNickname(String nickname);
 }
