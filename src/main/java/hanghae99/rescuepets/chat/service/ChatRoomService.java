@@ -54,7 +54,7 @@ public class ChatRoomService {
         }
         ChatRoom room = chatRoomRepository.findChatRoomByPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
         chatRoomRepository.save(room);
-
+        readChat(room.isHost(member), room);
         return room.getRoomId();
     }
 
@@ -89,6 +89,12 @@ public class ChatRoomService {
     private int getUnreadChat(boolean isHost, ChatRoom room) {
         return isHost ? room.getGuestChatCount() : room.getHostChatCount();
     }
+
+    private void readChat(boolean isHost, ChatRoom room) {
+        if (isHost) {
+            room.initGuestChatCount();
+        } else {
+            room.initHostChatCount();
+        }
+    }
 }
-
-

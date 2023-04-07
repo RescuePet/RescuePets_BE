@@ -55,7 +55,7 @@ public class PostService {
             post.addPostImage(new PostImage(post, postImageURL));
         }
         postRepository.save(post);
-        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS, post.getId());
+        return ResponseDto.toResponseEntity(POST_WRITING_SUCCESS, PostShortResponseDto.of(post));
     }
 
     private Boolean checkFrequencyMember(Long memberId) {

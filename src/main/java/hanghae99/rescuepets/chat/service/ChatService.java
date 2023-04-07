@@ -40,9 +40,9 @@ public class ChatService {
         template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(dto, sender));
         setChatCount(isHost, room);
         reEnterRoom(isHost, room);
-        readChat(isHost, room);
     }
 
+    @Transactional
     public ResponseEntity<ResponseDto> getMessages(String roomId, Member member) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
         readChat(room.isHost(member), room);
