@@ -8,6 +8,7 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.common.util.Time;
+import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.memberpet.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-import static hanghae99.rescuepets.common.dto.ExceptionMessage.CREATE_CHAT_ROOM_EXCEPTION;
-import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +26,7 @@ public class ChatRoomService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public ResponseEntity<ResponseDto> getRoomList(Member member) {
@@ -53,6 +54,7 @@ public class ChatRoomService {
             throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
         }
         ChatRoom room = chatRoomRepository.findChatRoomByPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
+        member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         chatRoomRepository.save(room);
         room.readChat(room.isHost(member));
 

@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.MEMBER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -42,8 +44,10 @@ public class ChatService {
         reEnterRoom(isHost, room);
     }
 
+    @Transactional
     public ResponseEntity<ResponseDto> getMessages(String roomId, Member member) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
+        member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         room.readChat(room.isHost(member));
         return ResponseDto.toResponseEntity(SuccessMessage.CHAT_HISTORY_SUCCESS, ChatRoomResponseDto.of(room));
     }
