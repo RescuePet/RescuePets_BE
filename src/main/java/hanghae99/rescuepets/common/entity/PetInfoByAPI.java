@@ -101,7 +101,7 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
         this.petStateEnum = petInfo.petStateEnum;
     }
 
-    public void updates(double latitude, double longitude) {
+    public void location(Double latitude, Double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }

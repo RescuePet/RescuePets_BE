@@ -46,7 +46,7 @@ public class ApiScheduler {
     @Value("${kakao.api.keys}")
     private String kakaoMapKey;
 
-    @Scheduled(cron = "0 0/30 * * * *")
+    @Scheduled(cron = "20 06 15 * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
@@ -136,11 +136,12 @@ public class ApiScheduler {
             List<String> compareDataList = new ArrayList<>();
             if (petInfoByAPIOptional.isEmpty()) {
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
-                Map<String, Double> latitudeandlongitude  = getLatLng(petInfo.getCareAddr());
-                double latitude = latitudeandlongitude.get("latitude");
-                double longitude =latitudeandlongitude.get("longitude");
-                petInfo.updates(latitude,longitude);
-                publicPetInfoRepository.saveAndFlush(petInfo);
+                List<Double> latitudeandlongitude  = getLatLng(itemObject.optString("careAddr"));
+                if (latitudeandlongitude != null){
+                    petInfo.location(latitudeandlongitude.get(0),latitudeandlongitude.get(1));
+                }
+                publicPetInfoRepository.save(petInfo);
+
             } else {
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.get();
                 Field[] fields = petInfoByAPI.getClass().getDeclaredFields();
@@ -276,7 +277,7 @@ public class ApiScheduler {
                 .compareDataKey(compareDataKey)
                 .build();
     }
-    public  Map<String, Double> getLatLng(String address) {
+    public  List<Double> getLatLng(String address) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -298,20 +299,14 @@ public class ApiScheduler {
         try {
             JsonNode rootNode = objectMapper.readTree(response.getBody());
             JsonNode documentsNode = rootNode.path("documents");
-            if(!documentsNode.isArray() || documentsNode.size() == 0) {
-                Map<String, Double> result = new HashMap<>();
-                result.put("latitude", 1.0);
-                result.put("longitude", 1.0);
-                return result;
-            }
             if (documentsNode.isArray() && documentsNode.size() > 0) {
                 JsonNode firstDocumentNode = documentsNode.get(0);
                 double latitude = firstDocumentNode.path("y").asDouble();
                 double longitude = firstDocumentNode.path("x").asDouble();
 
-                Map<String, Double> result = new HashMap<>();
-                result.put("latitude", latitude);
-                result.put("longitude", longitude);
+                List<Double> result = new ArrayList<>();
+                result.add(latitude);
+                result.add(longitude);
                 return result;
             }
         } catch (IOException e) {
