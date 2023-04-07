@@ -1,16 +1,14 @@
 package hanghae99.rescuepets.comment.service;
 
-import hanghae99.rescuepets.comment.dto.CommentByMemberResponseDto;
+import hanghae99.rescuepets.comment.dto.*;
 import hanghae99.rescuepets.comment.repository.CommentRepository;
-import hanghae99.rescuepets.comment.dto.CommentRequestDto;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Comment;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.Post;
-import hanghae99.rescuepets.common.entity.PostTypeEnum;
 import hanghae99.rescuepets.memberpet.repository.PostRepository;
-import hanghae99.rescuepets.comment.dto.CommentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,8 +38,9 @@ public class CommentService {
             throw new CustomException(TOO_FREQUENT_COMMENT);
         }
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
-        commentRepository.save(new Comment(requestDto.getContent(), post, member));
-        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS);
+        Comment comment = new Comment(requestDto.getContent(), post, member);
+        commentRepository.save(comment);
+        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS, new CommentResponseDto(comment));
     }
 
     private Boolean checkFrequency(Long memberId) {
@@ -75,22 +74,28 @@ public class CommentService {
     @Transactional
     public ResponseEntity<ResponseDto> getCommentListByMember(int page, int size, Member member) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Comment> commentList = commentRepository.findByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
-        List<CommentByMemberResponseDto> comments = new ArrayList<>();
-        for (Comment comment : commentList) {
-            comments.add(new CommentByMemberResponseDto(comment));
+        Page<Comment> commentPage = commentRepository.findAllByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
+        List<CommentByMemberResponseDto> commentList = new ArrayList<>();
+        for (Comment comment : commentPage) {
+            if(comment!=null) {
+                commentList.add(new CommentByMemberResponseDto(comment));
+            }
         }
-        return ResponseDto.toResponseEntity(MY_COMMENT_READING_SUCCESS, comments);
+        return ResponseDto.toResponseEntity(MY_COMMENT_READING_SUCCESS, CommentByMemberResponseWithIsLastDto.of(commentList, commentPage.isLast()));
     }
+
     @Transactional
-    public ResponseEntity<ResponseDto> getCommentList(Long postId) {
+    public ResponseEntity<ResponseDto> getCommentList(int page, int size, Long postId) {
+        Pageable pageable = PageRequest.of(page, size);
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
-        List<Comment> commentList = commentRepository.findByPostId(postId);
-        List<CommentResponseDto> comments = new ArrayList<>();
-        for (Comment comment : commentList) {
-            comments.add(new CommentResponseDto(comment, post));
+        Page<Comment> commentPage = commentRepository.findAllByPostIdOrderByCreatedAtDesc(post.getId(), pageable);
+        List<CommentResponseDto> commentList = new ArrayList<>();
+        for (Comment comment : commentPage) {
+            if(comment!=null) {
+                commentList.add(new CommentResponseDto(comment));
+            }
         }
-        return ResponseDto.toResponseEntity(COMMENT_READING_SUCCESS, comments);
+        return ResponseDto.toResponseEntity(COMMENT_READING_SUCCESS, CommentResponseWithIsLastDto.of(commentList, commentPage.isLast()));
     }
 
     @Transactional
@@ -114,5 +119,4 @@ public class CommentService {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
     }
-
 }

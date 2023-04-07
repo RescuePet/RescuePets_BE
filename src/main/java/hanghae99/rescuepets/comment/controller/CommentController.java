@@ -35,8 +35,10 @@ public class CommentController {
 
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 하나 댓글 불러오기", description = "")
-    public ResponseEntity<ResponseDto> getCommentList(@PathVariable Long postId) {
-        return commentService.getCommentList(postId);
+    public ResponseEntity<ResponseDto> getCommentList(@RequestParam int page,
+                                                      @RequestParam int size,
+                                                      @PathVariable Long postId) {
+        return commentService.getCommentList(page-1, size, postId);
     }
 
     @PostMapping("/{postId}")

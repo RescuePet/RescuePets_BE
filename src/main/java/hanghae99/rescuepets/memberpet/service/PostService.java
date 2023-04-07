@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.memberpet.service;
 
+import hanghae99.rescuepets.comment.repository.CommentRepository;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.*;
@@ -34,6 +35,7 @@ import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
 @Service
 @RequiredArgsConstructor
 public class PostService {
+    private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final ScrapRepository scrapRepository;
     private final PostLinkRepository postLinkRepository;
@@ -161,7 +163,7 @@ public class PostService {
             if (post.getIsDeleted()) {
                 continue;
             }
-            PostResponseDto dto = PostResponseDto.of(post);
+            PostResponseDto dto = PostResponseDto.of(post).build();
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
@@ -189,16 +191,17 @@ public class PostService {
         if (post.getIsDeleted()) {
             throw new CustomException(POST_ALREADY_DELETED);
         }
-        PostResponseDto responseDto = PostResponseDto.of(post);
-        responseDto.setLinked(postLinkRepository.findByPostId(post.getId()).isPresent());
-        responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId()).isPresent());
-        responseDto.setWishedCount(scrapRepository.countByPostId(postId));
+        PostResponseDto.PostResponseDtoBuilder responseBuilder = PostResponseDto.of(post)
+                .isLinked(postLinkRepository.findByPostId(post.getId()).isPresent())
+                .isWished(postLinkRepository.findByPostId(post.getId()).isPresent())
+                .wishedCount(scrapRepository.countByPostId(postId))
+                .commentCount(commentRepository.countByPostId(post.getId()));
         if (post.getOpenNickname() != null) {
-            if (post.getOpenNickname() == true) {
-                responseDto.setNickname(post.getMember().getNickname());
+            if (post.getOpenNickname()) {
+                responseBuilder.nickname(post.getMember().getNickname());
             }
         }
-        return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseDto);
+        return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseBuilder.build());
     }
 
     @Transactional
@@ -284,7 +287,7 @@ public class PostService {
         }
         postLinkRepository.save(postLink);
         PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(postId);
-        if (postId == requestDto.getLinkedPostId()) {
+        if (postId.equals(requestDto.getLinkedPostId())) {
             //사실 프론트 단에서 이런일은 미연에 방지할 것입니다. 넣을지 말지 고민 중
             throw new NullPointerException("자기 자신한테는 연결할 수 없지롱");
         }

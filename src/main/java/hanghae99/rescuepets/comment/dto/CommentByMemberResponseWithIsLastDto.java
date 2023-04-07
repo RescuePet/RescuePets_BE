@@ -21,5 +21,4 @@ public class CommentByMemberResponseWithIsLastDto {
                 .isLast(isLast)
                 .build();
     }
-
 }
