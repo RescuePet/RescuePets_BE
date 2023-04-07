@@ -12,8 +12,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     Optional<Report> findByMemberIdAndRespondentId(Long memberId, Long respondentId);
 
-    Optional<Report> findByRespondentNicknameAndMemberId(String respondentNickname, Long memberId);
-
     Optional<Report> findByMemberIdAndPostId(Long memberId, Long postId);
 
     List<Report> findByPostId(Long postId);
@@ -21,6 +19,4 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findByCommentId(Long commentId);
 
     List<Report> findByRespondentId(Long respondentId);
-
-    void deleteAllByRespondentId(Long respondentId);
 }

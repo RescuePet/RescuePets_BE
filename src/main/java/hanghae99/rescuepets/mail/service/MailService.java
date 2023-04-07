@@ -3,8 +3,6 @@ package hanghae99.rescuepets.mail.service;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ExceptionMessage;
 import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.Post;
-import hanghae99.rescuepets.common.entity.PostTypeEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;

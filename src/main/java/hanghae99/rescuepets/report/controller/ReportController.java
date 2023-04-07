@@ -1,17 +1,14 @@
 package hanghae99.rescuepets.report.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.ReportEnum;
 import hanghae99.rescuepets.common.security.MemberDetails;
-import hanghae99.rescuepets.report.dto.ReportIdRequestDto;
 import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
 import hanghae99.rescuepets.report.dto.ReportRequestDto;
 import hanghae99.rescuepets.report.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.WebDataBinder;
