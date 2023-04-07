@@ -72,12 +72,12 @@ public class Member {
         this.nickname = nickname;
     }
 
-    public void Stop(LocalDateTime localDateTime){
+    public void stop(LocalDateTime localDateTime){
         this.stop = true;
         this.reportDate = localDateTime;
     }
 
-    public void Start(){
+    public void start(){
         this.stop = false;
     }
 }

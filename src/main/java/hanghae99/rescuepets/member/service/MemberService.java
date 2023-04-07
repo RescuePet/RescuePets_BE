@@ -77,7 +77,7 @@ public class MemberService {
                 return ResponseDto.toResponseEntity(TIMECHECK_SUCCESS,new TimeResponseDto(timeLimits));
             }
             else{
-                member.Start();
+                member.start();
             }
         }
         jwtUtil.createToken(response, member);

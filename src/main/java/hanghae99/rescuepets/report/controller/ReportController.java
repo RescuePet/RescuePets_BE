@@ -40,9 +40,9 @@ public class ReportController {
 
 
 
-    @DeleteMapping(value = "/post")
-    public ResponseEntity<ResponseDto> reportPostDelete(@RequestBody ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportPostDelete(reportIdRequestDto,memberDetails.getMember());
+    @DeleteMapping(value = "/post/{reportId}")
+    public ResponseEntity<ResponseDto> reportPostDelete(@PathVariable Long reportId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportPostDelete(reportId,memberDetails.getMember());
     }
 
 
@@ -53,9 +53,9 @@ public class ReportController {
 
 
 
-    @DeleteMapping(value = "/comment")
-    public ResponseEntity<ResponseDto> reportCommentDelete(@RequestBody ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportCommentDelete(reportIdRequestDto, memberDetails.getMember());
+    @DeleteMapping(value = "/comment/{reportId}")
+    public ResponseEntity<ResponseDto> reportCommentDelete(@PathVariable Long reportId, @Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportCommentDelete(reportId, memberDetails.getMember());
     }
 
     @PostMapping(value = "/member")
@@ -63,9 +63,9 @@ public class ReportController {
         return reportService.reportMember(reportMemberRequestDto,memberDetails.getMember());
     }
 
-    @DeleteMapping(value = "/member")
-    public ResponseEntity<ResponseDto> reportMemberDelete(@RequestBody ReportMemberRequestDto reportMemberRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportMemberDelete(reportMemberRequestDto, memberDetails.getMember());
+    @DeleteMapping(value = "/member/{reportId}")
+    public ResponseEntity<ResponseDto> reportMemberDelete(@PathVariable Long reportId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportMemberDelete(reportId, memberDetails.getMember());
     }
 
     // value 값과 key 값 바꾸는 로직

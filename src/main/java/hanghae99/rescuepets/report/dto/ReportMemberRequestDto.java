@@ -8,7 +8,6 @@ import lombok.Setter;
 @Setter
 public class ReportMemberRequestDto {
     private String content;
-    private Long informantId;
     private String nickname;
     private ReportEnum reportCode;
 

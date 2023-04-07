@@ -2,14 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
 <div align="center" style="font-size: 15px">
-    <span th:text="${commenter}"></span>
-    <span>이/가 </span>
-    <span th:text="${kind}"></span>
-    <span th:text="${postType}"></span>
-    <span>게시글에 댓글을 등록했습니다.</span>
+    <span>계정 정지 알림</span>
     <br>
-    <span>댓글 내용 : </span>
-    <span th:text="${comment}"></span>
+    <span th:text="${member}"></span>
+    <span>님 께서는</span>
+    <span>15회 이상 신고당하여 계정이 3일동안 정지됩니다.</span>
 </div>
 </body>
 </html>

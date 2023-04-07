@@ -31,7 +31,6 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final MailService mailService;
 
     @Transactional
     public ResponseEntity<ResponseDto> createComment(Long postId, CommentRequestDto requestDto, Member member) {
@@ -40,7 +39,6 @@ public class CommentService {
         }
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
         commentRepository.save(new Comment(requestDto.getContent(), post, member));
-        mailService.send(post, member.getNickname(), requestDto.getContent());
         return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS);
     }
 
