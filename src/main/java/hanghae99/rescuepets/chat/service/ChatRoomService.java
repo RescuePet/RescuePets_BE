@@ -54,9 +54,9 @@ public class ChatRoomService {
             throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
         }
         ChatRoom room = chatRoomRepository.findChatRoomByPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
-        member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         chatRoomRepository.save(room);
-        room.readChat(room.isHost(member));
+        member = getMember(member, room);
+        room.readChat(member);
 
         return room.getRoomId();
     }
@@ -91,6 +91,15 @@ public class ChatRoomService {
 
     private int getUnreadChat(boolean isHost, ChatRoom room) {
         return isHost ? room.getGuest().getChatCount() : room.getHost().getChatCount();
+    }
+
+    private Member getMember(Member member, ChatRoom room) {
+        if (room.isHost(member)) {
+            member = memberRepository.findById(room.getGuest().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        } else {
+            member = memberRepository.findById(room.getHost().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        }
+        return member;
     }
 }
 
