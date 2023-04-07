@@ -98,11 +98,6 @@ public class CommentService {
         return ResponseDto.toResponseEntity(COMMENT_READING_SUCCESS, CommentResponseWithIsLastDto.of(commentList, commentPage.isLast()));
     }
 
-    public ResponseEntity<ResponseDto> getCommentCount(Long postId) {
-        Integer commentCount = commentRepository.countByPostId(postId);
-        return ResponseDto.toResponseEntity(COMMENT_COUNT_SUCCESS, new CommentCountResponseDto(commentCount));
-    }
-
     @Transactional
     public ResponseEntity<ResponseDto> update(Long commentId, CommentRequestDto requestDto, Member member) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(()->new CustomException(COMMENT_NOT_FOUND));
