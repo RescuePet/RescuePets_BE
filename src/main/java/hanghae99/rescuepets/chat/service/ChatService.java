@@ -42,6 +42,7 @@ public class ChatService {
         reEnterRoom(isHost, room);
     }
 
+    @Transactional
     public ResponseEntity<ResponseDto> getMessages(String roomId, Member member) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
         readChat(room.isHost(member), room);

@@ -1,22 +1,21 @@
 package hanghae99.rescuepets.common.util;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+import java.util.Locale;
 
 public class Time {
 
     public static String chatTime(LocalDateTime time) {
-        long between = ChronoUnit.SECONDS.between(LocalDateTime.now(), time);
-        String timeStr;
-        if (between < 60) {
-            timeStr = "방금 전";
-        } else if (between < 60 * 60) {
-            timeStr = (between / 60) + "분 전";
-        } else if (between < 60 * 60 * 24) {
-            timeStr = (between / 3600) + "시간 전";
+        String timeStr = "";
+        LocalDate day = time.toLocalDate();
+        if (day.compareTo(LocalDate.now()) == 0) {
+            timeStr = time.format(DateTimeFormatter.ofPattern("a h:mm").withLocale(Locale.forLanguageTag("ko")));
+        } else if (day.equals(LocalDate.now().minusDays(1))) { // 데이터 형태 변경
+            timeStr = "어제";
         } else {
-            timeStr = time.format(DateTimeFormatter.ofPattern("MM월 dd일"));
+            timeStr = time.format(DateTimeFormatter.ofPattern("M월 d일"));
         }
         return timeStr;
     }
