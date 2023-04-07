@@ -5,6 +5,7 @@ import hanghae99.rescuepets.common.entity.Member;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Getter
@@ -20,6 +21,7 @@ public class ChatResponseDto {
                 .sender(dto.getSender())
                 .message(dto.getMessage())
                 .profileImage(sender.getProfileImage())
+                .chatTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .build();
     }
 
