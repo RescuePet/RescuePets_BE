@@ -11,7 +11,7 @@ public class Time {
         String timeStr = "";
         LocalDate day = time.toLocalDate();
         if (day.compareTo(LocalDate.now()) == 0) {
-            timeStr = time.format(DateTimeFormatter.ofPattern("a h:mm").withLocale(Locale.forLanguageTag("ko")));
+            timeStr = time.format(DateTimeFormatter.ofPattern("HH:mm").withLocale(Locale.forLanguageTag("ko")));
         } else if (day.equals(LocalDate.now().minusDays(1))) { // 데이터 형태 변경
             timeStr = "어제";
         } else {
