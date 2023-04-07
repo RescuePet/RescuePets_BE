@@ -1,5 +1,4 @@
 package hanghae99.rescuepets.memberpet.repository;
-
 import hanghae99.rescuepets.common.entity.Post;
 import hanghae99.rescuepets.common.entity.PostTypeEnum;
 import org.springframework.data.domain.Page;
@@ -10,15 +9,13 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface PostRepository extends JpaRepository<Post, Long> {
+public interface PostRepository extends JpaRepository<Post, Long>{
     List<Post> findAllByMemberId(Long memberId);
-
     Page<Post> findByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
-
+    List<Post> findTop5ByMemberIdOrderByCreatedAtDesc(Long memberId);
     Page<Post> findByPostTypeOrderByCreatedAtDesc(PostTypeEnum postType, Pageable pageable);
-
+    List<Post> findTop50ByOrderByCreatedAtDesc();
     List<Post> findByOrderByCreatedAtDesc();
-
     Integer countByMemberId(Long memberId);
 
     List<Post> findALlByIsDeletedTrue();

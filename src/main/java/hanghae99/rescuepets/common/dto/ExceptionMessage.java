@@ -26,9 +26,12 @@ public enum ExceptionMessage {
     UNAUTHORIZED_SAVE(UNAUTHORIZED,"작성자만 저장할 수 있습니다."),
 
 
-    /* 403 FORBIDDEN : 권한 없음 */
+    /* 403 FORBIDDEN : 금지됨 */
     USER_FORBIDDEN(FORBIDDEN, "실행할 수 없습니다."),
     PROFANITY_CHECK(FORBIDDEN, "닉네임에는 비속어를 포함할 수 없습니다."),
+    TOO_FREQUENT_POST(FORBIDDEN, "한 번에 너무 많은 게시글들을 작성할 수 없습니다. 잠시 후 다시 시도해주세요."),
+    TOO_FREQUENT_COMMENT(FORBIDDEN, "한 번에 너무 많은 댓글들을 작성할 수 없습니다. 잠시 후 다시 시도해주세요."),
+    TOO_FREQUENT_CHAT(FORBIDDEN, "한 번에 너무 많은 채팅을 작성할 수 없습니다. 잠시 후 다시 시도해주세요."),
 
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */

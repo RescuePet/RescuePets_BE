@@ -33,22 +33,43 @@ public class ChatService {
     public void createChat(String roomId, ChatRequestDto dto) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.CHATROOM_NOT_FOUND));
         Member sender = memberRepository.findByNickname(dto.getSender()).orElseThrow(() -> new CustomException(ExceptionMessage.UNAUTHORIZED_MEMBER));
+        boolean isHost = room.isHost(sender);
+
         Chat message = Chat.of(dto, room, sender);
         chatRepository.save(message);
         template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(dto, sender));
-        reEnterRoom(room, sender);
+        setChatCount(isHost, room);
+        reEnterRoom(isHost, room);
+        readChat(isHost, room);
     }
 
-    public ResponseEntity<ResponseDto> getMessages(String roomId) {
-        ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
-        return ResponseDto.toResponseEntity(SuccessMessage.CHAT_HISTORY_SUCCESS, ChatRoomResponseDto.of(chatRoom));
+    public ResponseEntity<ResponseDto> getMessages(String roomId, Member member) {
+        ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.POST_NOT_FOUND));
+        readChat(room.isHost(member), room);
+        return ResponseDto.toResponseEntity(SuccessMessage.CHAT_HISTORY_SUCCESS, ChatRoomResponseDto.of(room));
     }
 
-    private void reEnterRoom(ChatRoom room, Member sender) {
-        if (room.getHost().getId().equals(sender.getId())) {
-            room.setGuestExited(false);
-        } else if (room.getGuest().getId().equals(sender.getId())) {
+    private void reEnterRoom(boolean isHost, ChatRoom room) {
+        if (isHost) {
             room.setHostExited(false);
+        } else {
+            room.setGuestExited(false);
+        }
+    }
+
+    private void setChatCount(boolean isHost, ChatRoom room) {
+        if (isHost) {
+            room.setHostChatCount();
+        } else {
+            room.setGuestChatCount();
+        }
+    }
+
+    private void readChat(boolean isHost, ChatRoom room) {
+        if (isHost) {
+            room.initGuestChatCount();
+        } else {
+            room.initHostChatCount();
         }
     }
 }
