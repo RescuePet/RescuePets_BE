@@ -41,6 +41,12 @@ public class CommentController {
         return commentService.getCommentList(page-1, size, postId);
     }
 
+    @GetMapping("/count/{postId}")
+    @Operation(summary = "게시글 댓글 갯수 불러오기", description = "")
+    public ResponseEntity<ResponseDto> getCommentCount(@PathVariable Long postId) {
+        return commentService.getCommentCount(postId);
+    }
+
     @PostMapping("/{postId}")
     @Operation(summary = "게시글 댓글 작성하기", description = "")
     public ResponseEntity<ResponseDto> createComment(@PathVariable Long postId, @RequestBody CommentRequestDto requestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
