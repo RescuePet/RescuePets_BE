@@ -42,4 +42,12 @@ public class ChatRoom extends TimeStamped {
                 .guest(member)
                 .build();
     }
+
+    public boolean isHost(Member member) {
+        return getHost().getId().equals(member.getId());
+    }
+
+    public void readChat(Member member) {
+        member.initChatCount();
+    }
 }

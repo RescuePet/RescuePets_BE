@@ -36,7 +36,6 @@ public class PostController {
         return postService.setPostPoster(requestDto, postId, memberDetails.getMember());
     }
 
-//    @ApiOperation(value = "게시글 목록 조회", notes = "page, size, sortBy로 페이징 후 조회")
     @GetMapping("/list/{postType}")
     @Operation(summary = "전체 게시글 페이징해서 불러오기", description = "카테고리를 지정하여 전체 게시글을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPostList(@RequestParam int page,
@@ -81,12 +80,12 @@ public class PostController {
     }
 
     @DeleteMapping("/temporary/{postId}")
-    @Operation(summary = "PostCatch 게시글 임시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
+    @Operation(summary = "게시글 임시 삭제하기", description = "내가 작성한 게시글 하나를 삭제합니다")
     public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long postId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return postService.softDeletePost(postId, userDetails.getMember());
     }
     @DeleteMapping("/{postId}")
-    @Operation(summary = "게시글 즉시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
+    @Operation(summary = "게시글 즉시 삭제하기", description = "관리자 권한으로 게시글을 영구 삭제합니다")
     public ResponseEntity<ResponseDto> deletePost(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return postService.deletePost(postId, userDetails.getMember());
     }
