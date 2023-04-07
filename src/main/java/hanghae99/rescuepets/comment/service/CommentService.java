@@ -75,19 +75,23 @@ public class CommentService {
         Page<Comment> commentPage = commentRepository.findAllByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
         List<CommentByMemberResponseDto> commentList = new ArrayList<>();
         for (Comment comment : commentPage) {
-            commentList.add(new CommentByMemberResponseDto(comment));
+            if(comment!=null) {
+                commentList.add(new CommentByMemberResponseDto(comment));
+            }
         }
         return ResponseDto.toResponseEntity(MY_COMMENT_READING_SUCCESS, CommentByMemberResponseWithIsLastDto.of(commentList, commentPage.isLast()));
     }
 
     @Transactional
     public ResponseEntity<ResponseDto> getCommentList(int page, int size, Long postId) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(page, size);
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
         Page<Comment> commentPage = commentRepository.findAllByPostIdOrderByCreatedAtDesc(postId, pageable);
         List<CommentResponseDto> commentList = new ArrayList<>();
         for (Comment comment : commentPage) {
-            commentList.add(new CommentResponseDto(comment, post));
+            if(comment!=null) {
+                commentList.add(new CommentResponseDto(comment));
+            }
         }
         return ResponseDto.toResponseEntity(COMMENT_READING_SUCCESS, CommentResponseWithIsLastDto.of(commentList, commentPage.isLast()));
     }

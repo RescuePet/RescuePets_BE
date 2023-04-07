@@ -16,17 +16,6 @@ public class CommentResponseDto {
     private String profileImage;
     private PostTypeEnum postType;
 
-    public CommentResponseDto(Comment comment, Post post) {
-        this.id = comment.getId();
-        this.content = comment.getContent();
-        this.userNickName = comment.getMember().getNickname();
-        this.createdAt = comment.getCreatedAt().toString();
-        this.modifiedAt = comment.getModifiedAt().toString();
-        this.postId = post.getId();
-        this.profileImage = comment.getMember().getProfileImage();
-        this.postType = post.getPostType();
-    }
-
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
         this.content = comment.getContent();

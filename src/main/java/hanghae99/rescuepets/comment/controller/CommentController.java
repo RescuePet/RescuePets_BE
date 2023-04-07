@@ -38,7 +38,7 @@ public class CommentController {
     public ResponseEntity<ResponseDto> getCommentList(@RequestParam int page,
                                                       @RequestParam int size,
                                                       @PathVariable Long postId) {
-        return commentService.getCommentList(page, size, postId);
+        return commentService.getCommentList(page-1, size, postId);
     }
 
     @PostMapping("/{postId}")
