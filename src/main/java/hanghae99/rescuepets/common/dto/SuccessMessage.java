@@ -20,6 +20,7 @@ public enum SuccessMessage {
     SCRAP_ALL_LIST_SUCCESS(HttpStatus.CREATED, "나의 스크랩 리스트 불러오기 성공"),
     POST_LINKING_SUCCESS(HttpStatus.CREATED, "링크 생성이 완료 되었습니다."),
     COMMENT_WRITING_SUCCESS(HttpStatus.CREATED, "댓글 작성이 완료 되었습니다."),
+    COMMENT_COUNT_SUCCESS(HttpStatus.OK, "댓글 갯수 반환 완료"),
 
     /* 200 OK : 성공 */
     ACCOUNT_CHECK_SUCCESS(HttpStatus.OK,"사용 가능한 아이디입니다."),
