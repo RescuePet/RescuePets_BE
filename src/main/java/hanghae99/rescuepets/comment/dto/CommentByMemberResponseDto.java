@@ -1,12 +1,12 @@
 package hanghae99.rescuepets.comment.dto;
 
 import hanghae99.rescuepets.common.entity.Comment;
-import hanghae99.rescuepets.common.entity.Post;
+import hanghae99.rescuepets.common.entity.PostImage;
 import hanghae99.rescuepets.common.entity.PostTypeEnum;
 import lombok.Getter;
 
 @Getter
-public class CommentResponseDto {
+public class CommentByMemberResponseDto {
     private Long id;
     private String content;
     private String userNickName;
@@ -15,8 +15,9 @@ public class CommentResponseDto {
     private Long postId;
     private String profileImage;
     private PostTypeEnum postType;
+    private String postImageURL;
 
-    public CommentResponseDto(Comment comment) {
+    public CommentByMemberResponseDto(Comment comment) {
         this.id = comment.getId();
         this.content = comment.getContent();
         this.userNickName = comment.getMember().getNickname();
@@ -25,5 +26,6 @@ public class CommentResponseDto {
         this.profileImage = comment.getMember().getProfileImage();
         this.postId = comment.getPost().getId();
         this.postType = comment.getPost().getPostType();
+        this.postImageURL = comment.getPost().getPostImages().get(0).getImageURL();
     }
 }

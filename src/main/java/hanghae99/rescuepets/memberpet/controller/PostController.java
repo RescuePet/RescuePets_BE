@@ -1,8 +1,8 @@
 package hanghae99.rescuepets.memberpet.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.security.MemberDetails;
+import hanghae99.rescuepets.memberpet.dto.MissingPosterRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PostRequestDto;
 import hanghae99.rescuepets.memberpet.dto.PostLinkRequestDto;
 import hanghae99.rescuepets.memberpet.service.PostService;
@@ -23,15 +23,21 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping(value = "/", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "PostCatch 게시글 작성하기", description = "PostCatch 게시글 하나를 작성합니다")
+    @Operation(summary = "게시글 작성하기", description = "게시글 하나를 작성합니다")
     public ResponseEntity<ResponseDto> createPost(@ModelAttribute PostRequestDto requestDto,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.createPost(requestDto, memberDetails.getMember());
     }
+    @PostMapping(value = "/posters/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @Operation(summary = "실종 게시글 포스터png URL 저장하기", description = "실종 게시글 포스터 이미지 파일의 URL을 저장합니다")
+    public ResponseEntity<ResponseDto> setPostPoster(@ModelAttribute MissingPosterRequestDto requestDto,
+                                                     @PathVariable Long postId,
+                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.setPostPoster(requestDto, postId, memberDetails.getMember());
+    }
 
-//    @ApiOperation(value = "게시글 목록 조회", notes = "page, size, sortBy로 페이징 후 조회")
     @GetMapping("/list/{postType}")
-    @Operation(summary = "전체 게시글 페이징해서 불러오기", description = "PostCatch 전체 게시글을 페이징하여 불러옵니다")
+    @Operation(summary = "전체 게시글 페이징해서 불러오기", description = "카테고리를 지정하여 전체 게시글을 페이징하여 불러옵니다")
     public ResponseEntity<ResponseDto> getPostList(@RequestParam int page,
                                                    @RequestParam int size,
                                                    @PathVariable String postType,
@@ -54,26 +60,46 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    @Operation(summary = "특정 게시글 조회하기", description = "URI에 명시된 PostId를 기반으로 특정 게시글을 조회합니다")
+    @Operation(summary = "특정 게시글 상세 조회하기", description = "URI에 명시된 PostId를 기반으로 특정 게시글을 조회합니다")
     public ResponseEntity<ResponseDto> getPost(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.getPost(postId, memberDetails.getMember());
     }
 
+    @GetMapping("/posters/{postId}")
+    @Operation(summary = "실종 게시글 포스터png 내려받기", description = "누구든 특정 실종 게시글의 포스터를 내려받습니다")
+    public ResponseEntity<ResponseDto> getPostPoster(@PathVariable Long postId) {
+        return postService.getPostPoster(postId);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "검색", description = "ex)memberLongitude(126.972828), memberLatitude(37.556817),description(100000)/서울역(위도,경도),100km/upkind=DOG,CAT,ETC")
+    public ResponseEntity<ResponseDto> getPostListByDistance(@RequestParam int page,
+                                                             @RequestParam int size,
+                                                             @RequestParam(value = "postType") String postType,
+                                                             @RequestParam(value = "memberLongitude", required = false) Double memberLongitude,
+                                                             @RequestParam(value = "memberLatitude", required = false) Double memberLatitude,
+                                                             @RequestParam(value = "description", required = false) Double description,
+                                                             @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                                             @RequestParam(value = "searchValue", required = false) String searchValue,
+                                                             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.getPostListByDistance(page -1, size, postType, memberLongitude, memberLatitude, description, searchKeyword, searchValue, memberDetails.getMember());
+    }
+
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    @Operation(summary = "내가 작성한 특정 게시글 수정하기", description = "내가 작성한 PostCatch 게시글 하나를 수정합니다")
+    @Operation(summary = "게시글 수정하기", description = "내가 작성한 게시글 하나를 수정합니다")
     public ResponseEntity<ResponseDto> updatePost(@PathVariable Long postId,
                                                   @ModelAttribute PostRequestDto requestDto,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.updatePost(postId, requestDto, memberDetails.getMember());
     }
 
-//    @DeleteMapping("/{petPostCatchId}")
-//    @Operation(summary = "PostCatch 게시글 임시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
-//    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long petPostCatchId, @AuthenticationPrincipal MemberDetails userDetails) {
-//        return petPostCatchService.softDeletePetPostCatch(petPostCatchId, userDetails.getMember());
-//    }
+    @DeleteMapping("/temporary/{postId}")
+    @Operation(summary = "게시글 임시 삭제하기", description = "내가 작성한 게시글 하나를 삭제합니다")
+    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long postId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
+        return postService.softDeletePost(postId, userDetails.getMember());
+    }
     @DeleteMapping("/{postId}")
-    @Operation(summary = "게시글 즉시 삭제하기", description = "내가 작성한 PostCatch 게시글 하나를 삭제합니다")
+    @Operation(summary = "게시글 즉시 삭제하기", description = "관리자 권한으로 게시글을 영구 삭제합니다")
     public ResponseEntity<ResponseDto> deletePost(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
         return postService.deletePost(postId, userDetails.getMember());
     }

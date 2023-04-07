@@ -10,6 +10,7 @@ import static org.springframework.http.HttpStatus.*;
 @AllArgsConstructor
 public enum ExceptionMessage {
     /* 400 BAD_REQUEST : 잘못된 요청 */
+    TEST(BAD_REQUEST, "TEST Exception"),
     MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다."),
     INVALID_TOKEN(BAD_REQUEST, "Invalid JWT signature, 유효하지 않는 JWT 서명 입니다."),
     ILLEGAL_TOKEN(BAD_REQUEST, "JWT claims is empty, 잘못된 JWT 토큰 입니다."),
@@ -23,14 +24,19 @@ public enum ExceptionMessage {
     UNAUTHORIZED_MEMBER(UNAUTHORIZED, "해당 회원이 존재하지 않습니다."),
     UNAUTHORIZED_ADMIN(UNAUTHORIZED, "관리자가 아닙니다."),
     UNAUTHORIZED_UPDATE_OR_DELETE(UNAUTHORIZED,"작성자만 수정/삭제할 수 있습니다."),
+    UNAUTHORIZED_SAVE(UNAUTHORIZED,"작성자만 저장할 수 있습니다."),
 
 
-    /* 403 FORBIDDEN : 권한 없음 */
+    /* 403 FORBIDDEN : 금지됨 */
     USER_FORBIDDEN(FORBIDDEN, "실행할 수 없습니다."),
     PROFANITY_CHECK(FORBIDDEN, "닉네임에는 비속어를 포함할 수 없습니다."),
+    TOO_FREQUENT_POST(FORBIDDEN, "한 번에 너무 많은 게시글들을 작성할 수 없습니다. 잠시 후 다시 시도해주세요."),
+    TOO_FREQUENT_COMMENT(FORBIDDEN, "한 번에 너무 많은 댓글들을 작성할 수 없습니다. 잠시 후 다시 시도해주세요."),
+    TOO_FREQUENT_CHAT(FORBIDDEN, "한 번에 너무 많은 채팅을 작성할 수 없습니다. 잠시 후 다시 시도해주세요."),
 
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
+    POST_TYPE_INCORRECT(NOT_FOUND, "게시글 타입이 적절하지 않습니다."),
     POST_NOT_FOUND(NOT_FOUND, "대상 게시글을 찾을 수 없습니다."),
     NOT_FOUND_IMAGE(NOT_FOUND, "이미지가 없습니다."),
     POST_ALREADY_DELETED(NOT_FOUND, "삭제된 게시글입니다."),

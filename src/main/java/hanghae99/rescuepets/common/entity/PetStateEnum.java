@@ -4,7 +4,6 @@ public enum PetStateEnum {
     NOTICE("공고중"),
     PROTECT("보호중"),
     END("종료");
-
     private final String korean;
 
     PetStateEnum(String korean) {

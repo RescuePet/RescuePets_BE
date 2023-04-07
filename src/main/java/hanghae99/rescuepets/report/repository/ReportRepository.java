@@ -12,6 +12,9 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
 
     Optional<Report> findByMemberIdAndRespondentId(Long memberId, Long respondentId);
 
+    Optional<Report> findByMemberNicknameAndMemberId(String nickname, Long id);
+
+
     Optional<Report> findByMemberIdAndPostId(Long memberId, Long postId);
 
     List<Report> findByPostId(Long postId);

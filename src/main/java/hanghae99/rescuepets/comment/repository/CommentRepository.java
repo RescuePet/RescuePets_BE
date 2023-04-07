@@ -1,12 +1,18 @@
 package hanghae99.rescuepets.comment.repository;
 
 import hanghae99.rescuepets.common.entity.Comment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findAllByMemberId(Long memberId);
-    List<Comment> findAllByPostId(Long postId);
+    List<Comment> findByMemberId(Long memberId);
+    List<Comment> findTop10ByMemberIdOrderByCreatedAtDesc(Long memberId);
+    List<Comment> findTop50ByOrderByCreatedAtDesc();
+    Page<Comment> findAllByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
+    List<Comment> findAllByPostIdOrderByCreatedAtDesc(Long postId);
+    Page<Comment> findAllByPostIdOrderByCreatedAtDesc(Long postId, Pageable pageable);
     Integer countByMemberId(Long memberId);
 }

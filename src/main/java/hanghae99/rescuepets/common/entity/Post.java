@@ -20,6 +20,7 @@ public class Post extends TimeStamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String kindCd;
+    private String petName = "";
     private String age;
     private String weight;
     private String colorCd;
@@ -32,9 +33,10 @@ public class Post extends TimeStamped{
     private String content;
     private String gratuity;
     private String contact;
-    private Boolean openNickname;
+    private Boolean openNickname = true;
     private Boolean isDeleted = false;
     private Date deletedDt;
+    private String missingPosterImageURL = "#";
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private PostTypeEnum postType;
@@ -51,6 +53,8 @@ public class Post extends TimeStamped{
     @JoinColumn(name = "memberId", nullable = false)
     private Member member;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatRoom> chatRoomList = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostLink> postLinkList = new ArrayList<>();
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImage> postImages = new ArrayList<>();
@@ -61,11 +65,12 @@ public class Post extends TimeStamped{
 
 
     public Post(PostRequestDto requestDto, Member member) {
-        this.postType = PostTypeEnum.valueOf(requestDto.getPostType());
+        this.postType = requestDto.getPostType();
         this.upkind = requestDto.getUpkind();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
         this.kindCd = requestDto.getKindCd();
+        this.petName = requestDto.getPetName();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
@@ -88,11 +93,12 @@ public class Post extends TimeStamped{
         }
     }
     public void update(PostRequestDto requestDto) {
-        this.postType = PostTypeEnum.valueOf(requestDto.getPostType());
+        this.postType = requestDto.getPostType();
         this.upkind = requestDto.getUpkind();
         this.sexCd = requestDto.getSexCd();
         this.neuterYn = requestDto.getNeuterYn();
         this.kindCd = requestDto.getKindCd();
+        this.petName = requestDto.getPetName();
         this.age = requestDto.getAge();
         this.weight = requestDto.getWeight();
         this.colorCd = requestDto.getColorCd();
@@ -114,4 +120,8 @@ public class Post extends TimeStamped{
         }
         return isDeleted;
     }
+    public void setMissingPosterImageURL(String imageURL){
+        this.missingPosterImageURL = imageURL;
+    }
+
 }

@@ -64,6 +64,10 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
     private String chargeNm;
     @Column
     private String officetel;
+    @Column
+    private Double latitude;
+    @Column
+    private Double longitude;
     @Enumerated(value = EnumType.STRING)
     @Column
     private PetStateEnum petStateEnum;
@@ -97,4 +101,8 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
         this.petStateEnum = petInfo.petStateEnum;
     }
 
+    public void location(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }
