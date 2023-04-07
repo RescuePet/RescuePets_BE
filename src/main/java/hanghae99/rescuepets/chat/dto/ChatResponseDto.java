@@ -21,7 +21,7 @@ public class ChatResponseDto {
                 .sender(dto.getSender())
                 .message(dto.getMessage())
                 .profileImage(sender.getProfileImage())
-                .chatTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .chatTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm")))
                 .build();
     }
 
@@ -30,7 +30,7 @@ public class ChatResponseDto {
                 .sender(message.getSender().getNickname())
                 .message(message.getMessage())
                 .profileImage(message.getSender().getProfileImage())
-                .chatTime(message.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .chatTime(message.getCreatedAt().format(DateTimeFormatter.ofPattern("HH:mm")))
                 .build();
     }
 }
