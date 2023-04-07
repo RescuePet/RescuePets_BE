@@ -71,6 +71,20 @@ public class PostController {
         return postService.getPostPoster(postId);
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "검색", description = "ex)memberLongitude(126.972828), memberLatitude(37.556817),description(100000)/서울역(위도,경도),100km/upkind=DOG,CAT,ETC")
+    public ResponseEntity<ResponseDto> getPostListByDistance(@RequestParam int page,
+                                                             @RequestParam int size,
+                                                             @RequestParam(value = "postType") String postType,
+                                                             @RequestParam(value = "memberLongitude", required = false) Double memberLongitude,
+                                                             @RequestParam(value = "memberLatitude", required = false) Double memberLatitude,
+                                                             @RequestParam(value = "description", required = false) Double description,
+                                                             @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                                             @RequestParam(value = "searchValue", required = false) String searchValue,
+                                                             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.getPostListByDistance(page -1, size, postType, memberLongitude, memberLatitude, description, searchKeyword, searchValue, memberDetails.getMember());
+    }
+
     @PutMapping(value = "/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "게시글 수정하기", description = "내가 작성한 게시글 하나를 수정합니다")
     public ResponseEntity<ResponseDto> updatePost(@PathVariable Long postId,

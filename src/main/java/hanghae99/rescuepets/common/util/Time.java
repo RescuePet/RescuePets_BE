@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class Time {
-
     public static String chatTime(LocalDateTime time) {
         String timeStr = "";
         LocalDate day = time.toLocalDate();
