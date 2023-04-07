@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.memberpet.service;
 
+import hanghae99.rescuepets.comment.repository.CommentRepository;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.*;
@@ -35,6 +36,7 @@ public class PostService {
     private final ScrapRepository scrapRepository;
     private final PostLinkRepository postLinkRepository;
     private final S3Uploader s3Uploader;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public ResponseEntity<ResponseDto> createPost(PostRequestDto requestDto, Member member) {
@@ -117,7 +119,7 @@ public class PostService {
         List<PostResponseDto> dtoList = new ArrayList<>();
         for (Post post : postList) {
             if(post.getIsDeleted()){continue;}
-            PostResponseDto dto = PostResponseDto.of(post);
+            PostResponseDto dto = PostResponseDto.of(post).build();
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
@@ -143,16 +145,17 @@ public class PostService {
         if(post.getIsDeleted()){
             throw new CustomException(POST_ALREADY_DELETED);
         }
-        PostResponseDto responseDto = PostResponseDto.of(post);
-        responseDto.setLinked(postLinkRepository.findByPostId(post.getId()).isPresent());
-        responseDto.setWished(scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId()).isPresent());
-        responseDto.setWishedCount(scrapRepository.countByPostId(postId));
+        PostResponseDto.PostResponseDtoBuilder responseBuilder = PostResponseDto.of(post)
+                .isLinked(postLinkRepository.findByPostId(post.getId()).isPresent())
+                .isWished(scrapRepository.findScrapByPostIdAndMemberId(postId, member.getId()).isPresent())
+                .wishedCount(scrapRepository.countByPostId(postId))
+                .commentCount(commentRepository.countByPostId(post.getId()));
         if(post.getOpenNickname() != null){
-            if(post.getOpenNickname() == true){
-                responseDto.setNickname(post.getMember().getNickname());
+            if(post.getOpenNickname()){
+                responseBuilder.nickname(post.getMember().getNickname());
             }
         }
-        return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseDto);
+        return ResponseDto.toResponseEntity(POST_DETAIL_READING_SUCCESS, responseBuilder.build());
     }
     @Transactional
     public ResponseEntity<ResponseDto> getPostPoster(Long postId) {
