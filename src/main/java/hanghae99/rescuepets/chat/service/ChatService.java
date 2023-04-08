@@ -51,9 +51,9 @@ public class ChatService {
 
     private void reEnterRoom(boolean isHost, ChatRoom room) {
         if (isHost) {
-            room.setHostExited(false);
-        } else {
             room.setGuestExited(false);
+        } else {
+            room.setHostExited(false);
         }
     }
 
