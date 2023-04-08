@@ -34,6 +34,7 @@ public class PublicPetResponseDto {
     private Integer scrapCount;//상세
     private Boolean isInquiry;//상세
     private Integer InquiryCount;//상세
+    private Boolean isExactAddress;
 
     public static PublicPetResponseDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap) {
         String neuterYn = neuterYnChange(petInfoByAPI.getNeuterYn());
@@ -47,6 +48,7 @@ public class PublicPetResponseDto {
                 .sexCd(petInfoByAPI.getSexCd())
                 .careNm(petInfoByAPI.getCareNm())//사용
                 .officetel(petInfoByAPI.getOfficetel())
+                .isExactAddress(petInfoByAPI.getIsExactAddress())
                 .state(petInfoByAPI.getPetStateEnum().getKorean())
                 .isScrap(isScrap)
                 .build();
