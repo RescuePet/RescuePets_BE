@@ -43,5 +43,18 @@ public class PublicPetController {
                                                       @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.petInfoInquiry(desertionNo, memberDetails.getMember());
     }
+    @GetMapping("/search")
+    @Operation(summary = "공공검색", description = "ex)memberLongitude(126.972828), memberLatitude(37.556817),description(100000)/서울역(위도,경도),100km/kindCd=개")
+    public ResponseEntity<ResponseDto> getapiListByDistance(@RequestParam int page,
+                                                            @RequestParam int size,
+                                                            @RequestParam(value = "Longitude", required = false) Double Latitude,
+                                                            @RequestParam(value = "Latitude", required = false) Double Longitude,
+                                                            @RequestParam(value = "description", required = false) Double description,
+                                                            @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                                            @RequestParam(value = "searchValue", required = false) String searchValue,
+                                                            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return publicPetService.getapiListByDistance(page -1, size, Latitude, Longitude, description, searchKeyword,searchValue,memberDetails.getMember());
+    }
+
 
 }
