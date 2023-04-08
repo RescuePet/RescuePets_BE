@@ -85,25 +85,25 @@ public class MemberController {
     public ResponseEntity<ResponseDto> setDefault(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.setDefault(memberDetails.getMember());
     }
-//
-//    @Operation(summary = "회원목록보기")
-//    @GetMapping(value = "/member/list")
-//    public ResponseEntity<ResponseDto> getMemberList(@RequestParam int page,
-//                                                     @RequestParam int size,
-//                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return memberService.getMemberList(page, size, memberDetails.getMember());
-//    }
-//    @Operation(summary = "회원닉네임으로 검색하기", description = "원하는 키워드로 검색하면 해당 키워드를 닉네임에 포함하는 모든 회원을 조회해 줍니다. 예를들어 하늘을 검색하면 파란하늘, 검은하늘, 붉은하늘을 모두 보여줍니다.")
-//    @GetMapping(value = "/member/list/{memberId}")
-//    public ResponseEntity<ResponseDto> findMember(@RequestParam int page,
-//                                                  @RequestParam int size,
-//                                                  @RequestBody MemberFindRequestDto requestDto,
-//                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return memberService.findMember(page, size, requestDto.getKeyword(), memberDetails.getMember());
-//    }
-//    @Operation(summary = "회원등급수정")
-//    @PutMapping(value = "/member/role")
-//    public ResponseEntity<ResponseDto> memberRoleChange(@ModelAttribute MemberRoleRequestDto memberRoleRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return memberService.memberRoleChange(memberRoleRequestDto, memberDetails.getMember());
-//    }
+
+    @Operation(summary = "회원목록보기")
+    @GetMapping(value = "/member/list")
+    public ResponseEntity<ResponseDto> getMemberList(@RequestParam int page,
+                                                     @RequestParam int size,
+                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.getMemberList(page-1, size, memberDetails.getMember());
+    }
+    @Operation(summary = "회원닉네임으로 검색하기", description = "원하는 키워드로 검색하면 해당 키워드를 닉네임에 포함하는 모든 회원을 조회해 줍니다. 예를들어 하늘을 검색하면 파란하늘, 검은하늘, 붉은하늘을 모두 보여줍니다.")
+    @GetMapping(value = "/member/list/{memberId}")
+    public ResponseEntity<ResponseDto> findMember(@RequestParam int page,
+                                                  @RequestParam int size,
+                                                  @RequestBody MemberFindRequestDto requestDto,
+                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.findMember(page-1, size, requestDto.getKeyword(), memberDetails.getMember());
+    }
+    @Operation(summary = "회원등급수정")
+    @PutMapping(value = "/member/role")
+    public ResponseEntity<ResponseDto> memberRoleChange(@ModelAttribute MemberRoleRequestDto memberRoleRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.memberRoleChange(memberRoleRequestDto, memberDetails.getMember());
+    }
 }

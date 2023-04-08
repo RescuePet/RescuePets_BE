@@ -11,7 +11,6 @@ import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
 
-import hanghae99.rescuepets.memberpet.dto.PostShortResponseDto;
 import hanghae99.rescuepets.report.repository.ReportRepository;
 import hanghae99.rescuepets.report.service.SuspensionLogic;
 import lombok.RequiredArgsConstructor;
@@ -161,49 +160,62 @@ public class MemberService {
 
         return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
     }
-//
-//    @Transactional
-//    public ResponseEntity<ResponseDto> getMemberList(int page, int size, Member member) {
-//        List<MemberResponseDto> dtoList = new ArrayList<>();
-//        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
-//            Pageable pageable = PageRequest.of(page, size);
-//            Page<Member> memberList = memberRepository.findAllOrderByCreatedAtDesc(pageable);
-//            for (Member memberTemp : memberList) {
-//                MemberResponseDto dto = new MemberResponseDto(memberTemp);
-//                dtoList.add(dto);
-//            }
-//        } else {
-//            throw new CustomException(UNAUTHORIZED_MANAGER);
-//        }
-//        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
-//    }
-//
-//    @Transactional
-//    public ResponseEntity<ResponseDto> findMember(int page, int size, String keyword, Member member) {
-//        List<MemberResponseDto> dtoList = new ArrayList<>();
-//        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
-//            Pageable pageable = PageRequest.of(page, size);
-//            Page<Member> memberList = memberRepository.findByNicknameContaining(keyword, pageable);
-//            for (Member memberTemp : memberList) {
-//                MemberResponseDto dto = new MemberResponseDto(memberTemp);
-//                dtoList.add(dto);
-//            }
-//        } else {
-//            throw new CustomException(UNAUTHORIZED_MANAGER);
-//        }
-//        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
-//    }
-//
-//    @Transactional
-//    public ResponseEntity<ResponseDto> memberRoleChange(MemberRoleRequestDto memberRoleRequestDto, Member member) {
-//        Member memberTemp = memberRepository.findById(memberRoleRequestDto.getMemberId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
-//        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
-//            memberTemp.setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
-//        }else{
-//            throw new CustomException(UNAUTHORIZED_MANAGER);
-//        }
-////    변수명 바꿀 예정
-//        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
-//    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> getMemberList(int page, int size, Member member) {
+        List<MemberResponseDto> dtoList = new ArrayList<>();
+        if (true/*member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER*/) {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Member> memberList = memberRepository.findByOrderByCreatedAtDesc(pageable);
+            for (Member memberTemp : memberList) {
+                MemberResponseDto dto = new MemberResponseDto(memberTemp);
+                dtoList.add(dto);
+            }
+        } else {
+            throw new CustomException(UNAUTHORIZED_MANAGER);
+        }
+        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> findMember(int page, int size, String keyword, Member member) {
+        List<MemberResponseDto> dtoList = new ArrayList<>();
+        if (true/*member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER*/) {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Member> memberList = memberRepository.findByNicknameContaining(keyword, pageable);
+            for (Member memberTemp : memberList) {
+                MemberResponseDto dto = new MemberResponseDto(memberTemp);
+                dtoList.add(dto);
+            }
+        } else {
+            throw new CustomException(UNAUTHORIZED_MANAGER);
+        }
+        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> memberRoleChange(MemberRoleRequestDto memberRoleRequestDto, Member member) {
+        Optional<Member> memberOptional = memberRepository.findByNickname(memberRoleRequestDto.getNickname());
+        if (memberOptional.isEmpty()){
+            throw new CustomException(MEMBER_NOT_FOUND);
+        }
+        if (memberRoleRequestDto.getNickname().equals(member.getNickname())){
+            throw new CustomException(SELF_REFERENCE_NOT_ALLOWED);
+        }
+        if (member.getMemberRoleEnum() == ADMIN) {
+            if(memberOptional.get().getMemberRoleEnum().equals(ADMIN)){
+                throw new CustomException(NOT_ALLOWED_GRADE);
+            }
+            memberOptional.get().setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
+        }else if( member.getMemberRoleEnum() == MANAGER){
+            if(memberOptional.get().getMemberRoleEnum().equals(ADMIN)||memberOptional.get().getMemberRoleEnum().equals(MANAGER)){
+                throw new CustomException(NOT_ALLOWED_GRADE);
+            }
+            memberOptional.get().setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
+        }else{
+            throw new CustomException(UNAUTHORIZED_MANAGER);
+        }
+        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
+    }
 }
 

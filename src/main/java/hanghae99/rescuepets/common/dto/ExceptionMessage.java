@@ -29,6 +29,7 @@ public enum ExceptionMessage {
     /* 403 FORBIDDEN : 권한 없음 */
     USER_FORBIDDEN(FORBIDDEN, "실행할 수 없습니다."),
     PROFANITY_CHECK(FORBIDDEN, "닉네임에는 비속어를 포함할 수 없습니다."),
+    NOT_ALLOWED_GRADE(FORBIDDEN, "해당 등급설정에 대한 권한이 없습니다."),
 
 
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
@@ -50,6 +51,7 @@ public enum ExceptionMessage {
     DUPLICATE_RESOURCE_PET_INFO_INQUIRY(CONFLICT, "해당 유기동물에 문의한 내역이 존재합니다"),
     DUPLICATE_NICKNAME(CONFLICT,"중복된 닉네임이 존재합니다."),
     DUPLICATE_EMAIL(CONFLICT,"중복된 이메일이 존재합니다."),
+    SELF_REFERENCE_NOT_ALLOWED(CONFLICT,"자기 자신을 대상으로 지정할 수 없습니다."),
     ALREADY_SCRAP(CONFLICT, "이미 스크랩되었습니다."),
     ALREADY_REPORT(CONFLICT, "이미 신고되었습니다.");
 
