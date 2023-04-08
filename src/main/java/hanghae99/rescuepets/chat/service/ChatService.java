@@ -12,7 +12,9 @@ import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.entity.Chat;
 import hanghae99.rescuepets.common.entity.ChatRoom;
 import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.NotificationType;
 import hanghae99.rescuepets.member.repository.MemberRepository;
+import hanghae99.rescuepets.sse.service.SseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -28,6 +30,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
     private final SimpMessagingTemplate template;
+    private final SseService sseService;
 
     @Transactional
     public void createChat(String roomId, ChatRequestDto dto) {
@@ -40,6 +43,7 @@ public class ChatService {
         template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(dto, sender));
         setChatCount(isHost, room);
         reEnterRoom(isHost, room);
+        sseService.send(getPartner(isHost, room), NotificationType.CHAT, sender.getNickname() + "님이 새로운 채팅을 보냈어요");
     }
 
     @Transactional
@@ -71,5 +75,9 @@ public class ChatService {
         } else {
             room.initHostChatCount();
         }
+    }
+
+    private Member getPartner(boolean isHost, ChatRoom room) {
+        return isHost ? room.getGuest() : room.getHost();
     }
 }
