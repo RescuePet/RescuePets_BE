@@ -5,7 +5,6 @@ import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.publicpet.service.PublicPetService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +42,7 @@ public class PublicPetController {
                                                       @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.petInfoInquiry(desertionNo, memberDetails.getMember());
     }
+
     @GetMapping("/search")
     @Operation(summary = "공공검색", description = "ex)memberLongitude(126.972828), memberLatitude(37.556817),description(100000)/서울역(위도,경도),100km/kindCd=개")
     public ResponseEntity<ResponseDto> getapiListByDistance(@RequestParam int page,
@@ -50,10 +50,10 @@ public class PublicPetController {
                                                             @RequestParam(value = "Longitude", required = false) Double Latitude,
                                                             @RequestParam(value = "Latitude", required = false) Double Longitude,
                                                             @RequestParam(value = "description", required = false) Double description,
-                                                            @RequestParam(value = "searchKeyword", required = false) String searchKeyword,
+                                                            @RequestParam(value = "searchKey", required = false) String searchKey,
                                                             @RequestParam(value = "searchValue", required = false) String searchValue,
                                                             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return publicPetService.getapiListByDistance(page -1, size, Latitude, Longitude, description, searchKeyword,searchValue,memberDetails.getMember());
+        return publicPetService.getapiListByDistance(page - 1, size, Latitude, Longitude, description, searchKey, searchValue, memberDetails.getMember());
     }
 
 
