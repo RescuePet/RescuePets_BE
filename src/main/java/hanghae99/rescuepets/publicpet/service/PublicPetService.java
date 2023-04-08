@@ -44,6 +44,9 @@ public class PublicPetService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetInfoByAPI> postPage = publicPetInfoRepository.findAll(pageable);
         List<PublicPetResponseDto> dtoList = new ArrayList<>();
+        if(postPage.getSize() == 0 ){
+            throw new CustomException(NOT_FOUND_POST);
+        }
 
         for (PetInfoByAPI petInfoByAPI : postPage) {
             Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
@@ -104,6 +107,9 @@ public class PublicPetService {
             throw new CustomException(TEST);
         }
         // 페이지 처리
+        if(postPage.getSize() == 0){
+            throw new CustomException(NOT_FOUND_POST);
+        }
 
         List<PublicPetResponseDto> postListByDistance = new ArrayList<>();
         for (PetInfoByAPI petInfoByAPI : postPage) {

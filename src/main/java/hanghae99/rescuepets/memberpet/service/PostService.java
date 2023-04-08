@@ -109,6 +109,9 @@ public class PostService {
     public ResponseEntity<ResponseDto> getPostList(int page, int size, String postType, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage = postRepository.findByPostTypeOrderByCreatedAtDesc(PostTypeEnum.valueOf(postType), pageable);
+        if(postPage.getSize() == 0){
+            throw new CustomException(UNAUTHORIZED_SAVE);
+        }
         List<PostShortResponseDto> dtoList = new ArrayList<>();
         for (Post post : postPage) {
             if (post.getIsDeleted()) {
@@ -144,6 +147,9 @@ public class PostService {
             throw new CustomException(TEST);
         }
         List<PostShortResponseDto> postListByDistance = new ArrayList<>();
+        if (postPage.getSize() == 0){
+            throw new CustomException(NOT_FOUND_POST);
+        }
         for (Post post : postPage) {
             if (post.getIsDeleted()) {
                 continue;
@@ -158,6 +164,9 @@ public class PostService {
     @Transactional
     public ResponseEntity<ResponseDto> getPostAll() {
         List<Post> postList = postRepository.findByOrderByCreatedAtDesc();
+        if(postList.size() == 0 ){
+            throw new CustomException(UNAUTHORIZED_SAVE);
+        }
         List<PostResponseDto> dtoList = new ArrayList<>();
         for (Post post : postList) {
             if (post.getIsDeleted()) {
@@ -173,6 +182,9 @@ public class PostService {
     public ResponseEntity<ResponseDto> getPostListByMember(int page, int size, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage = postRepository.findByMemberIdOrderByCreatedAtDesc(member.getId(), pageable);
+        if(postPage.getSize() == 0){
+            throw new CustomException(NOT_FOUND_POST);
+        }
         List<PostShortResponseDto> dtoList = new ArrayList<>();
         for (Post post : postPage) {
             if (post.getIsDeleted()) {
@@ -186,7 +198,7 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> getPost(Long postId, Member member) {
+    public ResponseEntity<ResponseDto> getPost(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (post.getIsDeleted()) {
             throw new CustomException(POST_ALREADY_DELETED);

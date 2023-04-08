@@ -41,6 +41,9 @@ public class ScrapService {
         Page<Scrap> scrapPages = scrapRepository.findByMemberId(member.getId(), pageable);
         List<ScrapResponseDto> dtoList = new ArrayList<>();
 
+        if(scrapPages.getSize() == 0){
+            throw new CustomException(NOT_FOUND_SCRAP);
+        }
         for (Scrap scrapPage : scrapPages) {
             if (scrapPage.getPetInfoByAPI() != null) {
                 dtoList.add(ScrapResponseDto.of("petInfo", scrapPage.getId(), scrapPage.getPetInfoByAPI()));
