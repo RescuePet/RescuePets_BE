@@ -36,8 +36,9 @@ public class PostResponseDto {
     private Integer wishedCount = 0;
     private List<PostImageResponseDto> postImages;
     private Boolean isLinked = false;
+    private Integer commentCount;
 
-    public static PostResponseDto of(Post post) {
+    public static PostResponseDto.PostResponseDtoBuilder of(Post post) {
         return PostResponseDto.builder()
                 .id(post.getId())
                 .upkind(post.getUpkind())
@@ -62,15 +63,6 @@ public class PostResponseDto {
                 .modifiedAt(post.getModifiedAt().toString())
                 .postImages(post.getPostImages().stream().map(PostImageResponseDto::of).toList())
                 .openNickname(post.getOpenNickname())
-                .postType(post.getPostType())
-                .build();
+                .postType(post.getPostType());
     }
-    public void setWished(Boolean isWished) {
-        this.isWished = isWished;
-    }
-    public void setWishedCount(Integer wishedCount) {this.wishedCount = wishedCount;}
-    public void setLinked(Boolean isLinked) {
-        this.isLinked = isLinked;
-    }
-    public void setNickname(String nickname) {this.nickname = nickname;}
 }

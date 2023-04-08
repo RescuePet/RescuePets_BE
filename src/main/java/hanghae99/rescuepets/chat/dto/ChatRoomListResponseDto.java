@@ -18,6 +18,7 @@ public class ChatRoomListResponseDto {
     private Long postId;
     private String postName;
     private SexEnum sexCd;
+    private int unreadChat;
 
     public static ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder of(ChatRoom room, Member partner) {
         return ChatRoomListResponseDto.builder()

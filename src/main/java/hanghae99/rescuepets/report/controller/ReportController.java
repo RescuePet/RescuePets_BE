@@ -1,17 +1,14 @@
 package hanghae99.rescuepets.report.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.ReportEnum;
 import hanghae99.rescuepets.common.security.MemberDetails;
-import hanghae99.rescuepets.report.dto.ReportIdRequestDto;
 import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
 import hanghae99.rescuepets.report.dto.ReportRequestDto;
 import hanghae99.rescuepets.report.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.WebDataBinder;
@@ -33,39 +30,39 @@ public class ReportController {
         return reportService.getReportAll(sortBy, memberDetails.getMember());
     }
 
-    @PostMapping(value = "/post",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportPost(@ModelAttribute ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+    @PostMapping(value = "/post")
+    public ResponseEntity<ResponseDto> reportPost(@RequestBody ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportPost(reportRequestDto, memberDetails.getMember());
     }
 
 
 
-    @DeleteMapping(value = "/post",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportPostDelete(@ModelAttribute ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportPostDelete(reportIdRequestDto,memberDetails.getMember());
+    @DeleteMapping(value = "/post/{reportId}")
+    public ResponseEntity<ResponseDto> reportPostDelete(@PathVariable Long reportId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportPostDelete(reportId,memberDetails.getMember());
     }
 
 
-    @PostMapping(value = "/comment",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportComment(@ModelAttribute ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+    @PostMapping(value = "/comment")
+    public ResponseEntity<ResponseDto> reportComment(@RequestBody ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return  reportService.reportComment(reportRequestDto,memberDetails.getMember());
     }
 
 
 
-    @DeleteMapping(value = "/comment",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportCommentDelete(@ModelAttribute ReportIdRequestDto reportIdRequestDto, @Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportCommentDelete(reportIdRequestDto, memberDetails.getMember());
+    @DeleteMapping(value = "/comment/{reportId}")
+    public ResponseEntity<ResponseDto> reportCommentDelete(@PathVariable Long reportId, @Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportCommentDelete(reportId, memberDetails.getMember());
     }
 
-    @PostMapping(value = "/member",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportMember(@ModelAttribute ReportMemberRequestDto reportMemberRequestDto,  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+    @PostMapping(value = "/member")
+    public ResponseEntity<ResponseDto> reportMember(@RequestBody ReportMemberRequestDto reportMemberRequestDto,  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportMember(reportMemberRequestDto,memberDetails.getMember());
     }
 
-    @DeleteMapping(value = "/member",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> reportMemberDelete(@ModelAttribute ReportMemberRequestDto reportMemberRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportMemberDelete(reportMemberRequestDto, memberDetails.getMember());
+    @DeleteMapping(value = "/member/{reportId}")
+    public ResponseEntity<ResponseDto> reportMemberDelete(@PathVariable Long reportId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportMemberDelete(reportId, memberDetails.getMember());
     }
 
     // value 값과 key 값 바꾸는 로직
@@ -81,3 +78,7 @@ public class ReportController {
     }
 
 }
+
+
+
+

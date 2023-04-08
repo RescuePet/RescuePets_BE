@@ -82,7 +82,7 @@ public class MemberService {
                 return ResponseDto.toResponseEntity(TIMECHECK_SUCCESS,new TimeResponseDto(timeLimits));
             }
             else{
-                member.Start();
+                member.start();
             }
         }
         jwtUtil.createToken(response, member);
@@ -94,7 +94,6 @@ public class MemberService {
         if (memberRepository.findByEmail(emailRequestDto.getEmail()).isPresent()) {
             throw new CustomException(DUPLICATE_EMAIL);
         }
-
         return ResponseDto.toResponseEntity(ACCOUNT_CHECK_SUCCESS);
     }
 

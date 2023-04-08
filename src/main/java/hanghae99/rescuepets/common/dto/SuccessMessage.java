@@ -20,6 +20,7 @@ public enum SuccessMessage {
     SCRAP_ALL_LIST_SUCCESS(HttpStatus.CREATED, "나의 스크랩 리스트 불러오기 성공"),
     POST_LINKING_SUCCESS(HttpStatus.CREATED, "링크 생성이 완료 되었습니다."),
     COMMENT_WRITING_SUCCESS(HttpStatus.CREATED, "댓글 작성이 완료 되었습니다."),
+    COMMENT_COUNT_SUCCESS(HttpStatus.OK, "댓글 갯수 반환 완료"),
 
     /* 200 OK : 성공 */
     ACCOUNT_CHECK_SUCCESS(HttpStatus.OK,"사용 가능한 아이디입니다."),
@@ -49,6 +50,7 @@ public enum SuccessMessage {
     COMMENT_DELETE_SUCCESS(HttpStatus.OK,"댓글 삭제를 완료했습니다."),
     CHAT_ROOM_LIST_SUCCESS(HttpStatus.OK, "채팅방 불러오기 성공"),
     CHAT_HISTORY_SUCCESS(HttpStatus.OK, "채팅 내역 불러오기 성공"),
+    CHAT_ROOM_EXIT_SUCCESS(HttpStatus.OK, "채팅방 나가기 성공"),
     REPORT_SUCCESS(HttpStatus.OK,"신고가 완료되었습니다"),
     TIMECHECK_SUCCESS(HttpStatus.OK, "아직 정지 시간이 풀리지 않았습니다."),
     REPORT_DELETE_SUCCESS(HttpStatus.OK,"신고삭제가 완료되었습니다");
