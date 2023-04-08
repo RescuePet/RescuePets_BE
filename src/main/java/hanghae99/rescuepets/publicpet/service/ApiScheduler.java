@@ -46,7 +46,7 @@ public class ApiScheduler {
     @Value("${kakao.api.keys}")
     private String kakaoMapKey;
 
-    @Scheduled(cron = "0 30 * * * *")
+    @Scheduled(cron = "10 54 13 * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
@@ -135,12 +135,21 @@ public class ApiScheduler {
             Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetInfoRepository.findByDesertionNo(itemObject.optString("desertionNo"));
             List<String> compareDataList = new ArrayList<>();
             if (petInfoByAPIOptional.isEmpty()) {
+                String careAddr = itemObject.optString("careAddr");
                 PetInfoByAPI petInfo = buildPetInfo(itemObject, state);
-                List<Double> latitudeandlongitude  = getLatLng(itemObject.optString("careAddr"));
-                if (latitudeandlongitude != null){
-                    petInfo.location(latitudeandlongitude.get(0),latitudeandlongitude.get(1));
+                List<Double> latitudeandlongitude = getLatLng(careAddr);
+                if (latitudeandlongitude != null) {
+                    petInfo.location(latitudeandlongitude.get(0), latitudeandlongitude.get(1), true);
+                } else {
+                    String[] careAddrParts = careAddr.split(" ");
+                    if (careAddrParts.length >= 1) {
+                        careAddr = careAddrParts[0] + " " + careAddrParts[1];
+                        latitudeandlongitude = getLatLng(careAddr);
+                        petInfo.location(latitudeandlongitude.get(0), latitudeandlongitude.get(1), false);
+                    }
                 }
                 publicPetInfoRepository.save(petInfo);
+
 
             } else {
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.get();
@@ -187,6 +196,7 @@ public class ApiScheduler {
             }
         }
     }
+
     //유지헤야할 DB
     protected PetInfoByAPI buildPetInfo(JSONObject itemObject, PetStateEnum state) {
         return PetInfoByAPI.builder()
@@ -247,7 +257,8 @@ public class ApiScheduler {
                 .compareDataKey(compareDataKey)
                 .build();
     }
-//    비교 DB 확인용 /기존 DB 저장 (PetInfoByAPI 테이블) /최종 삭제 예정
+
+    //    비교 DB 확인용 /기존 DB 저장 (PetInfoByAPI 테이블) /최종 삭제 예정
     protected PetInfoCompare buildPetInfoEntity(PetInfoByAPI petInfoByAPI, String compareDataKey) {
         return PetInfoCompare.builder()
                 .desertionNo(petInfoByAPI.getDesertionNo())
@@ -277,7 +288,8 @@ public class ApiScheduler {
                 .compareDataKey(compareDataKey)
                 .build();
     }
-    public  List<Double> getLatLng(String address) {
+
+    public List<Double> getLatLng(String address) {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
