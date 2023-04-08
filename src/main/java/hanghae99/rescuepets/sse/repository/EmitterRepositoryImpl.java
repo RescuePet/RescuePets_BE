@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 @Repository
 public class EmitterRepositoryImpl implements EmitterRepository {
 
-    private final Map<String, SseEmitter> emitterMap = new ConcurrentHashMap<>();
+    private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
     private final Map<String, Object> eventCache = new ConcurrentHashMap<>();
 
     @Override
     public SseEmitter save(String id, SseEmitter sseEmitter) {
-        emitterMap.put(id, sseEmitter);
+        emitters.put(id, sseEmitter);
         return sseEmitter;
     }
 
@@ -26,14 +26,21 @@ public class EmitterRepositoryImpl implements EmitterRepository {
     }
 
     @Override
-    public Map<String, SseEmitter> findAllStartWithById(String id) {
-        return emitterMap.entrySet().stream()
+    public Map<String, SseEmitter> findAllStartWithByMemberId(String id) {
+        return emitters.entrySet().stream()
                 .filter(entry -> Arrays.stream(entry.getKey().split("_")).findFirst().get().equals(id))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @Override
+    public Map<String, Object> findAllEventCacheStartWithByMemberId(String memberId) {
+        return emitters.entrySet().stream()
+                .filter(entry -> Arrays.stream(entry.getKey().split("_")).findFirst().get().equals(memberId))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    @Override
     public void deleteById(String id) {
-        emitterMap.remove(id);
+        emitters.remove(id);
     }
 }

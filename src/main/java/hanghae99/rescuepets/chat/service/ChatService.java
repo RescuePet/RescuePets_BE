@@ -29,21 +29,19 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
-    private final SimpMessagingTemplate template;
     private final SseService sseService;
 
     @Transactional
-    public void createChat(String roomId, ChatRequestDto dto) {
+    public Member createChat(String roomId, ChatRequestDto dto) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.CHATROOM_NOT_FOUND));
         Member sender = memberRepository.findByNickname(dto.getSender()).orElseThrow(() -> new CustomException(ExceptionMessage.UNAUTHORIZED_MEMBER));
         boolean isHost = room.isHost(sender);
 
         Chat message = Chat.of(dto, room, sender);
         chatRepository.save(message);
-        template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(dto, sender));
         setChatCount(isHost, room);
         reEnterRoom(isHost, room);
-        sseService.send(getPartner(isHost, room), NotificationType.CHAT, sender.getNickname() + "님이 새로운 채팅을 보냈어요");
+        return getPartner(isHost, room);
     }
 
     @Transactional
