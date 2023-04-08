@@ -164,7 +164,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<ResponseDto> getMemberList(int page, int size, Member member) {
         List<MemberResponseDto> dtoList = new ArrayList<>();
-        if (true/*member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER*/) {
+        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
             Pageable pageable = PageRequest.of(page, size);
             Page<Member> memberList = memberRepository.findByOrderByCreatedAtDesc(pageable);
             for (Member memberTemp : memberList) {
@@ -180,7 +180,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<ResponseDto> findMember(int page, int size, String keyword, Member member) {
         List<MemberResponseDto> dtoList = new ArrayList<>();
-        if (true/*member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER*/) {
+        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
             Pageable pageable = PageRequest.of(page, size);
             Page<Member> memberList = memberRepository.findByNicknameContaining(keyword, pageable);
             for (Member memberTemp : memberList) {
@@ -207,7 +207,7 @@ public class MemberService {
                 throw new CustomException(NOT_ALLOWED_GRADE);
             }
             memberOptional.get().setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
-        }else if( member.getMemberRoleEnum() == MANAGER){
+        }else if(member.getMemberRoleEnum() == MANAGER) {
             if(memberOptional.get().getMemberRoleEnum().equals(ADMIN)||memberOptional.get().getMemberRoleEnum().equals(MANAGER)){
                 throw new CustomException(NOT_ALLOWED_GRADE);
             }
