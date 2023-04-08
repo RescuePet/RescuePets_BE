@@ -80,4 +80,38 @@ public class PublicPetService {
                 () -> new CustomException(NOT_FOUND_PET_INFO)
         );
     }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<ResponseDto> getapiListByDistance(int page, int size,  Double Longitude, Double Latitude,
+                                                            Double description, String searchKeyword, String searchValue,Member member) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PetInfoByAPI> postPage;
+        if (Latitude != null && searchKeyword == null) {
+            postPage = publicPetInfoRepository.findApiByDistance(Longitude, Latitude, description, pageable);
+        } else if (Latitude == null && searchKeyword != null) {
+            if (searchKeyword.equals("kindCd")) {
+                postPage = publicPetInfoRepository.findApiBykindCd("%" + searchValue + "%", pageable);
+            } else {
+                postPage = publicPetInfoRepository.findApiBycareNm( "%" + searchValue + "%", pageable);
+            }
+        }else if  (Latitude != null && searchKeyword != null) {
+            if (searchKeyword.equals("kindCd")) {
+                postPage = publicPetInfoRepository.findApiByDistanceAndkindCd( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
+            } else {//kindCd
+                postPage = publicPetInfoRepository.findApiByDistanceAndcareNm( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
+            }
+        } else {
+            throw new CustomException(TEST);
+        }
+        // 페이지 처리
+
+        List<PublicPetResponseDto> postListByDistance = new ArrayList<>();
+        for (PetInfoByAPI petInfoByAPI : postPage) {
+            Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
+            PublicPetResponseDto dto = PublicPetResponseDto.of(petInfoByAPI,isScrap);
+            postListByDistance.add(dto);
+        }
+        return ResponseDto.toResponseEntity(TEST_SUCCESS, postListByDistance);
+    }
 }
+
