@@ -25,6 +25,7 @@ public enum ExceptionMessage {
     UNAUTHORIZED_ADMIN(UNAUTHORIZED, "관리자가 아닙니다."),
     UNAUTHORIZED_UPDATE_OR_DELETE(UNAUTHORIZED,"작성자만 수정/삭제할 수 있습니다."),
     UNAUTHORIZED_SAVE(UNAUTHORIZED,"작성자만 저장할 수 있습니다."),
+    UNAUTHORIZED_MANAGER(UNAUTHORIZED, "매니저 등급이 아닙니다."),
 
 
     /* 403 FORBIDDEN : 권한 없음 */
