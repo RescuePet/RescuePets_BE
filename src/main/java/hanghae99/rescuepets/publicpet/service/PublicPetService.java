@@ -83,19 +83,19 @@ public class PublicPetService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getapiListByDistance(int page, int size,  Double Longitude, Double Latitude,
-                                                            Double description, String searchKeyword, String searchValue,Member member) {
+                                                            Double description, String searchKey, String searchValue,Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PetInfoByAPI> postPage;
-        if (Latitude != null && searchKeyword == null) {
+        if (Latitude != null && searchKey == null) {
             postPage = publicPetInfoRepository.findApiByDistance(Longitude, Latitude, description, pageable);
-        } else if (Latitude == null && searchKeyword != null) {
-            if (searchKeyword.equals("kindCd")) {
+        } else if (Latitude == null && searchKey != null) {
+            if (searchKey.equals("kindCd")) {
                 postPage = publicPetInfoRepository.findApiBykindCd("%" + searchValue + "%", pageable);
             } else {
                 postPage = publicPetInfoRepository.findApiBycareNm( "%" + searchValue + "%", pageable);
             }
-        }else if  (Latitude != null && searchKeyword != null) {
-            if (searchKeyword.equals("kindCd")) {
+        }else if  (Latitude != null && searchKey != null) {
+            if (searchKey.equals("kindCd")) {
                 postPage = publicPetInfoRepository.findApiByDistanceAndkindCd( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
             } else {//kindCd
                 postPage = publicPetInfoRepository.findApiByDistanceAndcareNm( Longitude, Latitude, description, "%" + searchValue + "%", pageable);

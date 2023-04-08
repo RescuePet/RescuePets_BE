@@ -123,19 +123,19 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getPostListByDistance(int page, int size, String postType, Double memberLongitude, Double memberLatitude,
-                                                             Double description, String searchKeyword, String searchValue, Member member) {
+                                                             Double description, String searchKey, String searchValue, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage;
-        if (memberLatitude != null && searchKeyword == null) {
+        if (memberLatitude != null && searchKey == null) {
             postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, pageable);
-        } else if (memberLatitude == null && searchKeyword != null) {
-            if (searchKeyword.equals("upkind")) {
+        } else if (memberLatitude == null && searchKey != null) {
+            if (searchKey.equals("upkind")) {
                 postPage = postRepository.findPostsByUpkind(postType, searchValue, pageable);
             } else {//kindCd
                 postPage = postRepository.findPostsByKindCd(postType, "%" + searchValue + "%", pageable);
             }
-        } else if (memberLatitude != null && searchKeyword != null) {
-            if (searchKeyword.equals("upkind")) {
+        } else if (memberLatitude != null && searchKey != null) {
+            if (searchKey.equals("upkind")) {
                 postPage = postRepository.findPostsByDistanceAndUpkind(postType, memberLongitude, memberLatitude, description, searchValue, pageable);
             } else {//kindCd
                 postPage = postRepository.findPostsByDistanceAndKindCd(postType, memberLongitude, memberLatitude, description, "%" + searchValue + "%", pageable);
