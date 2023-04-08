@@ -31,20 +31,20 @@ public class MemberController {
     private final JwtUtil jwtUtil;
 
     @Operation(summary = "회원가입", description = "자세한 설명")
-    @PostMapping("member/signup")
+    @PostMapping("/member/signup")
     public ResponseEntity<ResponseDto> signup(@RequestBody @Validated SignupRequestDto signupRequestDto) {
         return memberService.signup(signupRequestDto);
 
     }
 
     @Operation(summary = "이메일 중복 확인", description = "자세한 설명")
-    @PostMapping("member/email-duplicate")
+    @PostMapping("/member/email-duplicate")
     public ResponseEntity<ResponseDto> checkEmail(@RequestBody EmailRequestDto emailRequestDto) {
         return memberService.checkEmail(emailRequestDto);
     }
 
     @Operation(summary = "닉네임 욕설 포함여부 및 중복 확인", description = "자세한 설명")
-    @PostMapping("member/nickName-duplicate")
+    @PostMapping("/member/nickName-duplicate")
     public ResponseEntity<ResponseDto> checkNickname(@RequestBody NicknameRequestDto nicknameRequestDto) {
         return memberService.checkNickname(nicknameRequestDto);
     }
@@ -63,7 +63,7 @@ public class MemberController {
     }
 
     @Operation(summary = "로그아웃")
-    @DeleteMapping("member/logout")
+    @DeleteMapping("/member/logout")
     public ResponseEntity<ResponseDto> logout(@Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.logout(memberDetails.getMember());
     }
@@ -84,5 +84,26 @@ public class MemberController {
     @PutMapping(value = "/member/default-image")
     public ResponseEntity<ResponseDto> setDefault(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.setDefault(memberDetails.getMember());
+    }
+
+    @Operation(summary = "회원목록보기")
+    @GetMapping(value = "/member/list")
+    public ResponseEntity<ResponseDto> getMemberList(@RequestParam int page,
+                                                     @RequestParam int size,
+                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.getMemberList(page-1, size, memberDetails.getMember());
+    }
+    @Operation(summary = "회원닉네임으로 검색하기", description = "원하는 키워드로 검색하면 해당 키워드를 닉네임에 포함하는 모든 회원을 조회해 줍니다. 예를들어 하늘을 검색하면 파란하늘, 검은하늘, 붉은하늘을 모두 보여줍니다.")
+    @GetMapping(value = "/member/list/{memberId}")
+    public ResponseEntity<ResponseDto> findMember(@RequestParam int page,
+                                                  @RequestParam int size,
+                                                  @RequestBody MemberFindRequestDto requestDto,
+                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.findMember(page-1, size, requestDto.getKeyword(), memberDetails.getMember());
+    }
+    @Operation(summary = "회원등급수정")
+    @PutMapping(value = "/member/role")
+    public ResponseEntity<ResponseDto> memberRoleChange(@ModelAttribute MemberRoleRequestDto memberRoleRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.memberRoleChange(memberRoleRequestDto, memberDetails.getMember());
     }
 }

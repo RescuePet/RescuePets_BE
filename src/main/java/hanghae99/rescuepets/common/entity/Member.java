@@ -3,6 +3,7 @@ package hanghae99.rescuepets.common.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.parameters.P;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Member {
+public class Member extends TimeStamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +35,7 @@ public class Member {
     @Column
     private String profileImage;
 
+    //    변수명 바꿀 예정
     @Enumerated(value = EnumType.STRING)
     @Column
     private MemberRoleEnum memberRoleEnum;
@@ -54,6 +56,10 @@ public class Member {
     public void setKakao(Long kakaoId, String profileImage) {
         this.kakaoId = kakaoId;
         this.profileImage = profileImage;
+    }
+//    변수명 바꿀 예정
+    public void setMemberRoleEnum(String memberRoleEnum){
+
     }
 
     public void withdrawal() {

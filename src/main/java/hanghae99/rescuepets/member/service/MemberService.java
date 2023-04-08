@@ -3,9 +3,7 @@ package hanghae99.rescuepets.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.common.entity.Member;
-import hanghae99.rescuepets.common.entity.MemberRoleEnum;
-import hanghae99.rescuepets.common.entity.RefreshToken;
+import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.profanityFilter.ProfanityFiltering;
 import hanghae99.rescuepets.common.s3.S3Uploader;
@@ -16,6 +14,9 @@ import hanghae99.rescuepets.member.repository.RefreshTokenRepository;
 import hanghae99.rescuepets.report.repository.ReportRepository;
 import hanghae99.rescuepets.report.service.SuspensionLogic;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,10 +24,14 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.ADMIN;
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.MANAGER;
 
 @Service
 @RequiredArgsConstructor
@@ -152,6 +157,63 @@ public class MemberService {
         member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
         member.updateImage(defaultImage);
 
+        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> getMemberList(int page, int size, Member member) {
+        List<MemberResponseDto> dtoList = new ArrayList<>();
+        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Member> memberList = memberRepository.findByOrderByCreatedAtDesc(pageable);
+            for (Member memberTemp : memberList) {
+                MemberResponseDto dto = new MemberResponseDto(memberTemp);
+                dtoList.add(dto);
+            }
+        } else {
+            throw new CustomException(UNAUTHORIZED_MANAGER);
+        }
+        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> findMember(int page, int size, String keyword, Member member) {
+        List<MemberResponseDto> dtoList = new ArrayList<>();
+        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Member> memberList = memberRepository.findByNicknameContaining(keyword, pageable);
+            for (Member memberTemp : memberList) {
+                MemberResponseDto dto = new MemberResponseDto(memberTemp);
+                dtoList.add(dto);
+            }
+        } else {
+            throw new CustomException(UNAUTHORIZED_MANAGER);
+        }
+        return ResponseDto.toResponseEntity(MEMBER_LIST_SUCCESS, dtoList);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> memberRoleChange(MemberRoleRequestDto memberRoleRequestDto, Member member) {
+        Optional<Member> memberOptional = memberRepository.findByNickname(memberRoleRequestDto.getNickname());
+        if (memberOptional.isEmpty()){
+            throw new CustomException(MEMBER_NOT_FOUND);
+        }
+        if (memberRoleRequestDto.getNickname().equals(member.getNickname())){
+            throw new CustomException(SELF_REFERENCE_NOT_ALLOWED);
+        }
+        if (member.getMemberRoleEnum() == ADMIN) {
+            if(memberOptional.get().getMemberRoleEnum().equals(ADMIN)){
+                throw new CustomException(NOT_ALLOWED_GRADE);
+            }
+            memberOptional.get().setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
+        }else if(member.getMemberRoleEnum() == MANAGER) {
+            if(memberOptional.get().getMemberRoleEnum().equals(ADMIN)||memberOptional.get().getMemberRoleEnum().equals(MANAGER)){
+                throw new CustomException(NOT_ALLOWED_GRADE);
+            }
+            memberOptional.get().setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
+        }else{
+            throw new CustomException(UNAUTHORIZED_MANAGER);
+        }
         return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
     }
 }

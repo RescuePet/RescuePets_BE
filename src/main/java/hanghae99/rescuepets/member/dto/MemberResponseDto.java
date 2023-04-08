@@ -1,6 +1,9 @@
 package hanghae99.rescuepets.member.dto;
 
 import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.Post;
+import hanghae99.rescuepets.memberpet.dto.PostImageResponseDto;
+import hanghae99.rescuepets.memberpet.dto.PostResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
