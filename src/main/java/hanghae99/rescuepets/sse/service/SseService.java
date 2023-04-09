@@ -27,7 +27,7 @@ public class SseService {
 
     public SseEmitter subscribe(Member member) {
         String emitterId = makeTimeIncludeId(member.getId());
-        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
+        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(0L));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
