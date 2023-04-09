@@ -7,6 +7,5 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @AllArgsConstructor
 public class MissingPosterRequestDto {
-    private String sample;
     private MultipartFile postPoster;
 }
