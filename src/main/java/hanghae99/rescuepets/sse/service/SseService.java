@@ -23,11 +23,11 @@ public class SseService {
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 60 * 1000L;
+    private static final Long DEFAULT_TIMEOUT = 10 * 1000L;
 
     public SseEmitter subscribe(Member member) {
         String emitterId = makeTimeIncludeId(member.getId());
-        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(0L));
+        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
