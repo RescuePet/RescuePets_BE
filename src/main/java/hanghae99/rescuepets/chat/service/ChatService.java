@@ -29,7 +29,6 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
-    private final SseService sseService;
 
     @Transactional
     public Member createChat(String roomId, ChatRequestDto dto) {

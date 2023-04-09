@@ -27,13 +27,13 @@ public class SseService {
 
     public SseEmitter subscribe(Member member) {
         String emitterId = makeTimeIncludeId(member.getId());
-        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
+        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(0L));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
 
         String eventId = makeTimeIncludeId(member.getId());
-        sendToClient(emitter, emitterId, eventId, "EventStream Created. [userId = " + member.getId() + "]");
+        sendToClient(emitter, eventId, emitterId, "EventStream Created. [userId = " + member.getId() + "]");
 
         return emitter;
     }
