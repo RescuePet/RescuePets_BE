@@ -101,7 +101,7 @@ public class PublicPetService {
                 postPage = publicPetInfoRepository.findApiByDistanceAndcareNm( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
             }
         } else {
-            throw new CustomException(TEST);
+            throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
         }
         // 페이지 처리
 
@@ -111,7 +111,7 @@ public class PublicPetService {
             PublicPetResponseDto dto = PublicPetResponseDto.of(petInfoByAPI,isScrap);
             postListByDistance.add(dto);
         }
-        return ResponseDto.toResponseEntity(TEST_SUCCESS, postListByDistance);
+        return ResponseDto.toResponseEntity(PET_INFO_SEARCH_SUCCESS, postListByDistance);
     }
 }
 

@@ -50,6 +50,7 @@ public enum ExceptionMessage {
     NOT_FOUND_PET_INFO_SCRAP_MEMBER(NOT_FOUND,"요청하신 회원은 해당 유기 동물이 스크랩되어있지 않습니다."),
     NOT_FOUND_SCRAP(NOT_FOUND,"스크랩되어있지 않습니다."),
     NOT_FOUND_REPORT(NOT_FOUND,"신고가 되어있지 않습니다."),
+    NOT_FOUND_SEARCH_KEYWORD(BAD_REQUEST, "검색 내용을 찾을 수 없습니다."),
 
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
