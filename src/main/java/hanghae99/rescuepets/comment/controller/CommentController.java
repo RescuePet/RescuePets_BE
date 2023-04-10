@@ -5,9 +5,11 @@ import hanghae99.rescuepets.comment.service.CommentService;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ExceptionMessage;
 import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.entity.NotificationType;
 import hanghae99.rescuepets.common.entity.Post;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.memberpet.repository.PostRepository;
+import hanghae99.rescuepets.sse.service.SseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,6 +27,7 @@ import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
 public class CommentController {
     private final CommentService commentService;
     private final PostRepository postRepository;
+    private final SseService sseService;
     @GetMapping("/member")
     @Operation(summary = "내가 쓴 댓글 불러오기", description = "")
     public ResponseEntity<ResponseDto> getCommentListByMember(@RequestParam int page,

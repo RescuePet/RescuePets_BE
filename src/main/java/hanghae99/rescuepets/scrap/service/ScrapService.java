@@ -10,6 +10,7 @@ import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
 import hanghae99.rescuepets.scrap.dto.ScrapListResponseDto;
 import hanghae99.rescuepets.scrap.dto.ScrapResponseDto;
 import hanghae99.rescuepets.scrap.repository.ScrapRepository;
+import hanghae99.rescuepets.sse.service.SseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +34,7 @@ public class ScrapService {
     private final ScrapRepository scrapRepository;
     private final PostRepository postRepository;
     private final PublicPetInfoRepository publicPetInfoRepository;
+    private final SseService sseService;
 
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getMyScrapList(int page, int size, String sortBy, Member member) {
@@ -59,6 +61,7 @@ public class ScrapService {
             throw new CustomException(ExceptionMessage.ALREADY_SCRAP);
         }
         scrapRepository.save(new Scrap(member, post));
+        sseService.send(post.getMember(), NotificationType.SCRAP, member.getNickname() + "님이 스크랩 하였습니다.");
         return ResponseDto.toResponseEntity(SuccessMessage.POST_SCRAP_SUCCESS);
     }
 
