@@ -26,33 +26,56 @@ public class SseService {
     private static final Long DEFAULT_TIMEOUT = 60 * 1000L;
 
     public SseEmitter subscribe(Member member) {
-        String id = member.getId() + "_" + System.currentTimeMillis();
-        SseEmitter emitter = emitterRepository.save(id, new SseEmitter(DEFAULT_TIMEOUT));
-        emitter.onCompletion(() -> emitterRepository.deleteById(id));
-        emitter.onTimeout(() -> emitterRepository.deleteById(id));
-        sendToClient(emitter, id, "EventStream Created. [userId = " + member.getId() + "]");
+        String emitterId = makeTimeIncludeId(member.getId());
+        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
+
+        emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
+        emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
+
+        String eventId = makeTimeIncludeId(member.getId());
+        sendToClient(emitter, emitterId, eventId, "EventStream Created. [userId = " + member.getId() + "]");
 
         return emitter;
     }
 
-    public void send(Member receiver, NotificationType notificationType, String message) {
-        Notification notification = notificationRepository.save(Notification.createNotification(receiver, notificationType, message));
-        Map<String, SseEmitter> sseEmitterMap = emitterRepository.findAllStartWithById(String.valueOf(receiver.getId()));
+    public void send(Member member, NotificationType notificationType, String message) {
+        Notification notification = notificationRepository.save(Notification.createNotification(member, notificationType, message));
+
+        String receiverId = String.valueOf(member.getId());
+        String eventId = receiverId + "_" + System.currentTimeMillis();
+
+        Map<String, SseEmitter> sseEmitterMap = emitterRepository.findAllStartWithByMemberId(eventId);
         sseEmitterMap.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, notification);
-                    sendToClient(emitter, key, NotificationResponseDto.of(notification));
+                    sendToClient(emitter, eventId, key, NotificationResponseDto.of(notification));
                 }
         );
     }
 
-    private void sendToClient(SseEmitter emitter, String id, Object data) {
+    private boolean hasLostData(String lastEventId) {
+        return !lastEventId.isEmpty();
+    }
+
+    private void sendLostData(String lastEventID, Long memberId, String emitterId, SseEmitter emitter) {
+
+        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberId(String.valueOf(memberId));
+        eventCaches.entrySet().stream()
+                .filter(entry -> lastEventID.compareTo(entry.getKey()) < 0)
+                .forEach(entry -> sendToClient(emitter, entry.getKey(), emitterId, entry.getValue()));
+    }
+
+    private String makeTimeIncludeId(Long memberId) {
+        return memberId + "_" + System.currentTimeMillis();
+    }
+
+    private void sendToClient(SseEmitter emitter, String eventId, String emitterId, Object data) {
         try {
             emitter.send(SseEmitter.event()
-                    .id(id)
+                    .id(eventId)
                     .data(data));
         } catch (IOException e) {
-            emitterRepository.deleteById(id);
+            emitterRepository.deleteById(emitterId);
             throw new CustomException(CONNECTION_ERROR);
         }
     }
