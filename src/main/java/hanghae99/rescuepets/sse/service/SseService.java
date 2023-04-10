@@ -9,6 +9,7 @@ import hanghae99.rescuepets.sse.repository.EmitterRepository;
 import hanghae99.rescuepets.sse.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -23,11 +24,11 @@ public class SseService {
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 10 * 1000L;
+    private static final Long DEFAULT_TIMEOUT = 60 * 1000L;
 
     public SseEmitter subscribe(Member member) {
         String emitterId = makeTimeIncludeId(member.getId());
-        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(0L));
+        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
@@ -51,18 +52,6 @@ public class SseService {
                     sendToClient(emitter, eventId, key, NotificationResponseDto.of(notification));
                 }
         );
-    }
-
-    private boolean hasLostData(String lastEventId) {
-        return !lastEventId.isEmpty();
-    }
-
-    private void sendLostData(String lastEventID, Long memberId, String emitterId, SseEmitter emitter) {
-
-        Map<String, Object> eventCaches = emitterRepository.findAllEventCacheStartWithByMemberId(String.valueOf(memberId));
-        eventCaches.entrySet().stream()
-                .filter(entry -> lastEventID.compareTo(entry.getKey()) < 0)
-                .forEach(entry -> sendToClient(emitter, entry.getKey(), emitterId, entry.getValue()));
     }
 
     private String makeTimeIncludeId(Long memberId) {
