@@ -38,13 +38,13 @@ public class SseService {
         return emitter;
     }
 
-    public void send(Member member, NotificationType notificationType, String message) {
-        Notification notification = notificationRepository.save(Notification.createNotification(member, notificationType, message));
+    public void send(Member receiver, NotificationType notificationType, String message) {
+        Notification notification = notificationRepository.save(Notification.createNotification(receiver, notificationType, message));
 
-        String receiverId = String.valueOf(member.getId());
+        String receiverId = String.valueOf(receiver.getId());
         String eventId = receiverId + "_" + System.currentTimeMillis();
 
-        Map<String, SseEmitter> sseEmitterMap = emitterRepository.findAllStartWithByMemberId(eventId);
+        Map<String, SseEmitter> sseEmitterMap = emitterRepository.findAllStartWithByMemberId(receiverId);
         sseEmitterMap.forEach(
                 (key, emitter) -> {
                     emitterRepository.saveEventCache(key, notification);
