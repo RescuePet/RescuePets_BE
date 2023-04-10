@@ -29,14 +29,12 @@ public class ChatController {
 
     private final ChatService chatService;
     private final SimpMessagingTemplate template;
-    private final SseService sseService;
 
     @MessageMapping("/{roomId}")
     @SendTo("/sub/{roomId}")
     public void enter(@DestinationVariable String roomId, ChatRequestDto requestDto) {
-        Member receiver = chatService.createChat(roomId, requestDto);
+        chatService.createChat(roomId, requestDto);
         template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(requestDto));
-        sseService.send(receiver, NotificationType.CHAT, requestDto.getSender() + "님이 새로운 채팅을 보냈어요");
     }
 
     @GetMapping("/room/{roomId}")

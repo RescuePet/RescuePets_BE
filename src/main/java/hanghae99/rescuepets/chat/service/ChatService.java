@@ -29,9 +29,10 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
+    private final SseService sseService;
 
     @Transactional
-    public Member createChat(String roomId, ChatRequestDto dto) {
+    public void createChat(String roomId, ChatRequestDto dto) {
         ChatRoom room = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(ExceptionMessage.CHATROOM_NOT_FOUND));
         Member sender = memberRepository.findByNickname(dto.getSender()).orElseThrow(() -> new CustomException(ExceptionMessage.UNAUTHORIZED_MEMBER));
         boolean isHost = room.isHost(sender);
@@ -40,7 +41,7 @@ public class ChatService {
         chatRepository.save(message);
         setChatCount(isHost, room);
         reEnterRoom(isHost, room);
-        return getPartner(isHost, room);
+        sseService.send(getPartner(isHost, room), NotificationType.CHAT, sender.getNickname() + "님이 새로운 채팅을 보냈어요");
     }
 
     @Transactional
