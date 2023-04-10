@@ -11,15 +11,19 @@ import lombok.Getter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class PostLinkResponseDto {
+public class PostCoordinatesResponseDto {
     private Long memberId;
     private Long linkedPostId;
+    private String linkedPostLongitude;
+    private String linkedPostLatitude;
     private boolean isLinkedByMe = false;
 
-    public static PostLinkResponseDto of (PostLink postLink) {
-        return PostLinkResponseDto.builder()
+    public static PostCoordinatesResponseDto of (PostLink postLink, Post linkedPost) {
+        return PostCoordinatesResponseDto.builder()
                 .memberId(postLink.getMember().getId())
                 .linkedPostId(postLink.getLinkedPostId())
+                .linkedPostLongitude(linkedPost.getHappenLongitude())
+                .linkedPostLatitude(linkedPost.getHappenLatitude())
                 .build();
     }
     public void setLinkedByMe(boolean isLinkedByMe) {
