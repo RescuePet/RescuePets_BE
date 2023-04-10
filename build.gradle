@@ -58,11 +58,6 @@ dependencies {
     //sentry
     implementation 'io.sentry:sentry-spring-boot-starter:6.17.0'
     implementation 'io.sentry:sentry-logback:6.17.0'
-
-    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
-    implementation 'net.logstash.logback:logstash-logback-encoder:7.3'
-    implementation 'ch.qos.logback:logback-classic:1.4.6'
-    implementation 'ch.qos.logback:logback-access:1.4.6'
 }
 jar {
     enabled = false

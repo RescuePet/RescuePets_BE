@@ -16,14 +16,7 @@
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder" />
     </appender>
-    <appender name="ACCESS" class="ch.qos.logback.access.servlet.TeeFilter">
-        <appender-ref ref="Sentry" />
-    </appender>
-    <logger name="org.apache.catalina.access" level="INFO">
-        <appender-ref ref="ACCESS" />
-    </logger>
 
     <!-- Enable the Console and Sentry appenders, Console is provided as an example
  of a non-Sentry logger that is set to a different logging threshold -->
