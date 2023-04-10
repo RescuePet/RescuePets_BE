@@ -118,7 +118,7 @@ public class PostController {
         return postService.getLink(postId, memberDetails.getMember());
     }
     @GetMapping(value = "/links/Coordinates/{postId}")
-    @Operation(summary = "게시글에서 생성된 링크의 좌표들을 일괄 조회합니다", description = "해당 게시글에서 생성된 링크들을 조회합니다. 게시글에서 생성된 링크가 전혀 없는지, 하나라도 있는지 사용자에게 표시해줍니다.")
+    @Operation(summary = "게시글에서 생성된 링크의 좌표들을 일괄 조회합니다", description = "생성된 링크 대상 게시물의 좌표를 리스트로 보여줍니다")
     public ResponseEntity<ResponseDto> getLinkCoordinates(@PathVariable Long postId,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.getLinkCoordinates(postId, memberDetails.getMember());
