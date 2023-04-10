@@ -60,7 +60,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    @Operation(summary = "특정 게시글 상세 조회하기", description = "URI에 명시된 PostId를 기반으로 특정 게시글을 조회합니다")
+    @Operation(summary = "게시글 상세 조회하기", description = "URI에 명시된 PostId를 기반으로 특정 게시글을 조회합니다")
     public ResponseEntity<ResponseDto> getPost(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.getPost(postId, memberDetails.getMember());
     }
