@@ -141,7 +141,7 @@ public class PostService {
                 postPage = postRepository.findPostsByDistanceAndKindCd(postType, memberLongitude, memberLatitude, description, "%" + searchValue + "%", pageable);
             }
         } else {
-            throw new CustomException(TEST);
+            throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
         }
         List<PostShortResponseDto> postListByDistance = new ArrayList<>();
         for (Post post : postPage) {
@@ -152,7 +152,7 @@ public class PostService {
             dto.setWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent());
             postListByDistance.add(dto);
         }
-        return ResponseDto.toResponseEntity(TEST_SUCCESS, postListByDistance);
+        return ResponseDto.toResponseEntity(POST_SEARCH_SUCCESS, postListByDistance);
     }
 
     @Transactional
