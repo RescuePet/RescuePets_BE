@@ -274,7 +274,7 @@ public class PostService {
     @Scheduled(cron = "0 0 3 * * *")
     @Transactional
     public void periodicDeletePost() {
-        List<Post> posts = postRepository.findALlByIsDeletedTrue();
+        List<Post> posts = postRepository.findAllByIsDeletedTrue();
         LocalDateTime currentDate = LocalDateTime.now();
         for (Post post : posts) {
             if (ChronoUnit.DAYS.between(post.getModifiedAt(), currentDate) >= 364) {
@@ -285,18 +285,17 @@ public class PostService {
 
     @Transactional
     public ResponseEntity<ResponseDto> createLink(Long postId, PostLinkRequestDto requestDto, Member member) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new NullPointerException("1단계에서 막힘ㅋ"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         PostLink postLink = new PostLink(post, requestDto.getLinkedPostId(), member);
         if ((postLinkRepository.findByPostAndMemberIdAndLinkedPostId(post, member.getId(), requestDto.getLinkedPostId())).isPresent()) {
-            throw new NullPointerException("이미 존재하지롱");
+            throw new CustomException(ALREADY_LINKED);
         }
         postLinkRepository.save(postLink);
         PostLinkRequestDto requestDtoTemp = new PostLinkRequestDto(postId);
         if (postId.equals(requestDto.getLinkedPostId())) {
-            //사실 프론트 단에서 이런일은 미연에 방지할 것입니다. 넣을지 말지 고민 중
-            throw new NullPointerException("자기 자신한테는 연결할 수 없지롱");
+            throw new CustomException(SAME_POST_NOT_ALLOWED);
         }
-        Post postTemp = postRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new NullPointerException("3단계에서 막힘ㅋ"));
+        Post postTemp = postRepository.findById(requestDto.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         postLinkRepository.save(new PostLink(postTemp, requestDtoTemp.getLinkedPostId(), member));
         return ResponseDto.toResponseEntity(POST_LINKING_SUCCESS);
     }
@@ -308,6 +307,22 @@ public class PostService {
         List<PostLinkResponseDto> dtoList = new ArrayList<>();
         for (PostLink postLink : postLinkList) {
             PostLinkResponseDto responseDto = PostLinkResponseDto.of(postLink);
+            if (member.getNickname().equals(postLink.getMember().getNickname())) {
+                responseDto.setLinkedByMe(true);
+            }
+            dtoList.add(responseDto);
+        }
+        return ResponseDto.toResponseEntity(POST_LINK_READING_SUCCESS, dtoList);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> getLinkCoordinates(Long postId, Member member) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        List<PostLink> postLinkList = postLinkRepository.findAllByPost(post);
+        List<PostCoordinatesResponseDto> dtoList = new ArrayList<>();
+        for (PostLink postLink : postLinkList) {
+            Post linkedPost = postRepository.findById(postLink.getLinkedPostId()).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+            PostCoordinatesResponseDto responseDto = PostCoordinatesResponseDto.of(postLink, linkedPost);
             if (member.getNickname().equals(postLink.getMember().getNickname())) {
                 responseDto.setLinkedByMe(true);
             }

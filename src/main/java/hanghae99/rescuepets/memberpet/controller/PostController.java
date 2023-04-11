@@ -60,7 +60,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    @Operation(summary = "특정 게시글 상세 조회하기", description = "URI에 명시된 PostId를 기반으로 특정 게시글을 조회합니다")
+    @Operation(summary = "게시글 상세 조회하기", description = "URI에 명시된 PostId를 기반으로 특정 게시글을 조회합니다")
     public ResponseEntity<ResponseDto> getPost(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.getPost(postId, memberDetails.getMember());
     }
@@ -116,6 +116,12 @@ public class PostController {
     public ResponseEntity<ResponseDto> getLink(@PathVariable Long postId,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.getLink(postId, memberDetails.getMember());
+    }
+    @GetMapping(value = "/links/Coordinates/{postId}")
+    @Operation(summary = "게시글에서 생성된 링크의 좌표들을 일괄 조회합니다", description = "생성된 링크 대상 게시물의 좌표를 리스트로 보여줍니다")
+    public ResponseEntity<ResponseDto> getLinkCoordinates(@PathVariable Long postId,
+                                                  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.getLinkCoordinates(postId, memberDetails.getMember());
     }
     @DeleteMapping(value = "/links/{postId}")
     @Operation(summary = "게시글에서 내가 만든 링크를 삭제합니다", description = "해당 게시글에서 생성된 링크 중, 내가 생성한 링크를 일괄 삭제합니다. 연결한 반대편 게시글에서도 링크가 같이 삭제됩니다.")

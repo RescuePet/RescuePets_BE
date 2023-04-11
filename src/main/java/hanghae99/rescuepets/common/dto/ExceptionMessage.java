@@ -60,6 +60,8 @@ public enum ExceptionMessage {
     DUPLICATE_EMAIL(CONFLICT,"중복된 이메일이 존재합니다."),
     SELF_REFERENCE_NOT_ALLOWED(CONFLICT,"자기 자신을 대상으로 지정할 수 없습니다."),
     ALREADY_SCRAP(CONFLICT, "이미 스크랩되었습니다."),
+    SAME_POST_NOT_ALLOWED(CONFLICT, "링크 시작점과 같은 게시물을 대상으로 지정할 수 없습니다."),
+    ALREADY_LINKED(CONFLICT, "이미 존재하는 링크입니다."),
     ALREADY_REPORT(CONFLICT, "이미 신고되었습니다.");
 
     private final HttpStatus httpStatus;

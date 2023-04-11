@@ -25,7 +25,6 @@ import javax.transaction.Transactional;
 @Service
 @RequiredArgsConstructor
 public class ChatService {
-
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;

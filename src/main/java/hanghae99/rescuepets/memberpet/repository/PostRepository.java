@@ -18,7 +18,7 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     List<Post> findByOrderByCreatedAtDesc();
     Integer countByMemberId(Long memberId);
 
-    List<Post> findALlByIsDeletedTrue();
+    List<Post> findAllByIsDeletedTrue();
 
     //위도 경도
     @Query(value = "SELECT * FROM post WHERE post.post_type = :postType AND ST_DISTANCE_SPHERE(POINT(:memberLatitude, :memberLongitude), " +
