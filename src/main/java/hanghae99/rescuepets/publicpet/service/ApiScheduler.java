@@ -2,11 +2,13 @@ package hanghae99.rescuepets.publicpet.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hanghae99.rescuepets.common.entity.PetInfoByAPI;
-import hanghae99.rescuepets.common.entity.PetInfoCompare;
-import hanghae99.rescuepets.common.entity.PetStateEnum;
+import hanghae99.rescuepets.common.dto.CustomException;
+import hanghae99.rescuepets.common.dto.ExceptionMessage;
+import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.publicpet.repository.PetInfoCompareRepository;
 import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
+import hanghae99.rescuepets.scrap.repository.ScrapRepository;
+import hanghae99.rescuepets.sse.service.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -32,6 +34,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.*;
 
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.entity.PetStateEnum.*;
 
 @Slf4j
@@ -44,8 +47,10 @@ public class ApiScheduler {
     private final PetInfoCompareRepository petInfoCompareRepository;
     @Value("${kakao.api.keys}")
     private String kakaoMapKey;
+    private final SseService sseService;
+    private final ScrapRepository scrapRepository;
 
-    @Scheduled(cron = "10 54 13 * * *")
+    @Scheduled(cron = "0 30 * * * *")
     @Transactional
     protected void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
@@ -191,6 +196,8 @@ public class ApiScheduler {
                     petInfoCompareRepository.save(petInfoEntity);
 
                     publicPetInfoRepository.saveAndFlush(petInfoByAPI);
+                    Optional<Scrap> petInfoByApiScrap = scrapRepository.findByPetInfoByAPI_DesertionNo(petInfoByAPI.getDesertionNo());
+                    petInfoByApiScrap.ifPresent(scrap -> sseService.send(scrap.getMember(), NotificationType.UPDATE, "회원님이 스크랩한 게시물 정보가 업데이트 되었습니다."));
                 }
             }
         }
