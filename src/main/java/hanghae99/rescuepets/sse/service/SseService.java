@@ -24,11 +24,9 @@ public class SseService {
     private final EmitterRepository emitterRepository;
     private final NotificationRepository notificationRepository;
 
-    private static final Long DEFAULT_TIMEOUT = 60 * 1000L;
-
     public SseEmitter subscribe(Member member) {
         String emitterId = makeTimeIncludeId(member.getId());
-        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT));
+        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(0L));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
@@ -39,6 +37,7 @@ public class SseService {
         return emitter;
     }
 
+    @Transactional
     public void send(Member receiver, NotificationType notificationType, String message) {
         Notification notification = notificationRepository.save(Notification.createNotification(receiver, notificationType, message));
 

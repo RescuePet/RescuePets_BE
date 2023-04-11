@@ -34,19 +34,17 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final SseService sseService;
 
     @Transactional
-    public ResponseEntity<ResponseDto> createComment(Long postId, CommentRequestDto requestDto, Member member) {
+    public CommentControllerResponse createComment(Long postId, CommentRequestDto requestDto, Member member) {
         if(!checkFrequency(member.getId())||!checkFrequencyDB()){
             throw new CustomException(TOO_FREQUENT_COMMENT);
         }
         Post post = postRepository.findById(postId).orElseThrow(()->new CustomException(POST_NOT_FOUND));
         Comment comment = new Comment(requestDto.getContent(), post, member);
         commentRepository.save(comment);
-        sseService.send(post.getMember(), NotificationType.COMMENT, member.getNickname() + "님이 댓글을 등록했어요.");
 
-        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS, new CommentResponseDto(comment));
+        return new CommentControllerResponse(post.getMember(), comment);
     }
 
     private Boolean checkFrequency(Long memberId) {
