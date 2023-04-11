@@ -50,10 +50,9 @@ public class CommentController {
     @PostMapping("/{postId}")
     @Operation(summary = "게시글 댓글 작성하기", description = "")
     public ResponseEntity<ResponseDto> createComment(@PathVariable Long postId, @RequestBody CommentRequestDto requestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        CommentControllerResponse comment = commentService.createComment(postId, requestDto, memberDetails.getMember());
-        sseService.send(comment.getReceiver(), NotificationType.COMMENT, comment.getReceiver().getNickname() + "님이 댓글을 등록했어요.");
-
-        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS, new CommentResponseDto(comment.getComment()));
+        return commentService.createComment(postId, requestDto, memberDetails.getMember());
+//        sseService.send(comment.getReceiver(), NotificationType.COMMENT, comment.getReceiver().getNickname() + "님이 댓글을 등록했어요.");
+//        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS, new CommentResponseDto(comment.getComment()));
     }
 
     @PutMapping("/{commentId}")
