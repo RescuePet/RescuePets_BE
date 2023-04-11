@@ -36,7 +36,7 @@ public class CommentService {
     private final PostRepository postRepository;
 
     @Transactional
-    public CommentControllerResponse createComment(Long postId, CommentRequestDto requestDto, Member member) {
+    public ResponseEntity<ResponseDto> createComment(Long postId, CommentRequestDto requestDto, Member member) {
         if(!checkFrequency(member.getId())||!checkFrequencyDB()){
             throw new CustomException(TOO_FREQUENT_COMMENT);
         }
@@ -44,7 +44,8 @@ public class CommentService {
         Comment comment = new Comment(requestDto.getContent(), post, member);
         commentRepository.save(comment);
 
-        return new CommentControllerResponse(post.getMember(), comment);
+        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS, new CommentResponseDto(comment));
+//        return new CommentControllerResponse(post.getMember(), comment);
     }
 
     private Boolean checkFrequency(Long memberId) {

@@ -1,6 +1,5 @@
 package hanghae99.rescuepets.sse.service;
 
-import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.Notification;
 import hanghae99.rescuepets.common.entity.NotificationType;
@@ -15,8 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.io.IOException;
 import java.util.Map;
 
-import static hanghae99.rescuepets.common.dto.ExceptionMessage.CONNECTION_ERROR;
-
 @Service
 @RequiredArgsConstructor
 public class SseService {
@@ -26,7 +23,7 @@ public class SseService {
 
     public SseEmitter subscribe(Member member) {
         String emitterId = makeTimeIncludeId(member.getId());
-        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(0L));
+        SseEmitter emitter = emitterRepository.save(emitterId, new SseEmitter(60 * 1000L));
 
         emitter.onCompletion(() -> emitterRepository.deleteById(emitterId));
         emitter.onTimeout(() -> emitterRepository.deleteById(emitterId));
@@ -64,7 +61,6 @@ public class SseService {
                     .data(data));
         } catch (IOException e) {
             emitterRepository.deleteById(emitterId);
-            throw new CustomException(CONNECTION_ERROR);
         }
     }
 }
