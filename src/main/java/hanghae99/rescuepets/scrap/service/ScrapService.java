@@ -61,7 +61,9 @@ public class ScrapService {
             throw new CustomException(ExceptionMessage.ALREADY_SCRAP);
         }
         scrapRepository.save(new Scrap(member, post));
-        sseService.send(post.getMember(), NotificationType.SCRAP, member.getNickname() + "님이 스크랩 하였습니다.");
+        if (!member.getId().equals(post.getMember().getId())) {
+            sseService.send(post.getMember(), NotificationType.SCRAP, member.getNickname() + "님이 스크랩 하였습니다.");
+        }
         return ResponseDto.toResponseEntity(SuccessMessage.POST_SCRAP_SUCCESS);
     }
 
