@@ -193,7 +193,7 @@ public class PostService {
         }
         PostResponseDto.PostResponseDtoBuilder responseBuilder = PostResponseDto.of(post)
                 .isLinked(postLinkRepository.findByPostId(post.getId()).isPresent())
-                .isWished(postLinkRepository.findByPostId(post.getId()).isPresent())
+                .isWished(scrapRepository.findScrapByPostIdAndMemberId(post.getId(), member.getId()).isPresent())
                 .wishedCount(scrapRepository.countByPostId(postId))
                 .commentCount(commentRepository.countByPostId(post.getId()));
         if (post.getOpenNickname() != null) {
