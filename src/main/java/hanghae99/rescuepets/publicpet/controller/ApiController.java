@@ -2,17 +2,14 @@ package hanghae99.rescuepets.publicpet.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.PetStateEnum;
-import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.publicpet.service.ApiDataService;
 import hanghae99.rescuepets.publicpet.service.ApiScheduler;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -31,7 +28,6 @@ public class ApiController {
     public ResponseEntity<ResponseDto> apiCompareData(@PathVariable(value = "pageNo") String pageNo,
                                                       @RequestParam(value = "state") PetStateEnum state,
                                                       @RequestParam(value = "size") String size) throws IOException {
-        log.info("센트리 테스트");
         return apiDataService.apiCompareData(pageNo, state, size);
     }
 
