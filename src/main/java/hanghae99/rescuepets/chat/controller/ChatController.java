@@ -4,7 +4,10 @@ import hanghae99.rescuepets.chat.dto.ChatRequestDto;
 import hanghae99.rescuepets.chat.dto.ChatResponseDto;
 import hanghae99.rescuepets.chat.service.ChatService;
 import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.entity.Member;
+import hanghae99.rescuepets.common.entity.NotificationType;
 import hanghae99.rescuepets.common.security.MemberDetails;
+import hanghae99.rescuepets.sse.service.SseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -26,12 +29,14 @@ public class ChatController {
 
     private final ChatService chatService;
     private final SimpMessagingTemplate template;
+    private final SseService sseService;
 
     @MessageMapping("/{roomId}")
     @SendTo("/sub/{roomId}")
     public void enter(@DestinationVariable String roomId, ChatRequestDto requestDto) {
-        chatService.createChat(roomId, requestDto);
+        Member receiver = chatService.createChat(roomId, requestDto);
         template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(requestDto));
+        sseService.send(receiver, NotificationType.CHAT, requestDto.getSender() + "님이 새로운 채팅을 보냈어요");
     }
 
     @GetMapping("/room/{roomId}")
