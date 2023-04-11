@@ -1,26 +1,21 @@
 package hanghae99.rescuepets.member.controller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.dto.SuccessMessage;
 import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.*;
 import hanghae99.rescuepets.member.service.MemberService;
-import hanghae99.rescuepets.memberpet.dto.PostLinkRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -82,8 +77,8 @@ public class MemberController {
 
     @Operation(summary = "프로필 이미지 기본값 변경")
     @PutMapping(value = "/member/default-image")
-    public ResponseEntity<ResponseDto> setDefault(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return memberService.setDefault(memberDetails.getMember());
+    public ResponseEntity<ResponseDto> setDefaultImage(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return memberService.setDefaultImage(memberDetails.getMember());
     }
 
     @Operation(summary = "회원목록보기")

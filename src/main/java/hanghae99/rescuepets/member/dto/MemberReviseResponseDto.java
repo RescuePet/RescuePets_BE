@@ -9,10 +9,13 @@ public class MemberReviseResponseDto {
 
     private String profileImage;
 
+    private String email;
+
 
     public MemberReviseResponseDto(Member member){
         this.nickname = member.getNickname();
         this.profileImage = member.getProfileImage();
+        this.email = member.getEmail();
     }
 }
 
