@@ -91,7 +91,7 @@ public class KakaoService {
         Long id = jsonNode.get("id").asLong();
         String nickname = jsonNode.get("properties").get("nickname").asText();
         String email = jsonNode.get("kakao_account").get("email").asText();
-        String profileImage = jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText();
+        String profileImage = jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText().replace("http://", "https://");
 
         return new KakaoUserInfoDto(id, nickname, email, profileImage);
     }
