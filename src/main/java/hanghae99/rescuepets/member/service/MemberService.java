@@ -153,7 +153,7 @@ public class MemberService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> setDefault(Member member) {
+    public ResponseEntity<ResponseDto> setDefaultImage(Member member) {
         member = memberRepository.findById(member.getId()).orElseThrow(() -> new CustomException(UNAUTHORIZED_MEMBER));
         member.updateImage(defaultImage);
 

@@ -2,8 +2,6 @@ package hanghae99.rescuepets.publicpet.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import hanghae99.rescuepets.common.dto.CustomException;
-import hanghae99.rescuepets.common.dto.ExceptionMessage;
 import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.publicpet.repository.PetInfoCompareRepository;
 import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
@@ -24,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,9 +31,10 @@ import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.entity.PetStateEnum.*;
 
 @Slf4j
@@ -196,8 +196,10 @@ public class ApiScheduler {
                     petInfoCompareRepository.save(petInfoEntity);
 
                     publicPetInfoRepository.saveAndFlush(petInfoByAPI);
-                    Optional<Scrap> petInfoByApiScrap = scrapRepository.findByPetInfoByAPI_DesertionNo(petInfoByAPI.getDesertionNo());
-                    petInfoByApiScrap.ifPresent(scrap -> sseService.send(scrap.getMember(), NotificationType.UPDATE, "회원님이 스크랩한 게시물 정보가 업데이트 되었습니다."));
+                    List<Scrap> scrapList = scrapRepository.findByPetInfoByAPI_desertionNo(petInfoByAPI.getDesertionNo());
+                    for (Scrap scrap : scrapList) {
+                        sseService.send(scrap.getMember(), NotificationType.UPDATE, "회원님이 스크랩한 게시물 정보가 업데이트 되었습니다.");
+                    }
                 }
             }
         }
