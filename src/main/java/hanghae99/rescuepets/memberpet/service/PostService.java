@@ -127,7 +127,7 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage;
         if (memberLatitude != null && searchKey == null) {
-            postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, pageable);
+                postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, pageable);
         } else if (memberLatitude == null && searchKey != null) {
             if (searchKey.equals("upkind")) {
                 postPage = postRepository.findPostsByUpkind(postType, searchValue, pageable);
@@ -143,6 +143,11 @@ public class PostService {
         } else {
             throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
         }
+
+        if (postPage.isEmpty()){
+            return ResponseDto.toResponseEntity(PET_INFO_SEARCH_EMPTY);
+        }
+
         List<PostShortResponseDto> postListByDistance = new ArrayList<>();
         for (Post post : postPage) {
             if (post.getIsDeleted()) {

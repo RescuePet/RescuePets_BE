@@ -103,8 +103,9 @@ public class PublicPetService {
         } else {
             throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
         }
-        // 페이지 처리
-
+        if (postPage.isEmpty()){
+            return ResponseDto.toResponseEntity(PET_INFO_SEARCH_EMPTY);
+        }
         List<PublicPetResponseDto> postListByDistance = new ArrayList<>();
         for (PetInfoByAPI petInfoByAPI : postPage) {
             Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
