@@ -34,14 +34,15 @@ public class PublicPetResponseDto {
     private Integer scrapCount;//상세
     private Boolean isInquiry;//상세
     private Integer InquiryCount;//상세
-    private Boolean isExactAddress;
-
+    private Double latitude; //위도
+    private Double longitude; //경도
+    private Boolean isExactAddress; //상세 좌표 여부
     public static PublicPetResponseDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap) {
         String neuterYn = neuterYnChange(petInfoByAPI.getNeuterYn());
         return PublicPetResponseDto.builder()
                 .id(petInfoByAPI.getId())
                 .desertionNo(petInfoByAPI.getDesertionNo())
-                .filename(petInfoByAPI.getFilename())
+                .filename(petInfoByAPI.getFilename().replace("http://", "https://"))
                 .kindCd(petInfoByAPI.getKindCd())
                 .ageWeightNeuterYn("중성화"+neuterYn+"/"+petInfoByAPI.getAge()+"/"+petInfoByAPI.getWeight())
                 .noticeDate(petInfoByAPI.getNoticeSdt()+"~"+petInfoByAPI.getNoticeEdt())//공고 시작일 종료일 합침
@@ -58,14 +59,14 @@ public class PublicPetResponseDto {
         return PublicPetResponseDto.builder()
                 .id(petInfoByAPI.getId())
                 .desertionNo(petInfoByAPI.getDesertionNo())
-                .filename(petInfoByAPI.getFilename())
+                .filename(petInfoByAPI.getFilename().replace("http://", "https://"))
                 .happenDt(petInfoByAPI.getHappenDt())
                 .happenPlace(petInfoByAPI.getHappenPlace())
                 .kindCd(petInfoByAPI.getKindCd())
                 .ageWeightNeuterYnColorCd("중성화"+neuterYn+"/"+petInfoByAPI.getAge()+"/"+petInfoByAPI.getWeight()+"/"+petInfoByAPI.getColorCd())
                 .noticeNo(petInfoByAPI.getNoticeNo())
                 .noticeDate(petInfoByAPI.getNoticeSdt()+"~"+petInfoByAPI.getNoticeEdt())//공고 시작일 종료일 합침
-                .popfile(petInfoByAPI.getPopfile())
+                .popfile(petInfoByAPI.getPopfile().replace("http://", "https://"))
                 .processState(petInfoByAPI.getProcessState())
                 .sexCd(petInfoByAPI.getSexCd())
                 .specialMark(petInfoByAPI.getSpecialMark())
@@ -80,6 +81,9 @@ public class PublicPetResponseDto {
                 .scrapCount(scrapCount)
                 .isInquiry(isInquiry)
                 .InquiryCount(InquiryCount)
+                .latitude(petInfoByAPI.getLatitude())
+                .longitude(petInfoByAPI.getLongitude())
+                .isExactAddress(petInfoByAPI.getIsExactAddress())
                 .build();
     }
 
