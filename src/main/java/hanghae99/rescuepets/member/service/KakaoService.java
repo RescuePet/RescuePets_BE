@@ -13,7 +13,9 @@ import hanghae99.rescuepets.common.jwt.JwtUtil;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.member.dto.KakaoUserInfoDto;
 import hanghae99.rescuepets.member.dto.MemberResponseDto;
+import hanghae99.rescuepets.member.dto.TimeResponseDto;
 import hanghae99.rescuepets.member.repository.MemberRepository;
+import hanghae99.rescuepets.report.service.SuspensionLogic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -28,7 +30,10 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.time.Duration;
 import java.util.UUID;
+
+import static hanghae99.rescuepets.common.dto.SuccessMessage.TIMECHECK_SUCCESS;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +53,16 @@ public class KakaoService {
         String accessToken = getAccessToken(code);
         KakaoUserInfoDto kakaoUserInfo = getKakaoUserInfo(accessToken);
         Member kakaoMember = registerKakaoUserIfNeeded(kakaoUserInfo);
+        if(kakaoMember.getStop()){
+            if(!SuspensionLogic.shouldSuspend(kakaoMember.getReportDate())){
+                Duration timeLimit = SuspensionLogic.getTimeDifference(kakaoMember.getReportDate());
+                String timeLimits = SuspensionLogic.toKoreanDuration(timeLimit);
+                return ResponseDto.toResponseEntity(TIMECHECK_SUCCESS,new TimeResponseDto(timeLimits));
+            }
+            else{
+                kakaoMember.start();
+            }
+        }
         forceLogin(kakaoMember);
         jwtUtil.createToken(response, kakaoMember);
 
