@@ -1,6 +1,8 @@
 package hanghae99.rescuepets.comment.controller;
 
+import hanghae99.rescuepets.comment.dto.CommentControllerResponse;
 import hanghae99.rescuepets.comment.dto.CommentRequestDto;
+import hanghae99.rescuepets.comment.dto.CommentResponseDto;
 import hanghae99.rescuepets.comment.service.CommentService;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ExceptionMessage;
@@ -19,6 +21,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
+import static hanghae99.rescuepets.common.dto.SuccessMessage.COMMENT_WRITING_SUCCESS;
 
 @Tag(name = "코멘트 작성 CRUD API")
 @RequestMapping("/api/comments")
@@ -26,8 +29,8 @@ import static hanghae99.rescuepets.common.dto.ExceptionMessage.POST_NOT_FOUND;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-    private final PostRepository postRepository;
     private final SseService sseService;
+
     @GetMapping("/member")
     @Operation(summary = "내가 쓴 댓글 불러오기", description = "")
     public ResponseEntity<ResponseDto> getCommentListByMember(@RequestParam int page,
@@ -47,7 +50,10 @@ public class CommentController {
     @PostMapping("/{postId}")
     @Operation(summary = "게시글 댓글 작성하기", description = "")
     public ResponseEntity<ResponseDto> createComment(@PathVariable Long postId, @RequestBody CommentRequestDto requestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return commentService.createComment(postId, requestDto, memberDetails.getMember());
+        CommentControllerResponse comment = commentService.createComment(postId, requestDto, memberDetails.getMember());
+        sseService.send(comment.getReceiver(), NotificationType.COMMENT, comment.getReceiver().getNickname() + "님이 댓글을 등록했어요.");
+
+        return ResponseDto.toResponseEntity(COMMENT_WRITING_SUCCESS, new CommentResponseDto(comment.getComment()));
     }
 
     @PutMapping("/{commentId}")
