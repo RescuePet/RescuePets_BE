@@ -144,11 +144,10 @@ public class PostService {
             throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
         }
 
-        if (postPage.isEmpty()){
-            return ResponseDto.toResponseEntity(PET_INFO_SEARCH_EMPTY);
-        }
-
         List<PostShortResponseDto> postListByDistance = new ArrayList<>();
+        if (postPage.isEmpty()){
+            return ResponseDto.toResponseEntity(PET_INFO_SEARCH_EMPTY, postListByDistance);
+        }
         for (Post post : postPage) {
             if (post.getIsDeleted()) {
                 continue;
