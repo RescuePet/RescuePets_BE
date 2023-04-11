@@ -103,7 +103,7 @@ public class PublicPetService {
         } else {
             throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
         }
-        if (postPage == null){
+        if (postPage.isEmpty()){
             return ResponseDto.toResponseEntity(PET_INFO_SEARCH_EMPTY);
         }
         List<PublicPetResponseDto> postListByDistance = new ArrayList<>();
