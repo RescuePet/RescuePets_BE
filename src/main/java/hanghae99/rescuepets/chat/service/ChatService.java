@@ -28,7 +28,7 @@ public class ChatService {
 
     private final ChatRepository chatRepository;
     private final ChatRoomRepository chatRoomRepository;
-    private final MemberRepository memberRepository
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Member createChat(String roomId, ChatRequestDto dto) {
