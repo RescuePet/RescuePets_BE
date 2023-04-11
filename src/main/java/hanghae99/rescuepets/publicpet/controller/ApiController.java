@@ -31,6 +31,7 @@ public class ApiController {
     public ResponseEntity<ResponseDto> apiCompareData(@PathVariable(value = "pageNo") String pageNo,
                                                       @RequestParam(value = "state") PetStateEnum state,
                                                       @RequestParam(value = "size") String size) throws IOException {
+        log.info("센트리 테스트");
         return apiDataService.apiCompareData(pageNo, state, size);
     }
 
