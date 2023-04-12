@@ -90,15 +90,15 @@ public class PublicPetService {
             postPage = publicPetInfoRepository.findApiByDistance(Longitude, Latitude, description, pageable);
         } else if (Latitude == null && searchKey != null) {
             if (searchKey.equals("kindCd")) {
-                postPage = publicPetInfoRepository.findApiBykindCd("%" + searchValue + "%", pageable);
+                postPage = publicPetInfoRepository.findApiByKindCd("%" + searchValue + "%", pageable);
             } else {
                 postPage = publicPetInfoRepository.findApiBycareNm( "%" + searchValue + "%", pageable);
             }
         }else if  (Latitude != null && searchKey != null) {
             if (searchKey.equals("kindCd")) {
-                postPage = publicPetInfoRepository.findApiByDistanceAndkindCd( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
+                postPage = publicPetInfoRepository.findApiByDistanceAndKindCd( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
             } else {//kindCd
-                postPage = publicPetInfoRepository.findApiByDistanceAndcareNm( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
+                postPage = publicPetInfoRepository.findApiByDistanceAndCareNm( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
             }
         } else {
             throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
