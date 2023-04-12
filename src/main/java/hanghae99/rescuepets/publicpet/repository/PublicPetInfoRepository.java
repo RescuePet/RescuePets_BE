@@ -16,26 +16,26 @@ public interface PublicPetInfoRepository extends JpaRepository<PetInfoByAPI, Lon
     Optional<PetInfoByAPI> findById(Long Id);
 
 
-    @Query(value = "SELECT * FROM pet_info_byapi WHERE true = true AND ST_DISTANCE_SPHERE(POINT(:Latitude, :Longitude), " +
-            "POINT(pet_info_byapi.longitude, pet_info_byapi.latitude)) <= :distance ORDER BY pet_info_byapi.happen_dt, pet_info_byapi.created_at DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pet_info_byapi WHERE ST_DISTANCE_SPHERE(POINT(:Latitude, :Longitude), " +
+            "POINT(pet_info_byapi.longitude, pet_info_byapi.latitude)) <= :distance ORDER BY pet_info_byapi.happen_dt DESC, pet_info_byapi.created_at DESC", nativeQuery = true)
     Page<PetInfoByAPI> findApiByDistance( @Param("Latitude") Double Latitude,
                                    @Param("Longitude") Double Longitude, @Param("distance") Double distance, Pageable pageable);
 
 
-    @Query(value = "SELECT * FROM pet_info_byapi WHERE true = true AND pet_info_byapi.kind_cd LIKE :searchValue ORDER BY pet_info_byapi.happen_dt, pet_info_byapi.created_at DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pet_info_byapi WHERE pet_info_byapi.kind_cd LIKE :searchValue ORDER BY pet_info_byapi.happen_dt DESC, pet_info_byapi.created_at DESC", nativeQuery = true)
     Page<PetInfoByAPI> findApiByKindCd(@Param("searchValue") String searchValue, Pageable pageable);
 
-    @Query(value = "SELECT * FROM pet_info_byapi WHERE true = true AND pet_info_byapi.care_nm LIKE :searchValue ORDER BY pet_info_byapi.happen_dt, pet_info_byapi.created_at DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pet_info_byapi WHERE pet_info_byapi.care_nm LIKE :searchValue ORDER BY pet_info_byapi.happen_dt DESC, pet_info_byapi.created_at DESC", nativeQuery = true)
     Page<PetInfoByAPI> findApiBycareNm( @Param("searchValue") String searchValue, Pageable pageable);
 
 
-    @Query(value = "SELECT * FROM pet_info_byapi WHERE true = true AND pet_info_byapi.kind_cd LIKE :searchValue AND ST_DISTANCE_SPHERE(POINT(:Latitude, :Longitude), " +
-            "POINT(pet_info_byapi.longitude, pet_info_byapi.latitude)) <= :distance ORDER BY pet_info_byapi.happen_dt, pet_info_byapi.created_at DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pet_info_byapi WHERE pet_info_byapi.kind_cd LIKE :searchValue AND ST_DISTANCE_SPHERE(POINT(:Latitude, :Longitude), " +
+            "POINT(pet_info_byapi.longitude, pet_info_byapi.latitude)) <= :distance ORDER BY pet_info_byapi.happen_dt DESC, pet_info_byapi.created_at DESC", nativeQuery = true)
     Page<PetInfoByAPI> findApiByDistanceAndKindCd(@Param("Latitude") Double Latitude, @Param("Longitude") Double Longitude,
                                                   @Param("distance") Double distance, @Param("searchValue") String searchValue, Pageable pageable);
 
-    @Query(value = "SELECT * FROM pet_info_byapi WHERE true = true AND pet_info_byapi.care_nm LIKE :searchValue AND ST_DISTANCE_SPHERE(POINT(:Latitude, :Longitude)," +
-            " POINT(pet_info_byapi.longitude, pet_info_byapi.latitude)) <= :distance ORDER BY pet_info_byapi.happen_dt, pet_info_byapi.created_at DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM pet_info_byapi WHERE pet_info_byapi.care_nm LIKE :searchValue AND ST_DISTANCE_SPHERE(POINT(:Latitude, :Longitude)," +
+            " POINT(pet_info_byapi.longitude, pet_info_byapi.latitude)) <= :distance ORDER BY pet_info_byapi.happen_dt DESC, pet_info_byapi.created_at DESC", nativeQuery = true)
     Page<PetInfoByAPI> findApiByDistanceAndCareNm(@Param("Latitude") Double Latitude, @Param("Longitude") Double Longitude,
                                                   @Param("distance") Double distance, @Param("searchValue") String searchValue, Pageable pageable);
 }
