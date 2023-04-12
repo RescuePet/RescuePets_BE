@@ -33,8 +33,8 @@ public class JwtUtil {
     private final MemberDetailServiceImpl memberDetailService;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private static final long ACCESS_TIME = 1000L * 30 * 1;
-    private static final long REFRESH_TIME = 1000L * 60 * 30;
+    private static final long ACCESS_TIME = 1000L * 60 * 60 * 24;
+    private static final long REFRESH_TIME = 1000L * 60 * 60 * 24 * 3;
     public static final String ACCESS_TOKEN = "Authorization";
     public static final String REFRESH_TOKEN = "Refresh";
     public static final String BEARER_PREFIX = "Bearer ";
