@@ -104,10 +104,10 @@ public class PostController {
         return postService.deletePost(postId, userDetails.getMember());
     }
 
-    @PostMapping(value = "/links/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/links/{postId}")
     @Operation(summary = "게시글에서 다른 게시글로 링크걸기", description = "사용자가 연결짓고 싶은 게시물 간의 링크를 생성합니다. PostType에 대상 게시물이 CATCH인지 MISSING인지 입력해주어야합니다.")
     public ResponseEntity<ResponseDto> createLink(@PathVariable Long postId,
-                                                  @ModelAttribute PostLinkRequestDto requestDto,
+                                                  @RequestBody PostLinkRequestDto requestDto,
                                                   @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.createLink(postId, requestDto, memberDetails.getMember());
     }
