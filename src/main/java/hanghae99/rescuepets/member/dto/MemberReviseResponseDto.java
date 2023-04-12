@@ -11,11 +11,14 @@ public class MemberReviseResponseDto {
 
     private String email;
 
+    private String memberRole;
+
 
     public MemberReviseResponseDto(Member member){
         this.nickname = member.getNickname();
         this.profileImage = member.getProfileImage();
         this.email = member.getEmail();
+        this.memberRole = member.getMemberRoleEnum().toString();
     }
 }
 
