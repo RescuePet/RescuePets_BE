@@ -20,9 +20,9 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.TEST_SUCCESS;
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
-    private final ScrapRepository scrapRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
+    private final ScrapRepository scrapRepository;
 
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getMyPage(Member member) {
