@@ -1,6 +1,7 @@
 package hanghae99.rescuepets.publicpet.service;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
+import hanghae99.rescuepets.common.entity.Member;
 import hanghae99.rescuepets.common.entity.PetStateEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class ApiDataService {
     private final ApiScheduler apiScheduler;
 
     @Transactional
-    public ResponseEntity<ResponseDto> apiCompareData(String pageNo, PetStateEnum state, String size) throws IOException {
+    public ResponseEntity<ResponseDto> apiCompareData(String pageNo, PetStateEnum state, String size, Member member) throws IOException {
         String apiUrl = apiScheduler.createApiUrl(pageNo, state, size);
         JSONArray itemList = apiScheduler.fetchDataFromApi(apiUrl);
         if (itemList != null) {
