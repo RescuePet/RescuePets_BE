@@ -85,27 +85,25 @@ public class PublicPetService {
     public ResponseEntity<ResponseDto> getapiListByDistance(int page, int size,  Double Longitude, Double Latitude,
                                                             Double description, String searchKey, String searchValue,Member member) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<PetInfoByAPI> postPage;
-        if (Latitude != null && searchKey == null) {
+        Page<PetInfoByAPI> postPage = null;
+        if (Latitude != null && searchKey.isBlank()) {
             postPage = publicPetInfoRepository.findApiByDistance(Longitude, Latitude, description, pageable);
-        } else if (Latitude == null && searchKey != null) {
+        } else if (Latitude == null && !searchKey.isBlank()) {
             if (searchKey.equals("kindCd")) {
                 postPage = publicPetInfoRepository.findApiByKindCd("%" + searchValue + "%", pageable);
             } else {
                 postPage = publicPetInfoRepository.findApiBycareNm( "%" + searchValue + "%", pageable);
             }
-        }else if  (Latitude != null && searchKey != null) {
+        }else if  (Latitude != null && !searchKey.isBlank()) {
             if (searchKey.equals("kindCd")) {
                 postPage = publicPetInfoRepository.findApiByDistanceAndKindCd( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
             } else {//kindCd
                 postPage = publicPetInfoRepository.findApiByDistanceAndCareNm( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
             }
-        } else {
-            throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
         }
 
         List<PublicPetResponseDto> postListByDistance = new ArrayList<>();
-        if (postPage.isEmpty()){
+        if (postPage == null || postPage.isEmpty()){
             return ResponseDto.toResponseEntity(PET_INFO_SEARCH_EMPTY, postListByDistance);
         }
         for (PetInfoByAPI petInfoByAPI : postPage) {
