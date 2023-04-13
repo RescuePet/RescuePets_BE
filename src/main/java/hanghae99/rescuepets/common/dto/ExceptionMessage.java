@@ -11,6 +11,7 @@ import static org.springframework.http.HttpStatus.*;
 public enum ExceptionMessage {
     /* 400 BAD_REQUEST : 잘못된 요청 */
     TEST(BAD_REQUEST, "TEST Exception"),
+    ID_PASSWORDS_INCORRECT(BAD_REQUEST, "아이디,비밀번호를 확인해주세요"),
     MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다."),
     INVALID_TOKEN(BAD_REQUEST, "Invalid JWT signature, 유효하지 않는 JWT 서명 입니다."),
     ILLEGAL_TOKEN(BAD_REQUEST, "JWT claims is empty, 잘못된 JWT 토큰 입니다."),

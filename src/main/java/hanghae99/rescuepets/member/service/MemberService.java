@@ -70,10 +70,10 @@ public class MemberService {
         String email = loginRequestDto.getEmail();
         String password = loginRequestDto.getPassword();
         Member member = memberRepository.findByEmail(email).orElseThrow(
-                () -> new CustomException(MEMBER_NOT_FOUND)
+                () -> new CustomException(ID_PASSWORDS_INCORRECT)
         );
         if (!passwordEncoder.matches(password, member.getPassword())) {
-            throw new CustomException(MEMBER_NOT_FOUND);
+            throw new CustomException(ID_PASSWORDS_INCORRECT);
         }
         if(member.getStop()){
             if(!SuspensionLogic.shouldSuspend(member.getReportDate())){
