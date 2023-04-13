@@ -265,7 +265,6 @@ public class PostService {
             return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
         } else {
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
-
         }
     }
 
