@@ -4,7 +4,8 @@ import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.ReportEnum;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
-import hanghae99.rescuepets.report.dto.ReportRequestDto;
+import hanghae99.rescuepets.report.dto.ReportCommentRequestDto;
+import hanghae99.rescuepets.report.dto.ReportPostRequestDto;
 import hanghae99.rescuepets.report.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,24 +32,19 @@ public class ReportController {
     }
 
     @PostMapping(value = "/post")
-    public ResponseEntity<ResponseDto> reportPost(@RequestBody ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportPost(reportRequestDto, memberDetails.getMember());
+    public ResponseEntity<ResponseDto> reportPost(@RequestBody ReportPostRequestDto reportPostRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportPost(reportPostRequestDto, memberDetails.getMember());
     }
-
-
 
     @DeleteMapping(value = "/post/{reportId}")
     public ResponseEntity<ResponseDto> reportPostDelete(@PathVariable Long reportId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportPostDelete(reportId,memberDetails.getMember());
     }
 
-
     @PostMapping(value = "/comment")
-    public ResponseEntity<ResponseDto> reportComment(@RequestBody ReportRequestDto reportRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return  reportService.reportComment(reportRequestDto,memberDetails.getMember());
+    public ResponseEntity<ResponseDto> reportComment(@RequestBody ReportCommentRequestDto reportCommentRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return  reportService.reportComment(reportCommentRequestDto,memberDetails.getMember());
     }
-
-
 
     @DeleteMapping(value = "/comment/{reportId}")
     public ResponseEntity<ResponseDto> reportCommentDelete(@PathVariable Long reportId, @Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails){

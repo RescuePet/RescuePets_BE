@@ -178,7 +178,7 @@ public class MemberService {
     @Transactional
     public ResponseEntity<ResponseDto> findMember(int page, int size, String keyword, Member member) {
         List<MemberResponseDto> dtoList = new ArrayList<>();
-        if (member.getMemberRoleEnum() == ADMIN || member.getMemberRoleEnum() == MANAGER) {
+        if (member.getMemberRoleEnum().equals(ADMIN) || member.getMemberRoleEnum().equals(MANAGER)) {
             Pageable pageable = PageRequest.of(page, size);
             Page<Member> memberList = memberRepository.findByNicknameContaining(keyword, pageable);
             for (Member memberTemp : memberList) {

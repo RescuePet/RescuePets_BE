@@ -50,6 +50,17 @@ public class PostController {
         return postService.getPostAll();
     }
 
+//    @GetMapping("/soft")
+//    @Operation(summary = "전체 게시글 페이징없이 불러오기(지도용)", description = "카테고리 구분 없이 전체 게시글을 페이징없이 불러옵니다")
+//    public ResponseEntity<ResponseDto> getPostAll() {
+//        return postService.getPostAll();
+//    }
+//
+//    @GetMapping("/soft/")
+//    @Operation(summary = "전체 게시글 페이징없이 불러오기(지도용)", description = "카테고리 구분 없이 전체 게시글을 페이징없이 불러옵니다")
+//    public ResponseEntity<ResponseDto> getPostAll() {
+//        return postService.getPostAll();
+//    }
 
     @GetMapping("/member")
     @Operation(summary = "내가 작성한 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")

@@ -6,9 +6,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ReportMemberRequestDto {
+public class ReportCommentRequestDto {
     private String content;
-    private String nickname;
+    private Long CommentId;
     private ReportEnum reportEnum;
-
 }

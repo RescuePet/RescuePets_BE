@@ -42,6 +42,7 @@ public enum ExceptionMessage {
     /* 404 NOT_FOUND : Resource 를 찾을 수 없음 */
     POST_TYPE_INCORRECT(NOT_FOUND, "게시글 타입이 적절하지 않습니다."),
     POST_NOT_FOUND(NOT_FOUND, "대상 게시글을 찾을 수 없습니다."),
+    ENUM_NOT_FOUND(NOT_FOUND, "해당 이넘값은 존재하지 않습니다."),
     NOT_FOUND_IMAGE(NOT_FOUND, "이미지가 없습니다."),
     POST_ALREADY_DELETED(NOT_FOUND, "삭제된 게시글입니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "대상 댓글을 찾을 수 없습니다."),
