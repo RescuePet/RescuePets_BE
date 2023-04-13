@@ -147,9 +147,8 @@ public class MemberService {
             }
             member.updateNickname(updateRequestDto.getNickname());
         }
-        MemberReviseResponseDto memberReviseResponseDto = new MemberReviseResponseDto(member);
 
-        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS, memberReviseResponseDto);
+        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS, new MemberReviseResponseDto(member));
     }
 
     @Transactional

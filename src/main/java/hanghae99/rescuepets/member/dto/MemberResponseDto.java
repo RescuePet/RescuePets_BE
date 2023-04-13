@@ -18,11 +18,14 @@ public class MemberResponseDto {
 
     private String profileImage;
 
+    private String memberRole;
+
     public MemberResponseDto(Member member){
         this.id = member.getId();
         this.nickname = member.getNickname();
         this.email = member.getEmail();
         this.profileImage = member.getProfileImage();
+        this.memberRole = member.getMemberRoleEnum().toString();
     }
 
 }
