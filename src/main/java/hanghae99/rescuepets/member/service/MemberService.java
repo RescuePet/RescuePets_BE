@@ -200,20 +200,26 @@ public class MemberService {
         if (memberRoleRequestDto.getNickname().equals(member.getNickname())){
             throw new CustomException(SELF_REFERENCE_NOT_ALLOWED);
         }
+        if (MemberRoleEnum.valueOf(memberRoleRequestDto.getMemberRoleEnum()) == memberOptional.get().getMemberRoleEnum()){
+            throw new CustomException(SAME_ROLE_NOT_ALLOWED);
+        }
         if (member.getMemberRoleEnum() == ADMIN) {
             if(memberOptional.get().getMemberRoleEnum().equals(ADMIN)){
                 throw new CustomException(NOT_ALLOWED_GRADE);
             }
-            memberOptional.get().setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
+            memberOptional.get().setMemberRoleEnum(memberRoleRequestDto.getMemberRoleEnum());
         }else if(member.getMemberRoleEnum() == MANAGER) {
-            if(memberOptional.get().getMemberRoleEnum().equals(ADMIN)||memberOptional.get().getMemberRoleEnum().equals(MANAGER)){
+            if(memberOptional.get().getMemberRoleEnum().equals(MANAGER)||memberOptional.get().getMemberRoleEnum().equals(ADMIN)){
+                throw new CustomException(NOT_ALLOWED_GRADE);
+            }else if(memberRoleRequestDto.getMemberRoleEnum().equals("MANAGER")||memberRoleRequestDto.getMemberRoleEnum().equals("ADMIN")){
                 throw new CustomException(NOT_ALLOWED_GRADE);
             }
-            memberOptional.get().setMemberRoleEnum(memberRoleRequestDto.getMemberRole());
+            memberOptional.get().setMemberRoleEnum(memberRoleRequestDto.getMemberRoleEnum());
         }else{
             throw new CustomException(UNAUTHORIZED_MANAGER);
         }
-        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS);
+        MemberResponseDto responseDto = new MemberResponseDto(memberOptional.get());
+        return ResponseDto.toResponseEntity(MEMBER_EDIT_SUCCESS, responseDto);
     }
 }
 

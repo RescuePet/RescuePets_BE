@@ -60,6 +60,7 @@ public enum ExceptionMessage {
     DUPLICATE_NICKNAME(CONFLICT,"중복된 닉네임이 존재합니다."),
     DUPLICATE_EMAIL(CONFLICT,"중복된 이메일이 존재합니다."),
     SELF_REFERENCE_NOT_ALLOWED(CONFLICT,"자기 자신을 대상으로 지정할 수 없습니다."),
+    SAME_ROLE_NOT_ALLOWED(CONFLICT,"선택한 유저는 이미 해당 등급입니다."),
     ALREADY_SCRAP(CONFLICT, "이미 스크랩되었습니다."),
     SAME_POST_NOT_ALLOWED(CONFLICT, "링크 시작점과 같은 게시물을 대상으로 지정할 수 없습니다."),
     ALREADY_LINKED(CONFLICT, "이미 존재하는 링크입니다."),

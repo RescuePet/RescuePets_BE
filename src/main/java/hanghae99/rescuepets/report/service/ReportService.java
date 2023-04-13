@@ -64,7 +64,7 @@ public class ReportService {
 
     public ResponseEntity<ResponseDto> reportPostDelete(Long reportId, Member member) {
         Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
+        if(!(member.getMemberRoleEnum().getMemberRole().equals("MANAGER") || member.getMemberRoleEnum().getMemberRole().equals("ADMIN"))){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
         reportRepository.deleteById(report.getId());
@@ -96,7 +96,7 @@ public class ReportService {
 
     public ResponseEntity<ResponseDto> reportCommentDelete(Long reportId, Member member) {
         Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
+        if(!(member.getMemberRoleEnum().getMemberRole().equals("MANAGER") || member.getMemberRoleEnum().getMemberRole().equals("ADMIN"))){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
         reportRepository.deleteById(report.getId());
@@ -129,7 +129,7 @@ public class ReportService {
     @Transactional
     public ResponseEntity<ResponseDto> reportMemberDelete(Long reportId, Member member) {
         Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
+        if(!(member.getMemberRoleEnum().getMemberRole().equals("MANAGER") || member.getMemberRoleEnum().getMemberRole().equals("ADMIN"))){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
         reportRepository.deleteById(report.getId());
@@ -138,7 +138,7 @@ public class ReportService {
     }
 
     public ResponseEntity<ResponseDto> getReportAll(String sortBy,Member member) {
-        if(!(member.getMemberRoleEnum().getMemberRole().equals("매니저") || member.getMemberRoleEnum().getMemberRole().equals("관리자"))){
+        if(!(member.getMemberRoleEnum().getMemberRole().equals("MANAGER") || member.getMemberRoleEnum().getMemberRole().equals("ADMIN"))){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
             Sort sort = Sort.by(Sort.Direction.DESC, sortBy);

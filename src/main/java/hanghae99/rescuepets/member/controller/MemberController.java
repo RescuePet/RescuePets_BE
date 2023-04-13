@@ -98,7 +98,7 @@ public class MemberController {
     }
     @Operation(summary = "회원등급수정")
     @PutMapping(value = "/member/role")
-    public ResponseEntity<ResponseDto> memberRoleChange(@ModelAttribute MemberRoleRequestDto memberRoleRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseEntity<ResponseDto> memberRoleChange(@RequestBody MemberRoleRequestDto memberRoleRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.memberRoleChange(memberRoleRequestDto, memberDetails.getMember());
     }
 }
