@@ -12,9 +12,9 @@ import java.util.UUID;
 
 @Entity
 @Getter
-@NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ChatRoom extends TimeStamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,12 +59,12 @@ public class ChatRoom extends TimeStamped {
         this.isGuestExited = guestExited;
     }
 
-    public void setHostChatCount() {
-        this.hostChatCount++;
+    public void setHostChatCount(int count) {
+        this.hostChatCount = count;
     }
 
-    public void setGuestChatCount() {
-        this.guestChatCount++;
+    public void setGuestChatCount(int count) {
+        this.guestChatCount = count;
     }
 
     public void initHostChatCount() {
