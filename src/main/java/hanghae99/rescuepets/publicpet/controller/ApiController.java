@@ -9,7 +9,6 @@ import hanghae99.rescuepets.publicpet.service.ApiDataService;
 import hanghae99.rescuepets.publicpet.service.ApiScheduler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -3,7 +3,6 @@ package hanghae99.rescuepets.common.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.parameters.P;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -59,7 +58,7 @@ public class Member extends TimeStamped{
     }
 //    변수명 바꿀 예정
     public void setMemberRoleEnum(String memberRoleEnum){
-
+        this.memberRoleEnum = MemberRoleEnum.valueOf(memberRoleEnum);
     }
 
     public void withdrawal() {
