@@ -12,8 +12,9 @@ import hanghae99.rescuepets.mail.service.MailService;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.memberpet.repository.PostRepository;
 import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
-import hanghae99.rescuepets.report.dto.ReportRequestDto;
-import hanghae99.rescuepets.report.dto.ResponseReportDto;
+import hanghae99.rescuepets.report.dto.ReportCommentRequestDto;
+import hanghae99.rescuepets.report.dto.ReportPostRequestDto;
+import hanghae99.rescuepets.report.dto.ReportResponseDto;
 import hanghae99.rescuepets.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -27,6 +28,8 @@ import java.util.List;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.ADMIN;
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.MANAGER;
 
 @Service
 @RequiredArgsConstructor
@@ -38,25 +41,27 @@ public class ReportService {
     private final MailService mailService;
 
     @Transactional
-    public ResponseEntity<ResponseDto> reportPost(ReportRequestDto reportRequestDto, Member member) {
-        Post post = postRepository.findById(reportRequestDto.getPostId()).orElseThrow(
+    public ResponseEntity<ResponseDto> reportPost(ReportPostRequestDto reportPostRequestDto, Member member) {
+        Post post = postRepository.findById(reportPostRequestDto.getPostId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_PET_INFO)
         );
         // 중복 확인
-        if (reportRepository.findByMemberIdAndPostId(member.getId(), reportRequestDto.getPostId()).isPresent()) {
+        if (reportRepository.findByAccuserNicknameAndPostId(member.getNickname(), reportPostRequestDto.getPostId()).isPresent()) {
             throw new CustomException(ALREADY_REPORT);
         }
         Report report = Report.builder()
-                .reportcode(reportRequestDto.getReportCode().getValue())
-                .content(reportRequestDto.getContent())
+                .accuserNickname(member.getNickname())
+                .reportEnum(reportPostRequestDto.getReportEnum())
+                .content(reportPostRequestDto.getContent())
+                .respondent(post.getMember())
                 .post(post)
-                .member(member)
+                .respondentNickname(post.getMember().getNickname())
                 .build();
 
         // 총개수 세기 필요 없을 수 도 있음 혹시 몰라서 써놓은 로직
-        int count = reportRepository.findByPostId(reportRequestDto.getPostId()).size()+1;
+        int count = reportRepository.findByPostId(reportPostRequestDto.getPostId()).size()+1;
         Member respondent = memberRepository.findById(post.getMember().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        stopRespondent(report, count, respondent);
+        stopRespondent(count, respondent);
         reportRepository.save(report);
 
         return ResponseDto.toResponseEntity(REPORT_SUCCESS);
@@ -64,7 +69,7 @@ public class ReportService {
 
     public ResponseEntity<ResponseDto> reportPostDelete(Long reportId, Member member) {
         Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum().getMemberRole().equals("MANAGER") || member.getMemberRoleEnum().getMemberRole().equals("ADMIN"))){
+        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
         reportRepository.deleteById(report.getId());
@@ -73,22 +78,24 @@ public class ReportService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> reportComment(ReportRequestDto reportRequestDto, Member member) {
-        Comment comment = commentRepository.findById(reportRequestDto.getCommentId()).orElseThrow(
+    public ResponseEntity<ResponseDto> reportComment(ReportCommentRequestDto reportCommentRequestDto, Member member) {
+        Comment comment = commentRepository.findById(reportCommentRequestDto.getCommentId()).orElseThrow(
                 () -> new CustomException(COMMENT_NOT_FOUND)
         );
-        if (reportRepository.findByMemberIdAndCommentId(member.getId(), reportRequestDto.getCommentId()).isPresent()) {
+        if (reportRepository.findByAccuserNicknameAndCommentId(member.getNickname(), reportCommentRequestDto.getCommentId()).isPresent()) {
             throw new CustomException(ALREADY_REPORT);
         }
         Report report = Report.builder()
+                .accuserNickname(member.getNickname())
+                .reportEnum(reportCommentRequestDto.getReportEnum())
+                .content(reportCommentRequestDto.getContent())
+                .respondent(comment.getMember())
                 .comment(comment)
-                .reportcode(reportRequestDto.getReportCode().getValue())
-                .content(reportRequestDto.getContent())
-                .member(member)
+                .respondentNickname(comment.getMember().getNickname())
                 .build();
-        int count = reportRepository.findByCommentId(reportRequestDto.getCommentId()).size()+1;
+        int count = reportRepository.findByCommentId(reportCommentRequestDto.getCommentId()).size()+1;
         Member informant = memberRepository.findById(comment.getMember().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        stopRespondent(report, count, informant);
+        stopRespondent(count, informant);
         reportRepository.save(report);
 
         return ResponseDto.toResponseEntity(REPORT_SUCCESS);
@@ -96,7 +103,7 @@ public class ReportService {
 
     public ResponseEntity<ResponseDto> reportCommentDelete(Long reportId, Member member) {
         Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum().getMemberRole().equals("MANAGER") || member.getMemberRoleEnum().getMemberRole().equals("ADMIN"))){
+        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
         reportRepository.deleteById(report.getId());
@@ -105,22 +112,23 @@ public class ReportService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> reportMember(ReportMemberRequestDto reportMemberRequestDto, Member informant) {
+    public ResponseEntity<ResponseDto> reportMember(ReportMemberRequestDto reportMemberRequestDto, Member member) {
         Member respondent = memberRepository.findByNickname(reportMemberRequestDto.getNickname()).orElseThrow(
-                () -> new CustomException(UNAUTHORIZED_MEMBER)
+                () -> new CustomException(MEMBER_NOT_FOUND)
         );
-        if (reportRepository.findByMemberIdAndRespondentId(informant.getId(), respondent.getId()).isPresent()) {
+        if (reportRepository.findByAccuserNicknameAndRespondentId(member.getNickname(), respondent.getId()).isPresent()) {
             throw new CustomException(ALREADY_REPORT);
         }
         Report report = Report.builder()
-                .member(informant)
-                .respondent(respondent)
+                .accuserNickname(member.getNickname())
+                .reportEnum(reportMemberRequestDto.getReportEnum())
                 .content(reportMemberRequestDto.getContent())
-                .reportcode(reportMemberRequestDto.getReportCode().getValue())
+                .respondent(respondent)
+                .respondentNickname(respondent.getNickname())
                 .build();
 
         int count = reportRepository.findByRespondentId(respondent.getId()).size() + 1;
-        stopRespondent(report, count, respondent);
+        stopRespondent(count, respondent);
         reportRepository.save(report);
 
         return ResponseDto.toResponseEntity(REPORT_SUCCESS);
@@ -129,7 +137,7 @@ public class ReportService {
     @Transactional
     public ResponseEntity<ResponseDto> reportMemberDelete(Long reportId, Member member) {
         Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum().getMemberRole().equals("MANAGER") || member.getMemberRoleEnum().getMemberRole().equals("ADMIN"))){
+        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
         reportRepository.deleteById(report.getId());
@@ -138,18 +146,20 @@ public class ReportService {
     }
 
     public ResponseEntity<ResponseDto> getReportAll(String sortBy,Member member) {
-        if(!(member.getMemberRoleEnum().getMemberRole().equals("MANAGER") || member.getMemberRoleEnum().getMemberRole().equals("ADMIN"))){
+        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
             throw new CustomException(UNAUTHORIZED_ADMIN);
         }
             Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
             List<Report> reports = reportRepository.findAll(sort);
-            List<ResponseReportDto> dtoList = new ArrayList<>();
+            List<ReportResponseDto> dtoList = new ArrayList<>();
             for (Report report : reports) {
-                ResponseReportDto dto = ResponseReportDto.of(report);
+                ReportResponseDto dto = ReportResponseDto.of(report);
+                dto.setRespondentRole(memberRepository.findByNickname(report.getRespondentNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND)).getMemberRoleEnum().getMemberRole());
+                dto.setReportCount(reportRepository.countByRespondent(report.getRespondent()));
                 dtoList.add(dto);
             }
             return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
-        }
+    }
 
     private Report validateReport(Long reportId) {
         return reportRepository.findById(reportId).orElseThrow(
@@ -157,8 +167,7 @@ public class ReportService {
         );
     }
 
-    private void stopRespondent(Report report, int count, Member respondent) {
-        report.updates(count);
+    private void stopRespondent(int count, Member respondent) {
         if(count >15){
             respondent.stop(LocalDateTime.now());
             mailService.send(respondent);

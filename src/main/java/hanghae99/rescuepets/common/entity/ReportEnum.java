@@ -1,19 +1,21 @@
 package hanghae99.rescuepets.common.entity;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import hanghae99.rescuepets.common.dto.CustomException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.ENUM_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Getter
 public enum ReportEnum {
-    INAPPOITE_WORD("부적절한단어"),
-    FALSE_INFORMATION("거짓정보"),
-    BODY_EXPOSURE("신체노출"),
+    VIOLENCE("폭력적 표현"),
+    INCORRECT_INFORMATION("부정확한 정보"),
+    INDECENT_EXPRESSION("선정적 표현"),
     ETC("기타");
 
     private final String value;
-
 
     public static ReportEnum fromValue(String value) {
         for (ReportEnum reportEnum : ReportEnum.values()) {
@@ -21,7 +23,7 @@ public enum ReportEnum {
                 return reportEnum;
             }
         }
-        throw new IllegalArgumentException("Invalid house type value: " + value);
+        throw new CustomException(ENUM_NOT_FOUND);
     }
 
     @JsonValue
