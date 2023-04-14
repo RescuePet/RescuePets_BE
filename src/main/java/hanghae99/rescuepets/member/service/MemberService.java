@@ -166,6 +166,9 @@ public class MemberService {
             Pageable pageable = PageRequest.of(page, size);
             Page<Member> memberList = memberRepository.findByOrderByCreatedAtDesc(pageable);
             for (Member memberTemp : memberList) {
+                if (memberTemp.getId().equals(member.getId())) {
+                    continue;
+                }
                 MemberResponseDto dto = new MemberResponseDto(memberTemp);
                 dtoList.add(dto);
             }
