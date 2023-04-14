@@ -46,7 +46,7 @@ public enum ExceptionMessage {
     NOT_FOUND_IMAGE(NOT_FOUND, "이미지가 없습니다."),
     POST_ALREADY_DELETED(NOT_FOUND, "삭제된 게시글입니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "대상 댓글을 찾을 수 없습니다."),
-    MEMBER_NOT_FOUND(NOT_FOUND, "아이디,비밀번호를 확인해주세요"),
+    MEMBER_NOT_FOUND(NOT_FOUND, "회원을 찾을 수 없습니다."),
     CHATROOM_NOT_FOUND(NOT_FOUND, "채팅방이 존재하지 않습니다."),
     NOT_FOUND_PET_INFO(NOT_FOUND,"해당 유기동물 정보가 없습니다."),
     NOT_FOUND_PET_INFO_SCRAP_MEMBER(NOT_FOUND,"요청하신 회원은 해당 유기 동물이 스크랩되어있지 않습니다."),

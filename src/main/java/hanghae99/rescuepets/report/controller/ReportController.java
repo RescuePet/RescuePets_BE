@@ -1,7 +1,7 @@
 package hanghae99.rescuepets.report.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.common.entity.ReportEnum;
+import hanghae99.rescuepets.common.entity.ReportReasonEnum;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
 import hanghae99.rescuepets.report.dto.ReportCommentRequestDto;
@@ -24,21 +24,9 @@ import java.beans.PropertyEditorSupport;
 public class ReportController {
     private final ReportService reportService;
 
-    @GetMapping("/all")
-    @Operation(summary = "Report 전체 게시글을 페이징없이 불러오기", description = "Report를 페이징없이 불러옵니다")
-    public ResponseEntity<ResponseDto> getReportAll(@RequestParam(required = false, defaultValue = "createdAt") String sortBy, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-
-        return reportService.getReportAll(sortBy, memberDetails.getMember());
-    }
-
     @PostMapping(value = "/post")
     public ResponseEntity<ResponseDto> reportPost(@RequestBody ReportPostRequestDto reportPostRequestDto, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportPost(reportPostRequestDto, memberDetails.getMember());
-    }
-
-    @DeleteMapping(value = "/post/{reportId}")
-    public ResponseEntity<ResponseDto> reportPostDelete(@PathVariable Long reportId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportPostDelete(reportId,memberDetails.getMember());
     }
 
     @PostMapping(value = "/comment")
@@ -46,31 +34,33 @@ public class ReportController {
         return  reportService.reportComment(reportCommentRequestDto,memberDetails.getMember());
     }
 
-    @DeleteMapping(value = "/comment/{reportId}")
-    public ResponseEntity<ResponseDto> reportCommentDelete(@PathVariable Long reportId, @Parameter(hidden = true)@AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportCommentDelete(reportId, memberDetails.getMember());
-    }
-
     @PostMapping(value = "/member")
     public ResponseEntity<ResponseDto> reportMember(@RequestBody ReportMemberRequestDto reportMemberRequestDto,  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportMember(reportMemberRequestDto,memberDetails.getMember());
     }
 
-    @DeleteMapping(value = "/member/{reportId}")
-    public ResponseEntity<ResponseDto> reportMemberDelete(@PathVariable Long reportId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
-        return reportService.reportMemberDelete(reportId, memberDetails.getMember());
+    @GetMapping("/all")
+    @Operation(summary = "Report 전체 게시글을 페이징없이 불러오기", description = "Report를 페이징없이 불러옵니다")
+    public ResponseEntity<ResponseDto> getReportAll(@RequestParam(required = false, defaultValue = "createdAt") String sortBy, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+
+        return reportService.getReportAll(sortBy, memberDetails.getMember());
+    }
+
+    @DeleteMapping(value = "/{reportId}")
+    public ResponseEntity<ResponseDto> reportDelete(@PathVariable Long reportId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
+        return reportService.reportDelete(reportId, memberDetails.getMember());
     }
 
     // value 값과 key 값 바꾸는 로직
     public class TempEnumConverter extends PropertyEditorSupport {
         public void setAsText(final String text) throws IllegalArgumentException {
-            setValue(ReportEnum.fromValue(text));
+            setValue(ReportReasonEnum.fromValue(text));
         }
     }
     // value 값과 key 값 바꾸는 로직
     @InitBinder
     public void initBinder(final WebDataBinder webdataBinder) {
-        webdataBinder.registerCustomEditor(ReportEnum.class, new TempEnumConverter());
+        webdataBinder.registerCustomEditor(ReportReasonEnum.class, new TempEnumConverter());
     }
 
 }

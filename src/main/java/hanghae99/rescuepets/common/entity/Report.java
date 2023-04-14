@@ -18,18 +18,22 @@ public class Report extends TimeStamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String accuserNickname;
+    @Enumerated(value = EnumType.STRING)
     @Column
-    private ReportEnum reportEnum;
+    private ReportTypeEnum reportTypeEnum;
+    @Enumerated(value = EnumType.STRING)
+    @Column
+    private ReportReasonEnum reportReasonEnum;
     @Column(nullable = true)
     private String content;
     private String respondentNickname;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member respondent;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "comment_id")
     private Comment comment;
 }
