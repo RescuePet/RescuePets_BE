@@ -20,6 +20,7 @@ public enum ExceptionMessage {
     KAKAO_UNLINK_FAIL(BAD_REQUEST, "회원탈퇴 실패"),
     MAIL_SEND_FAIL(BAD_REQUEST, "메일전송 실패"),
     CONNECTION_ERROR(BAD_REQUEST, "연결 실패"),
+    INVALID_SEARCH_KEY(BAD_REQUEST, "검색키가 올바르지 않습니다."),
 
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
@@ -52,9 +53,6 @@ public enum ExceptionMessage {
     NOT_FOUND_PET_INFO_SCRAP_MEMBER(NOT_FOUND,"요청하신 회원은 해당 유기 동물이 스크랩되어있지 않습니다."),
     NOT_FOUND_SCRAP(NOT_FOUND,"스크랩되어있지 않습니다."),
     NOT_FOUND_REPORT(NOT_FOUND,"신고가 되어있지 않습니다."),
-    NOT_FOUND_SEARCH_KEYWORD(BAD_REQUEST, "검색 내용을 찾을 수 없습니다."),
-
-
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE_PET_INFO_SCRAP(CONFLICT, "관심 유기동물에 이미 존재합니다"),
     DUPLICATE_RESOURCE_PET_INFO_INQUIRY(CONFLICT, "해당 유기동물에 문의한 내역이 존재합니다"),
