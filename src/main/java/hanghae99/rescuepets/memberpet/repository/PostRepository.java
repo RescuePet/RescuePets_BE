@@ -17,8 +17,7 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     Page<Post> findByPostTypeOrderByCreatedAtDesc(PostTypeEnum postType, Pageable pageable);
     List<Post> findTop50ByOrderByCreatedAtDesc();
     List<Post> findByOrderByCreatedAtDesc();
-    Integer countByMemberId(Long memberId);
-
+    Integer countByMemberIdAndIsDeletedFalse(Long memberId);
     List<Post> findAllByIsDeletedTrue();
 
     //위도 경도
