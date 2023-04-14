@@ -30,6 +30,7 @@ import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 import static hanghae99.rescuepets.common.entity.MemberRoleEnum.ADMIN;
 import static hanghae99.rescuepets.common.entity.MemberRoleEnum.MANAGER;
+import static hanghae99.rescuepets.common.entity.ReportTypeEnum.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,78 +42,10 @@ public class ReportService {
     private final MailService mailService;
 
     @Transactional
-    public ResponseEntity<ResponseDto> reportPost(ReportPostRequestDto reportPostRequestDto, Member member) {
-        Post post = postRepository.findById(reportPostRequestDto.getPostId()).orElseThrow(
-                () -> new CustomException(NOT_FOUND_PET_INFO)
-        );
-        // 중복 확인
-        if (reportRepository.findByAccuserNicknameAndPostId(member.getNickname(), reportPostRequestDto.getPostId()).isPresent()) {
-            throw new CustomException(ALREADY_REPORT);
-        }
-        Report report = Report.builder()
-                .accuserNickname(member.getNickname())
-                .reportEnum(reportPostRequestDto.getReportEnum())
-                .content(reportPostRequestDto.getContent())
-                .respondent(post.getMember())
-                .post(post)
-                .respondentNickname(post.getMember().getNickname())
-                .build();
-
-        // 총개수 세기 필요 없을 수 도 있음 혹시 몰라서 써놓은 로직
-        int count = reportRepository.findByPostId(reportPostRequestDto.getPostId()).size()+1;
-        Member respondent = memberRepository.findById(post.getMember().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        stopRespondent(count, respondent);
-        reportRepository.save(report);
-
-        return ResponseDto.toResponseEntity(REPORT_SUCCESS);
-    }
-
-    public ResponseEntity<ResponseDto> reportPostDelete(Long reportId, Member member) {
-        Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_ADMIN);
-        }
-        reportRepository.deleteById(report.getId());
-
-        return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);
-    }
-
-    @Transactional
-    public ResponseEntity<ResponseDto> reportComment(ReportCommentRequestDto reportCommentRequestDto, Member member) {
-        Comment comment = commentRepository.findById(reportCommentRequestDto.getCommentId()).orElseThrow(
-                () -> new CustomException(COMMENT_NOT_FOUND)
-        );
-        if (reportRepository.findByAccuserNicknameAndCommentId(member.getNickname(), reportCommentRequestDto.getCommentId()).isPresent()) {
-            throw new CustomException(ALREADY_REPORT);
-        }
-        Report report = Report.builder()
-                .accuserNickname(member.getNickname())
-                .reportEnum(reportCommentRequestDto.getReportEnum())
-                .content(reportCommentRequestDto.getContent())
-                .respondent(comment.getMember())
-                .comment(comment)
-                .respondentNickname(comment.getMember().getNickname())
-                .build();
-        int count = reportRepository.findByCommentId(reportCommentRequestDto.getCommentId()).size()+1;
-        Member informant = memberRepository.findById(comment.getMember().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-        stopRespondent(count, informant);
-        reportRepository.save(report);
-
-        return ResponseDto.toResponseEntity(REPORT_SUCCESS);
-    }
-
-    public ResponseEntity<ResponseDto> reportCommentDelete(Long reportId, Member member) {
-        Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_ADMIN);
-        }
-        reportRepository.deleteById(report.getId());
-
-        return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);
-    }
-
-    @Transactional
     public ResponseEntity<ResponseDto> reportMember(ReportMemberRequestDto reportMemberRequestDto, Member member) {
+        if (reportMemberRequestDto.getNickname().equals(member.getNickname())){
+            throw new CustomException(SELF_REFERENCE_NOT_ALLOWED);
+        }
         Member respondent = memberRepository.findByNickname(reportMemberRequestDto.getNickname()).orElseThrow(
                 () -> new CustomException(MEMBER_NOT_FOUND)
         );
@@ -121,7 +54,8 @@ public class ReportService {
         }
         Report report = Report.builder()
                 .accuserNickname(member.getNickname())
-                .reportEnum(reportMemberRequestDto.getReportEnum())
+                .reportTypeEnum(MEMBER_REPORT)
+                .reportReasonEnum(reportMemberRequestDto.getReportReasonEnum())
                 .content(reportMemberRequestDto.getContent())
                 .respondent(respondent)
                 .respondentNickname(respondent.getNickname())
@@ -135,7 +69,80 @@ public class ReportService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> reportMemberDelete(Long reportId, Member member) {
+    public ResponseEntity<ResponseDto> reportPost(ReportPostRequestDto reportPostRequestDto, Member member) {
+        Post post = postRepository.findById(reportPostRequestDto.getPostId()).orElseThrow(
+                () -> new CustomException(NOT_FOUND_PET_INFO)
+        );
+        if (post.getMember().getNickname().equals(member.getNickname())){
+            throw new CustomException(SELF_REFERENCE_NOT_ALLOWED);
+        }
+        // 중복 확인
+        if (reportRepository.findByAccuserNicknameAndPostId(member.getNickname(), reportPostRequestDto.getPostId()).isPresent()) {
+            throw new CustomException(ALREADY_REPORT);
+        }
+        Report report = Report.builder()
+                .accuserNickname(member.getNickname())
+                .reportTypeEnum(POST_REPORT)
+                .reportReasonEnum(reportPostRequestDto.getReportReasonEnum())
+                .content(reportPostRequestDto.getContent())
+                .post(post)
+                .respondentNickname(post.getMember().getNickname())
+                .build();
+
+        // 총개수 세기 필요 없을 수 도 있음 혹시 몰라서 써놓은 로직
+        int count = reportRepository.findByPostId(reportPostRequestDto.getPostId()).size()+1;
+        Member respondent = memberRepository.findById(post.getMember().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        stopRespondent(count, respondent);
+        reportRepository.save(report);
+
+        return ResponseDto.toResponseEntity(REPORT_SUCCESS);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> reportComment(ReportCommentRequestDto reportCommentRequestDto, Member member) {
+        Comment comment = commentRepository.findById(reportCommentRequestDto.getCommentId()).orElseThrow(
+                () -> new CustomException(COMMENT_NOT_FOUND)
+        );
+        if (comment.getMember().getNickname().equals(member.getNickname())){
+            throw new CustomException(SELF_REFERENCE_NOT_ALLOWED);
+        }
+        if (reportRepository.findByAccuserNicknameAndCommentId(member.getNickname(), reportCommentRequestDto.getCommentId()).isPresent()) {
+            throw new CustomException(ALREADY_REPORT);
+        }
+        Report report = Report.builder()
+                .accuserNickname(member.getNickname())
+                .reportTypeEnum(COMMENT_REPORT)
+                .reportReasonEnum(reportCommentRequestDto.getReportReasonEnum())
+                .content(reportCommentRequestDto.getContent())
+                .comment(comment)
+                .respondentNickname(comment.getMember().getNickname())
+                .build();
+        int count = reportRepository.findByCommentId(reportCommentRequestDto.getCommentId()).size()+1;
+        Member informant = memberRepository.findById(comment.getMember().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+        stopRespondent(count, informant);
+        reportRepository.save(report);
+
+        return ResponseDto.toResponseEntity(REPORT_SUCCESS);
+    }
+
+    public ResponseEntity<ResponseDto> getReportAll(String sortBy,Member member) {
+        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
+            throw new CustomException(UNAUTHORIZED_ADMIN);
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        List<Report> reports = reportRepository.findAll(sort);
+        List<ReportResponseDto> dtoList = new ArrayList<>();
+        for (Report report : reports) {
+            ReportResponseDto dto = ReportResponseDto.of(report);
+            dto.setRespondentRole(memberRepository.findByNickname(report.getRespondentNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND)).getMemberRoleEnum().getMemberRole());
+            dto.setReportCount(reportRepository.countByRespondent(report.getRespondent()));
+            dtoList.add(dto);
+        }
+        return ResponseDto.toResponseEntity(REPORT_LIST_READING_SUCCESS, dtoList);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> reportDelete(Long reportId, Member member) {
         Report report = validateReport(reportId);
         if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
             throw new CustomException(UNAUTHORIZED_ADMIN);
@@ -143,22 +150,6 @@ public class ReportService {
         reportRepository.deleteById(report.getId());
 
         return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);
-    }
-
-    public ResponseEntity<ResponseDto> getReportAll(String sortBy,Member member) {
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_ADMIN);
-        }
-            Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-            List<Report> reports = reportRepository.findAll(sort);
-            List<ReportResponseDto> dtoList = new ArrayList<>();
-            for (Report report : reports) {
-                ReportResponseDto dto = ReportResponseDto.of(report);
-                dto.setRespondentRole(memberRepository.findByNickname(report.getRespondentNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND)).getMemberRoleEnum().getMemberRole());
-                dto.setReportCount(reportRepository.countByRespondent(report.getRespondent()));
-                dtoList.add(dto);
-            }
-            return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
 
     private Report validateReport(Long reportId) {

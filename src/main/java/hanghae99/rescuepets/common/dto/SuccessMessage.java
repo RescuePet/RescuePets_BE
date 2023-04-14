@@ -43,6 +43,7 @@ public enum SuccessMessage {
     CHAT_HISTORY_SUCCESS(HttpStatus.OK, "채팅 내역 불러오기 성공"),
     CHAT_ROOM_EXIT_SUCCESS(HttpStatus.OK, "채팅방 나가기 성공"),
     REPORT_SUCCESS(HttpStatus.OK,"신고가 완료되었습니다"),
+    REPORT_LIST_READING_SUCCESS(HttpStatus.OK,"신고 목록 조회를 완료했습니다"),
     TIMECHECK_SUCCESS(HttpStatus.OK, "아직 정지 시간이 풀리지 않았습니다."),
     REPORT_DELETE_SUCCESS(HttpStatus.OK,"신고삭제가 완료되었습니다"),
 
