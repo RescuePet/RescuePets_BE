@@ -148,7 +148,7 @@ public class PostService {
         }
 
         List<PostShortResponseDto> postListByDistance = new ArrayList<>();
-        if (postPage.isEmpty()) {
+        if (postPage == null || postPage.isEmpty()) {
             return ResponseDto.toResponseEntity(PET_INFO_SEARCH_EMPTY, postListByDistance);
         }
         for (Post post : postPage) {
