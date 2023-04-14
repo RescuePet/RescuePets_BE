@@ -11,6 +11,7 @@ import hanghae99.rescuepets.memberpet.repository.PostLinkRepository;
 import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -126,9 +127,9 @@ public class PostService {
                                                              Double description, String searchKey, String searchValue, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> postPage = null;
-        if (memberLatitude != null && searchKey == null) {
+        if (memberLatitude != null && StringUtils.isBlank(searchKey)) {
             postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, pageable);
-        } else if (memberLatitude == null && searchKey != null) {
+        } else if (memberLatitude == null && !StringUtils.isBlank(searchKey)) {
             if (searchKey.equals("upkind")) {
                 postPage = postRepository.findPostsByUpkind(postType, searchValue, pageable);
             } else if (searchKey.equals("kindCd")) {//kindCd
@@ -136,7 +137,7 @@ public class PostService {
             } else {
                 throw new CustomException(INVALID_SEARCH_KEY);
             }
-        } else if (memberLatitude != null && searchKey != null) {
+        } else if (memberLatitude != null && !StringUtils.isBlank(searchKey)) {
             if (searchKey.equals("upkind")) {
                 postPage = postRepository.findPostsByDistanceAndUpkind(postType, memberLongitude, memberLatitude, description, searchValue, pageable);
             } else if (searchKey.equals("kindCd")) {

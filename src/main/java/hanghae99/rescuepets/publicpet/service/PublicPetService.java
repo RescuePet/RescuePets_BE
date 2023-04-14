@@ -12,6 +12,7 @@ import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
 import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -86,9 +87,10 @@ public class PublicPetService {
                                                             Double description, String searchKey, String searchValue, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PetInfoByAPI> postPage = null;
-        if (Latitude != null && searchKey == null) {
+        Boolean test = StringUtils.isBlank(searchKey);
+        if (Latitude != null && StringUtils.isBlank(searchKey)) {
             postPage = publicPetInfoRepository.findApiByDistance(Longitude, Latitude, description, pageable);
-        } else if (Latitude == null && searchKey != null) {
+        } else if (Latitude == null && !StringUtils.isBlank(searchKey)) {
             if (searchKey.equals("kindCd")) {
                 postPage = publicPetInfoRepository.findApiByKindCd("%" + searchValue + "%", pageable);
             } else if (searchKey.equals("careNm")) {
@@ -96,7 +98,7 @@ public class PublicPetService {
             } else {
                 throw new CustomException(INVALID_SEARCH_KEY);
             }
-        } else if (Latitude != null && searchKey != null) {
+        } else if (Latitude != null && !StringUtils.isBlank(searchKey)) {
             if (searchKey.equals("kindCd")) {
                 postPage = publicPetInfoRepository.findApiByDistanceAndKindCd(Longitude, Latitude, description, "%" + searchValue + "%", pageable);
             } else if (searchKey.equals("careNm")) {
