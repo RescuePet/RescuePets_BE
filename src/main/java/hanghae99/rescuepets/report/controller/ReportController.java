@@ -1,7 +1,7 @@
 package hanghae99.rescuepets.report.controller;
 
 import hanghae99.rescuepets.common.dto.ResponseDto;
-import hanghae99.rescuepets.common.entity.ReportEnum;
+import hanghae99.rescuepets.common.entity.ReportReasonEnum;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
 import hanghae99.rescuepets.report.dto.ReportCommentRequestDto;
@@ -54,13 +54,13 @@ public class ReportController {
     // value 값과 key 값 바꾸는 로직
     public class TempEnumConverter extends PropertyEditorSupport {
         public void setAsText(final String text) throws IllegalArgumentException {
-            setValue(ReportEnum.fromValue(text));
+            setValue(ReportReasonEnum.fromValue(text));
         }
     }
     // value 값과 key 값 바꾸는 로직
     @InitBinder
     public void initBinder(final WebDataBinder webdataBinder) {
-        webdataBinder.registerCustomEditor(ReportEnum.class, new TempEnumConverter());
+        webdataBinder.registerCustomEditor(ReportReasonEnum.class, new TempEnumConverter());
     }
 
 }

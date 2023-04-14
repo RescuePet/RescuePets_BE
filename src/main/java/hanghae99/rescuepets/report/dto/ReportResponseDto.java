@@ -11,7 +11,8 @@ import java.util.Optional;
 public class ReportResponseDto {
     private Long id;
     private String accuseMemberNickname;
-    private String reportEnum;
+    private String reportType;
+    private String reportReason;
     private String respondentNickname;
     private String respondentRole;
     private Long respondentId;
@@ -23,7 +24,8 @@ public class ReportResponseDto {
         return ReportResponseDto.builder()
                 .id(report.getId())
                 .accuseMemberNickname(report.getAccuserNickname())
-                .reportEnum(report.getReportEnum().getValue())
+                .reportType(report.getReportTypeEnum().getValue())
+                .reportReason(report.getReportReasonEnum().getValue())
                 .respondentNickname(report.getRespondentNickname())
                 .respondentId(Optional.ofNullable(report.getRespondent()).map(Member::getId).orElse(null))
                 .postId(Optional.ofNullable(report.getPost()).map(Post::getId).orElse(null))

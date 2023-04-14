@@ -14,8 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -176,11 +174,11 @@ public class PostService {
     }
     @Transactional
     public ResponseEntity<ResponseDto> getSoftDeletedPost(int page, int size, String postType, Member member) {
-        if(member.getMemberRoleEnum() != MANAGER || member.getMemberRoleEnum() != ADMIN){
+        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
             throw new CustomException(UNAUTHORIZED_MANAGER);
         }
         Pageable pageable = PageRequest.of(page, size);
-        Page<Post> postPage = postRepository.findByPostTypeByIsDeletedOrderByDeletedDtDesc(PostTypeEnum.valueOf(postType), true, pageable);
+        Page<Post> postPage = postRepository.findByPostTypeAndIsDeletedOrderByDeletedDtDesc(PostTypeEnum.valueOf(postType), true, pageable);
         List<PostResponseDto> dtoList = new ArrayList<>();
         for (Post post : postPage) {
             PostResponseDto dto = PostResponseDto.of(post).build();
@@ -263,20 +261,25 @@ public class PostService {
     @Transactional
     public ResponseEntity<ResponseDto> softDeletePost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(!member.getNickname().equals(post.getMember().getNickname())){
-            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
+        if(member.getNickname().equals(post.getMember().getNickname())){
+            post.setIsDeleted(true);
+
+            return ResponseDto.toResponseEntity(POST_SOFT_DELETE_SUCCESS);
+        }else{
+            if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
+                throw new CustomException(UNAUTHORIZED_MANAGER);
+            }else{
+                post.setIsDeleted(true);
+
+                return ResponseDto.toResponseEntity(POST_SOFT_DELETE_SUCCESS);
+            }
         }
-        if(member.getMemberRoleEnum() != MANAGER || member.getMemberRoleEnum() != ADMIN){
-            throw new CustomException(UNAUTHORIZED_MANAGER);
-        }
-        post.setIsDeleted(true);
-        return ResponseDto.toResponseEntity(POST_SOFT_DELETE_SUCCESS);
     }
 
     @Transactional
     public ResponseEntity<ResponseDto> restoreSoftDeletedPost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(member.getMemberRoleEnum() != MANAGER || member.getMemberRoleEnum() != ADMIN){
+        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
             throw new CustomException(UNAUTHORIZED_MANAGER);
         }
         post.setIsDeleted(false);
@@ -295,7 +298,7 @@ public class PostService {
         }
     }
 
-    //하루에 한번씩 post repo 하루 마다 isDeleted true 것을 확인 후 1년이 지난 것들은 삭제 20초 테스트
+    //하루에 한번씩 post repo 하루 마다 isDeleted true 것을 확인 후 1년이 지난 것들은 삭제. 매일 새벽 3시에 실행
     @Scheduled(cron = "0 0 3 * * *")
     @Transactional
     public void periodicDeletePost() {

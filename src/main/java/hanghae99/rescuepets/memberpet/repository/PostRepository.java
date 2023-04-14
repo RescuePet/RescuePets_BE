@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long>{
     List<Post> findAllByMemberId(Long memberId);
-    Page<Post> findByPostTypeByIsDeletedOrderByDeletedDtDesc(PostTypeEnum postType, Boolean isDeleted, Pageable pageable);
+    Page<Post> findByPostTypeAndIsDeletedOrderByDeletedDtDesc(PostTypeEnum postType, Boolean isDeleted, Pageable pageable);
     Page<Post> findByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
     List<Post> findTop5ByMemberIdOrderByCreatedAtDesc(Long memberId);
     Page<Post> findByPostTypeOrderByCreatedAtDesc(PostTypeEnum postType, Pageable pageable);

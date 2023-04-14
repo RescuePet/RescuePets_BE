@@ -50,22 +50,22 @@ public class PostController {
         return postService.getPostAll();
     }
 
-    @GetMapping("/temporary")
+    @GetMapping("/temporary/{postType}")
     @Operation(summary = "임시삭제 게시글 목록 불러오기", description = "소프트 딜리트된 게시글을 카테고리 별로 분류해서 확인할 수 있습니다")
     public ResponseEntity<ResponseDto> getSoftDeletedPost(@RequestParam int page,
                                                           @RequestParam int size,
-                                                          @RequestParam String postType,
+                                                          @PathVariable String postType,
                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.getSoftDeletedPost(page-1, size, postType, memberDetails.getMember());
     }
 
-//    @GetMapping("/member")
-//    @Operation(summary = "내가 작성한 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")
-//    public ResponseEntity<ResponseDto> getPostListByMember(@RequestParam int page,
-//                                                           @RequestParam int size,
-//                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-//        return postService.getPostListByMember(page-1, size, memberDetails.getMember());
-//    }
+    @GetMapping("/member")
+    @Operation(summary = "내가 작성한 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")
+    public ResponseEntity<ResponseDto> getPostListByMember(@RequestParam int page,
+                                                           @RequestParam int size,
+                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.getPostListByMember(page-1, size, memberDetails.getMember());
+    }
 
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 상세 조회하기", description = "URI에 명시된 PostId를 기반으로 특정 게시글을 조회합니다")

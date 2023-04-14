@@ -30,6 +30,7 @@ import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 import static hanghae99.rescuepets.common.entity.MemberRoleEnum.ADMIN;
 import static hanghae99.rescuepets.common.entity.MemberRoleEnum.MANAGER;
+import static hanghae99.rescuepets.common.entity.ReportTypeEnum.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,19 +42,49 @@ public class ReportService {
     private final MailService mailService;
 
     @Transactional
+    public ResponseEntity<ResponseDto> reportMember(ReportMemberRequestDto reportMemberRequestDto, Member member) {
+        if (reportMemberRequestDto.getNickname().equals(member.getNickname())){
+            throw new CustomException(SELF_REFERENCE_NOT_ALLOWED);
+        }
+        Member respondent = memberRepository.findByNickname(reportMemberRequestDto.getNickname()).orElseThrow(
+                () -> new CustomException(MEMBER_NOT_FOUND)
+        );
+        if (reportRepository.findByAccuserNicknameAndRespondentId(member.getNickname(), respondent.getId()).isPresent()) {
+            throw new CustomException(ALREADY_REPORT);
+        }
+        Report report = Report.builder()
+                .accuserNickname(member.getNickname())
+                .reportTypeEnum(MEMBER_REPORT)
+                .reportReasonEnum(reportMemberRequestDto.getReportReasonEnum())
+                .content(reportMemberRequestDto.getContent())
+                .respondent(respondent)
+                .respondentNickname(respondent.getNickname())
+                .build();
+
+        int count = reportRepository.findByRespondentId(respondent.getId()).size() + 1;
+        stopRespondent(count, respondent);
+        reportRepository.save(report);
+
+        return ResponseDto.toResponseEntity(REPORT_SUCCESS);
+    }
+
+    @Transactional
     public ResponseEntity<ResponseDto> reportPost(ReportPostRequestDto reportPostRequestDto, Member member) {
         Post post = postRepository.findById(reportPostRequestDto.getPostId()).orElseThrow(
                 () -> new CustomException(NOT_FOUND_PET_INFO)
         );
+        if (post.getMember().getNickname().equals(member.getNickname())){
+            throw new CustomException(SELF_REFERENCE_NOT_ALLOWED);
+        }
         // 중복 확인
         if (reportRepository.findByAccuserNicknameAndPostId(member.getNickname(), reportPostRequestDto.getPostId()).isPresent()) {
             throw new CustomException(ALREADY_REPORT);
         }
         Report report = Report.builder()
                 .accuserNickname(member.getNickname())
-                .reportEnum(reportPostRequestDto.getReportEnum())
+                .reportTypeEnum(POST_REPORT)
+                .reportReasonEnum(reportPostRequestDto.getReportReasonEnum())
                 .content(reportPostRequestDto.getContent())
-                .respondent(post.getMember())
                 .post(post)
                 .respondentNickname(post.getMember().getNickname())
                 .build();
@@ -72,43 +103,23 @@ public class ReportService {
         Comment comment = commentRepository.findById(reportCommentRequestDto.getCommentId()).orElseThrow(
                 () -> new CustomException(COMMENT_NOT_FOUND)
         );
+        if (comment.getMember().getNickname().equals(member.getNickname())){
+            throw new CustomException(SELF_REFERENCE_NOT_ALLOWED);
+        }
         if (reportRepository.findByAccuserNicknameAndCommentId(member.getNickname(), reportCommentRequestDto.getCommentId()).isPresent()) {
             throw new CustomException(ALREADY_REPORT);
         }
         Report report = Report.builder()
                 .accuserNickname(member.getNickname())
-                .reportEnum(reportCommentRequestDto.getReportEnum())
+                .reportTypeEnum(COMMENT_REPORT)
+                .reportReasonEnum(reportCommentRequestDto.getReportReasonEnum())
                 .content(reportCommentRequestDto.getContent())
-                .respondent(comment.getMember())
                 .comment(comment)
                 .respondentNickname(comment.getMember().getNickname())
                 .build();
         int count = reportRepository.findByCommentId(reportCommentRequestDto.getCommentId()).size()+1;
         Member informant = memberRepository.findById(comment.getMember().getId()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
         stopRespondent(count, informant);
-        reportRepository.save(report);
-
-        return ResponseDto.toResponseEntity(REPORT_SUCCESS);
-    }
-
-    @Transactional
-    public ResponseEntity<ResponseDto> reportMember(ReportMemberRequestDto reportMemberRequestDto, Member member) {
-        Member respondent = memberRepository.findByNickname(reportMemberRequestDto.getNickname()).orElseThrow(
-                () -> new CustomException(MEMBER_NOT_FOUND)
-        );
-        if (reportRepository.findByAccuserNicknameAndRespondentId(member.getNickname(), respondent.getId()).isPresent()) {
-            throw new CustomException(ALREADY_REPORT);
-        }
-        Report report = Report.builder()
-                .accuserNickname(member.getNickname())
-                .reportEnum(reportMemberRequestDto.getReportEnum())
-                .content(reportMemberRequestDto.getContent())
-                .respondent(respondent)
-                .respondentNickname(respondent.getNickname())
-                .build();
-
-        int count = reportRepository.findByRespondentId(respondent.getId()).size() + 1;
-        stopRespondent(count, respondent);
         reportRepository.save(report);
 
         return ResponseDto.toResponseEntity(REPORT_SUCCESS);
@@ -127,7 +138,7 @@ public class ReportService {
             dto.setReportCount(reportRepository.countByRespondent(report.getRespondent()));
             dtoList.add(dto);
         }
-        return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
+        return ResponseDto.toResponseEntity(REPORT_LIST_READING_SUCCESS, dtoList);
     }
 
     @Transactional
