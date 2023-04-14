@@ -33,7 +33,7 @@ public class ChatController {
 
     @MessageMapping("/{roomId}")
     @SendTo("/sub/{roomId}")
-    public void enter(@DestinationVariable String roomId, ChatRequestDto requestDto) {
+    public void createChat(@DestinationVariable String roomId, ChatRequestDto requestDto) {
         Member receiver = chatService.createChat(roomId, requestDto);
         template.convertAndSend("/sub/" + roomId, ChatResponseDto.of(requestDto));
         sseService.send(receiver, NotificationType.CHAT, requestDto.getSender() + "님이 새로운 채팅을 보냈어요");
@@ -41,7 +41,7 @@ public class ChatController {
 
     @GetMapping("/room/{roomId}")
     @Operation(summary = "채팅 조회")
-    public ResponseEntity<ResponseDto> chat(@PathVariable String roomId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseEntity<ResponseDto> getMessages(@PathVariable String roomId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return chatService.getMessages(roomId, memberDetails.getMember());
     }
 }

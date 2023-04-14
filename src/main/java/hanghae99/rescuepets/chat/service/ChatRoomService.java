@@ -30,6 +30,19 @@ public class ChatRoomService {
     private final PostRepository postRepository;
 
     @Transactional
+    public String createChatRoom(Long postId, Member member) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if (post.getMember().getId().equals(member.getId())) {
+            throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
+        }
+        ChatRoom room = chatRoomRepository.findChatRoomByPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
+        chatRoomRepository.save(room);
+        readChat(room);
+
+        return room.getRoomId();
+    }
+
+    @Transactional
     public ResponseEntity<ResponseDto> getRoomList(Member member) {
         List<ChatRoom> roomList = chatRoomRepository.findAllByHostIdOrGuestIdOrderByModifiedAtDesc(member.getId(), member.getId());
         List<ChatRoomListResponseDto> dto = new ArrayList<>();
@@ -45,19 +58,6 @@ public class ChatRoomService {
             dto.add(roomBuilder.build());
         }
         return ResponseDto.toResponseEntity(CHAT_ROOM_LIST_SUCCESS, dto);
-    }
-
-    @Transactional
-    public String createChatRoom(Long postId, Member member) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (post.getMember().getId().equals(member.getId())) {
-            throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);
-        }
-        ChatRoom room = chatRoomRepository.findChatRoomByPostIdAndGuestId(post.getId(), member.getId()).orElse(ChatRoom.of(post, member));
-        chatRoomRepository.save(room);
-        readChat(member, room);
-
-        return room.getRoomId();
     }
 
     @Transactional
@@ -84,19 +84,14 @@ public class ChatRoomService {
     }
 
     private boolean isExited(Member member, ChatRoom room) {
-        return (room.isHost(member) && room.isHostExited()) ||
-                (!room.isHost(member) && room.isGuestExited());
+        return (room.isHost(member) && room.isHostExited()) || (!room.isHost(member) && room.isGuestExited());
     }
 
     private int getUnreadChat(Member member, ChatRoom room) {
         return room.isHost(member) ? room.getGuestChatCount() : room.getHostChatCount();
     }
 
-    private void readChat(Member member, ChatRoom room) {
-        if (room.isHost(member)) {
-            room.initGuestChatCount();
-            return;
-        }
+    private void readChat(ChatRoom room) {
         room.initHostChatCount();
     }
 }
