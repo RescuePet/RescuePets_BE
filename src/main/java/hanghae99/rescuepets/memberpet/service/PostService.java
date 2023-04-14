@@ -29,6 +29,8 @@ import java.util.List;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.ADMIN;
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.MANAGER;
 import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
 
 @Slf4j
@@ -172,6 +174,20 @@ public class PostService {
         }
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
+    @Transactional
+    public ResponseEntity<ResponseDto> getSoftDeletedPost(int page, int size, String postType, Member member) {
+        if(member.getMemberRoleEnum() != MANAGER || member.getMemberRoleEnum() != ADMIN){
+            throw new CustomException(UNAUTHORIZED_MANAGER);
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> postPage = postRepository.findByPostTypeByIsDeletedOrderByDeletedDtDesc(PostTypeEnum.valueOf(postType), true, pageable);
+        List<PostResponseDto> dtoList = new ArrayList<>();
+        for (Post post : postPage) {
+            PostResponseDto dto = PostResponseDto.of(post).build();
+            dtoList.add(dto);
+        }
+        return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
+    }
 
     @Transactional
     public ResponseEntity<ResponseDto> getPostListByMember(int page, int size, Member member) {
@@ -244,16 +260,27 @@ public class PostService {
         }
     }
 
-    // true false
     @Transactional
     public ResponseEntity<ResponseDto> softDeletePost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (member.getNickname().equals(post.getMember().getNickname())) {
-            post.setIsDeleted(true);
-            return ResponseDto.toResponseEntity(POST_SOFT_DELETE_SUCCESS);
-        } else {
+        if(!member.getNickname().equals(post.getMember().getNickname())){
             throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
         }
+        if(member.getMemberRoleEnum() != MANAGER || member.getMemberRoleEnum() != ADMIN){
+            throw new CustomException(UNAUTHORIZED_MANAGER);
+        }
+        post.setIsDeleted(true);
+        return ResponseDto.toResponseEntity(POST_SOFT_DELETE_SUCCESS);
+    }
+
+    @Transactional
+    public ResponseEntity<ResponseDto> restoreSoftDeletedPost(Long postId, Member member) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
+        if(member.getMemberRoleEnum() != MANAGER || member.getMemberRoleEnum() != ADMIN){
+            throw new CustomException(UNAUTHORIZED_MANAGER);
+        }
+        post.setIsDeleted(false);
+        return ResponseDto.toResponseEntity(POST_SOFT_DELETE_SUCCESS);
     }
 
     // 즉시 삭제

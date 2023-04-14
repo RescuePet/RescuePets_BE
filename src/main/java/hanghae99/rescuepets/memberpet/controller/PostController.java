@@ -50,25 +50,22 @@ public class PostController {
         return postService.getPostAll();
     }
 
-//    @GetMapping("/soft")
-//    @Operation(summary = "전체 게시글 페이징없이 불러오기(지도용)", description = "카테고리 구분 없이 전체 게시글을 페이징없이 불러옵니다")
-//    public ResponseEntity<ResponseDto> getPostAll() {
-//        return postService.getPostAll();
-//    }
-//
-//    @GetMapping("/soft/")
-//    @Operation(summary = "전체 게시글 페이징없이 불러오기(지도용)", description = "카테고리 구분 없이 전체 게시글을 페이징없이 불러옵니다")
-//    public ResponseEntity<ResponseDto> getPostAll() {
-//        return postService.getPostAll();
-//    }
-
-    @GetMapping("/member")
-    @Operation(summary = "내가 작성한 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")
-    public ResponseEntity<ResponseDto> getPostListByMember(@RequestParam int page,
-                                                           @RequestParam int size,
-                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return postService.getPostListByMember(page-1, size, memberDetails.getMember());
+    @GetMapping("/temporary")
+    @Operation(summary = "임시삭제 게시글 목록 불러오기", description = "소프트 딜리트된 게시글을 카테고리 별로 분류해서 확인할 수 있습니다")
+    public ResponseEntity<ResponseDto> getSoftDeletedPost(@RequestParam int page,
+                                                          @RequestParam int size,
+                                                          @RequestParam String postType,
+                                                          @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.getSoftDeletedPost(page-1, size, postType, memberDetails.getMember());
     }
+
+//    @GetMapping("/member")
+//    @Operation(summary = "내가 작성한 게시글 불러오기", description = "캐시에 저장된 member정보를 기반으로 내가 작성한 PostCatch 게시글들을 페이징하여 불러옵니다")
+//    public ResponseEntity<ResponseDto> getPostListByMember(@RequestParam int page,
+//                                                           @RequestParam int size,
+//                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+//        return postService.getPostListByMember(page-1, size, memberDetails.getMember());
+//    }
 
     @GetMapping("/{postId}")
     @Operation(summary = "게시글 상세 조회하기", description = "URI에 명시된 PostId를 기반으로 특정 게시글을 조회합니다")
@@ -105,10 +102,19 @@ public class PostController {
     }
 
     @DeleteMapping("/temporary/{postId}")
-    @Operation(summary = "게시글 임시 삭제하기", description = "내가 작성한 게시글 하나를 삭제합니다")
-    public ResponseEntity<ResponseDto> softDeletePetPostCatch(@PathVariable Long postId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {
-        return postService.softDeletePost(postId, userDetails.getMember());
+    @Operation(summary = "게시글 임시 삭제하기", description = "게시글 하나를 임시삭제합니다")
+    public ResponseEntity<ResponseDto> softDeletePost(@PathVariable Long postId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return postService.softDeletePost(postId, memberDetails.getMember());
     }
+
+    @PutMapping("/temporary/{postId}")
+    @Operation(summary = "임시삭제 게시글 복구하기", description = "임시삭제 게시글 목록에서 게시글 하나를 복구합니다")
+    public ResponseEntity<ResponseDto> restoreSoftDeletedPost(@PathVariable Long postId,
+                                                              @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        return postService.restoreSoftDeletedPost(postId, memberDetails.getMember());
+    }
+
     @DeleteMapping("/{postId}")
     @Operation(summary = "게시글 즉시 삭제하기", description = "관리자 권한으로 게시글을 영구 삭제합니다")
     public ResponseEntity<ResponseDto> deletePost(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails userDetails) {

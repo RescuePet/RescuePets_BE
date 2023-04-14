@@ -14,8 +14,6 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Optional<Report> findByAccuserNicknameAndCommentId(String nickname, Long commentId);
     Integer countByRespondent(Member respondent);
     List<Report> findByPostId(Long postId);
-
     List<Report> findByCommentId(Long commentId);
-
     List<Report> findByRespondentId(Long respondentId);
 }

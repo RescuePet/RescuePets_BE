@@ -67,16 +67,6 @@ public class ReportService {
         return ResponseDto.toResponseEntity(REPORT_SUCCESS);
     }
 
-    public ResponseEntity<ResponseDto> reportPostDelete(Long reportId, Member member) {
-        Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_ADMIN);
-        }
-        reportRepository.deleteById(report.getId());
-
-        return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);
-    }
-
     @Transactional
     public ResponseEntity<ResponseDto> reportComment(ReportCommentRequestDto reportCommentRequestDto, Member member) {
         Comment comment = commentRepository.findById(reportCommentRequestDto.getCommentId()).orElseThrow(
@@ -99,16 +89,6 @@ public class ReportService {
         reportRepository.save(report);
 
         return ResponseDto.toResponseEntity(REPORT_SUCCESS);
-    }
-
-    public ResponseEntity<ResponseDto> reportCommentDelete(Long reportId, Member member) {
-        Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_ADMIN);
-        }
-        reportRepository.deleteById(report.getId());
-
-        return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);
     }
 
     @Transactional
@@ -134,8 +114,24 @@ public class ReportService {
         return ResponseDto.toResponseEntity(REPORT_SUCCESS);
     }
 
+    public ResponseEntity<ResponseDto> getReportAll(String sortBy,Member member) {
+        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
+            throw new CustomException(UNAUTHORIZED_ADMIN);
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
+        List<Report> reports = reportRepository.findAll(sort);
+        List<ReportResponseDto> dtoList = new ArrayList<>();
+        for (Report report : reports) {
+            ReportResponseDto dto = ReportResponseDto.of(report);
+            dto.setRespondentRole(memberRepository.findByNickname(report.getRespondentNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND)).getMemberRoleEnum().getMemberRole());
+            dto.setReportCount(reportRepository.countByRespondent(report.getRespondent()));
+            dtoList.add(dto);
+        }
+        return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
+    }
+
     @Transactional
-    public ResponseEntity<ResponseDto> reportMemberDelete(Long reportId, Member member) {
+    public ResponseEntity<ResponseDto> reportDelete(Long reportId, Member member) {
         Report report = validateReport(reportId);
         if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
             throw new CustomException(UNAUTHORIZED_ADMIN);
@@ -143,22 +139,6 @@ public class ReportService {
         reportRepository.deleteById(report.getId());
 
         return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);
-    }
-
-    public ResponseEntity<ResponseDto> getReportAll(String sortBy,Member member) {
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_ADMIN);
-        }
-            Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
-            List<Report> reports = reportRepository.findAll(sort);
-            List<ReportResponseDto> dtoList = new ArrayList<>();
-            for (Report report : reports) {
-                ReportResponseDto dto = ReportResponseDto.of(report);
-                dto.setRespondentRole(memberRepository.findByNickname(report.getRespondentNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND)).getMemberRoleEnum().getMemberRole());
-                dto.setReportCount(reportRepository.countByRespondent(report.getRespondent()));
-                dtoList.add(dto);
-            }
-            return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
 
     private Report validateReport(Long reportId) {
