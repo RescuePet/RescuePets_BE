@@ -38,7 +38,7 @@ public class PublicPetService {
     //전체 페이지
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getPublicPet(int page, int size, String sortBy, Member member) {
-        Sort sort = Sort.by(Sort.Direction.DESC, sortBy,"desertionNo");
+        Sort sort = Sort.by(Sort.Direction.DESC, sortBy, "desertionNo");
 //        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo").and(Sort.by(Sort.Direction.DESC, sortBy));
 //        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -82,35 +82,37 @@ public class PublicPetService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDto> getapiListByDistance(int page, int size,  Double Longitude, Double Latitude,
-                                                            Double description, String searchKey, String searchValue,Member member) {
+    public ResponseEntity<ResponseDto> getapiListByDistance(int page, int size, Double Longitude, Double Latitude,
+                                                            Double description, String searchKey, String searchValue, Member member) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<PetInfoByAPI> postPage;
+        Page<PetInfoByAPI> postPage = null;
         if (Latitude != null && searchKey == null) {
             postPage = publicPetInfoRepository.findApiByDistance(Longitude, Latitude, description, pageable);
         } else if (Latitude == null && searchKey != null) {
             if (searchKey.equals("kindCd")) {
                 postPage = publicPetInfoRepository.findApiByKindCd("%" + searchValue + "%", pageable);
+            } else if (searchKey.equals("careNm")) {
+                postPage = publicPetInfoRepository.findApiBycareNm("%" + searchValue + "%", pageable);
             } else {
-                postPage = publicPetInfoRepository.findApiBycareNm( "%" + searchValue + "%", pageable);
+                throw new CustomException(INVALID_SEARCH_KEY);
             }
-        }else if  (Latitude != null && searchKey != null) {
+        } else if (Latitude != null && searchKey != null) {
             if (searchKey.equals("kindCd")) {
-                postPage = publicPetInfoRepository.findApiByDistanceAndKindCd( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
-            } else {//kindCd
-                postPage = publicPetInfoRepository.findApiByDistanceAndCareNm( Longitude, Latitude, description, "%" + searchValue + "%", pageable);
+                postPage = publicPetInfoRepository.findApiByDistanceAndKindCd(Longitude, Latitude, description, "%" + searchValue + "%", pageable);
+            } else if (searchKey.equals("careNm")) {
+                postPage = publicPetInfoRepository.findApiByDistanceAndCareNm(Longitude, Latitude, description, "%" + searchValue + "%", pageable);
+            } else {
+                throw new CustomException(INVALID_SEARCH_KEY);
             }
-        } else {
-            throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
         }
 
         List<PublicPetResponseDto> postListByDistance = new ArrayList<>();
-        if (postPage.isEmpty()){
+        if (postPage == null || postPage.isEmpty()) {
             return ResponseDto.toResponseEntity(PET_INFO_SEARCH_EMPTY, postListByDistance);
         }
         for (PetInfoByAPI petInfoByAPI : postPage) {
             Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), petInfoByAPI.getDesertionNo()).isPresent();
-            PublicPetResponseDto dto = PublicPetResponseDto.of(petInfoByAPI,isScrap);
+            PublicPetResponseDto dto = PublicPetResponseDto.of(petInfoByAPI, isScrap);
             postListByDistance.add(dto);
         }
         return ResponseDto.toResponseEntity(PET_INFO_SEARCH_SUCCESS, postListByDistance);
