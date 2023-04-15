@@ -64,8 +64,8 @@ public class MemberController {
     }
 
     @Operation(summary = "회원탈퇴")
-    @PostMapping("/member/Withdrawal")
-    public ResponseEntity<ResponseDto> Withdrawal(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    @PostMapping("/member/withdrawal")
+    public ResponseEntity<ResponseDto> withdrawal(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return memberService.Withdrawal(memberDetails.getMember());
     }
 
