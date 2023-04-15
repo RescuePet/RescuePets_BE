@@ -11,6 +11,7 @@ import hanghae99.rescuepets.memberpet.repository.PostLinkRepository;
 import hanghae99.rescuepets.scrap.repository.ScrapRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -125,27 +126,29 @@ public class PostService {
     public ResponseEntity<ResponseDto> getPostListByDistance(int page, int size, String postType, Double memberLongitude, Double memberLatitude,
                                                              Double description, String searchKey, String searchValue, Member member) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Post> postPage;
-        if (memberLatitude != null && searchKey == null) {
-                postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, pageable);
-        } else if (memberLatitude == null && searchKey != null) {
+        Page<Post> postPage = null;
+        if (memberLatitude != null && StringUtils.isBlank(searchKey)) {
+            postPage = postRepository.findPostsByDistance(postType, memberLongitude, memberLatitude, description, pageable);
+        } else if (memberLatitude == null && !StringUtils.isBlank(searchKey)) {
             if (searchKey.equals("upkind")) {
                 postPage = postRepository.findPostsByUpkind(postType, searchValue, pageable);
-            } else {//kindCd
+            } else if (searchKey.equals("kindCd")) {//kindCd
                 postPage = postRepository.findPostsByKindCd(postType, "%" + searchValue + "%", pageable);
+            } else {
+                throw new CustomException(INVALID_SEARCH_KEY);
             }
-        } else if (memberLatitude != null && searchKey != null) {
+        } else if (memberLatitude != null && !StringUtils.isBlank(searchKey)) {
             if (searchKey.equals("upkind")) {
                 postPage = postRepository.findPostsByDistanceAndUpkind(postType, memberLongitude, memberLatitude, description, searchValue, pageable);
-            } else {//kindCd
+            } else if (searchKey.equals("kindCd")) {
                 postPage = postRepository.findPostsByDistanceAndKindCd(postType, memberLongitude, memberLatitude, description, "%" + searchValue + "%", pageable);
+            } else {
+                throw new CustomException(INVALID_SEARCH_KEY);
             }
-        } else {
-            throw new CustomException(NOT_FOUND_SEARCH_KEYWORD);
         }
 
         List<PostShortResponseDto> postListByDistance = new ArrayList<>();
-        if (postPage.isEmpty()){
+        if (postPage == null || postPage.isEmpty()) {
             return ResponseDto.toResponseEntity(PET_INFO_SEARCH_EMPTY, postListByDistance);
         }
         for (Post post : postPage) {

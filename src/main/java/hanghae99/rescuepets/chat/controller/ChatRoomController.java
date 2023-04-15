@@ -19,16 +19,16 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
 
-    @Operation(summary = "나의 채팅방 조회")
-    @GetMapping("/rooms")
-    public ResponseEntity<ResponseDto> rooms(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return chatRoomService.getRoomList(memberDetails.getMember());
-    }
-
     @Operation(summary = "채팅방 생성")
     @PostMapping("/room/{postId}")
     public String createCatchRoom(@PathVariable Long postId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return chatRoomService.createChatRoom(postId, memberDetails.getMember());
+    }
+
+    @Operation(summary = "나의 채팅방 조회")
+    @GetMapping("/rooms")
+    public ResponseEntity<ResponseDto> rooms(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+        return chatRoomService.getRoomList(memberDetails.getMember());
     }
 
     @Operation(summary = "채팅방 나가기")

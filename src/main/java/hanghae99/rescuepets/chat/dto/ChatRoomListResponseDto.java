@@ -13,11 +13,11 @@ public class ChatRoomListResponseDto {
     private String roomName;
     private String partner;
     private String profileImage;
-    private String lastChat;
-    private String time;
     private Long postId;
     private String postName;
     private SexEnum sexCd;
+    private String lastChat;
+    private String time;
     private int unreadChat;
 
     public static ChatRoomListResponseDto.ChatRoomListResponseDtoBuilder of(ChatRoom room, Member partner) {
