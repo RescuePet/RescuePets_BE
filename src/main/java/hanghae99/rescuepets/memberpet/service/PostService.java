@@ -302,13 +302,11 @@ public class PostService {
     // 즉시 삭제
     @Transactional
     public ResponseEntity<ResponseDto> deletePost(Long postId, Member member) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if (member.getNickname().equals(post.getMember().getNickname())) {
-            postRepository.deleteById(postId);
-            return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
-        } else {
-            throw new CustomException(UNAUTHORIZED_UPDATE_OR_DELETE);
+        if(member.getMemberRoleEnum() != ADMIN){
+            throw new CustomException(UNAUTHORIZED_MANAGER);
         }
+        postRepository.deleteById(postId);
+        return ResponseDto.toResponseEntity(POST_DELETE_SUCCESS);
     }
 
     //하루에 한번씩 post repo 하루 마다 isDeleted true 것을 확인 후 1년이 지난 것들은 삭제. 매일 새벽 3시에 실행
