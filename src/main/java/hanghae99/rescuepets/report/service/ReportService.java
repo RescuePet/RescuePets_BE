@@ -134,8 +134,8 @@ public class ReportService {
         List<ReportResponseDto> dtoList = new ArrayList<>();
         for (Report report : reports) {
             ReportResponseDto dto = ReportResponseDto.of(report);
-            dto.setRespondentRole(memberRepository.findByNickname(report.getRespondentNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND)).getMemberRoleEnum().getMemberRole());
-            dto.setReportCount(reportRepository.countByRespondent(report.getRespondent()));
+            dto.setRespondentRole(memberRepository.findByNickname(report.getRespondentNickname()).orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND)).getMemberRoleEnum().toString());
+            dto.setReportCount(reportRepository.countByRespondentNickname(report.getRespondentNickname()));
             dtoList.add(dto);
         }
         return ResponseDto.toResponseEntity(REPORT_LIST_READING_SUCCESS, dtoList);

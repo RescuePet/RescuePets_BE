@@ -15,6 +15,7 @@ public class ReportResponseDto {
     private String reportReason;
     private String respondentNickname;
     private String respondentRole;
+    private String profileImage;
     private Long respondentId;
     private Long postId;
     private Long commentId;
@@ -27,6 +28,8 @@ public class ReportResponseDto {
                 .reportType(report.getReportTypeEnum().getValue())
                 .reportReason(report.getReportReasonEnum().getValue())
                 .respondentNickname(report.getRespondentNickname())
+                .respondentRole(report.getRespondent().getMemberRoleEnum().toString())
+                .profileImage(report.getRespondent().getProfileImage())
                 .respondentId(Optional.ofNullable(report.getRespondent()).map(Member::getId).orElse(null))
                 .postId(Optional.ofNullable(report.getPost()).map(Post::getId).orElse(null))
                 .commentId(Optional.ofNullable(report.getComment()).map(Comment::getId).orElse(null))
