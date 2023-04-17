@@ -177,9 +177,6 @@ public class PostService {
     }
     @Transactional
     public ResponseEntity<ResponseDto> getSoftDeletedPost(int page, int size, String postType, Member member) {
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_MANAGER);
-        }
         List<PostResponseDto> dtoList = new ArrayList<>();
         if(postType.equals("all")){
             Pageable pageable = PageRequest.of(page, size);
@@ -292,9 +289,6 @@ public class PostService {
     @Transactional
     public ResponseEntity<ResponseDto> restoreSoftDeletedPost(Long postId, Member member) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_MANAGER);
-        }
         post.setIsDeleted(false);
         return ResponseDto.toResponseEntity(POST_SOFT_DELETE_SUCCESS);
     }

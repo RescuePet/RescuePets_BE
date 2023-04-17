@@ -2,6 +2,7 @@ package hanghae99.rescuepets.report.service;
 
 
 import hanghae99.rescuepets.comment.repository.CommentRepository;
+import hanghae99.rescuepets.common.annotation.CheckAuthority;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Comment;
@@ -124,11 +125,8 @@ public class ReportService {
 
         return ResponseDto.toResponseEntity(REPORT_SUCCESS);
     }
-
+    @CheckAuthority
     public ResponseEntity<ResponseDto> getReportAll(String sortBy,Member member) {
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_ADMIN);
-        }
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         List<Report> reports = reportRepository.findAll(sort);
         List<ReportResponseDto> dtoList = new ArrayList<>();
@@ -144,9 +142,7 @@ public class ReportService {
     @Transactional
     public ResponseEntity<ResponseDto> reportDelete(Long reportId, Member member) {
         Report report = validateReport(reportId);
-        if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
-            throw new CustomException(UNAUTHORIZED_ADMIN);
-        }
+
         reportRepository.deleteById(report.getId());
 
         return ResponseDto.toResponseEntity(REPORT_DELETE_SUCCESS);

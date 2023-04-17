@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.report.controller;
 
+import hanghae99.rescuepets.common.annotation.CheckAuthority;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.ReportReasonEnum;
 import hanghae99.rescuepets.common.security.MemberDetails;
@@ -38,14 +39,13 @@ public class ReportController {
     public ResponseEntity<ResponseDto> reportMember(@RequestBody ReportMemberRequestDto reportMemberRequestDto,  @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportMember(reportMemberRequestDto,memberDetails.getMember());
     }
-
+    @CheckAuthority
     @GetMapping("/all")
     @Operation(summary = "Report 전체 게시글을 페이징없이 불러오기", description = "Report를 페이징없이 불러옵니다")
     public ResponseEntity<ResponseDto> getReportAll(@RequestParam(required = false, defaultValue = "createdAt") String sortBy, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-
         return reportService.getReportAll(sortBy, memberDetails.getMember());
     }
-
+    @CheckAuthority
     @DeleteMapping(value = "/{reportId}")
     public ResponseEntity<ResponseDto> reportDelete(@PathVariable Long reportId, @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails){
         return reportService.reportDelete(reportId, memberDetails.getMember());
