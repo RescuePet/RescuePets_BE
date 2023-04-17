@@ -15,6 +15,7 @@ public class ReportResponseDto {
     private String reportReason;
     private String respondentNickname;
     private String respondentRole;
+    private String respondentProfileImage;
     private Long respondentId;
     private Long postId;
     private Long commentId;
@@ -33,8 +34,9 @@ public class ReportResponseDto {
                 .content(report.getContent())
                 .build();
     }
-    public void setRespondentRole(String respondentRole){
-        this.respondentRole = respondentRole;
+    public void setRespondentInfo(Member respondent){
+        this.respondentProfileImage = respondent.getProfileImage();
+        this.respondentRole = respondent.getMemberRoleEnum().toString();
     }
     public void setReportCount(int reportCount){
         this.reportCount = reportCount;

@@ -12,7 +12,7 @@ public interface ReportRepository extends JpaRepository<Report, Long> {
     Optional<Report> findByAccuserNicknameAndRespondentId(String nickname, Long respondentId);
     Optional<Report> findByAccuserNicknameAndPostId(String nickname, Long postId);
     Optional<Report> findByAccuserNicknameAndCommentId(String nickname, Long commentId);
-    Integer countByRespondent(Member respondent);
+    Integer countByRespondentNickname(String respondentNickname);
     List<Report> findByPostId(Long postId);
     List<Report> findByCommentId(Long commentId);
     List<Report> findByRespondentId(Long respondentId);
