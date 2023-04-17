@@ -17,14 +17,15 @@ import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
 @RequiredArgsConstructor
 @Service
 public class ApiDataService {
-    private final ApiScheduler apiScheduler;
+    private final ApiClient apiClient;
+    private final ApiCompareData apiCompareData;
 
     @Transactional
     public ResponseEntity<ResponseDto> apiCompareData(String pageNo, PetStateEnum state, String size, Member member) throws IOException {
-        String apiUrl = apiScheduler.createApiUrl(pageNo, state, size);
-        JSONArray itemList = apiScheduler.fetchDataFromApi(apiUrl);
+        String apiUrl = apiClient.createPublicDataApiUrl(pageNo, state, size);
+        JSONArray itemList = apiClient.fetchDataFromApi(apiUrl);
         if (itemList != null) {
-            apiScheduler.compareData(itemList, state);
+            apiCompareData.compareData(itemList, state);
         } else {
             log.error("API로부터 데이터를 받아오지 못했습니다.");
         }
