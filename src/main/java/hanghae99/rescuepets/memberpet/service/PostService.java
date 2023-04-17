@@ -180,13 +180,23 @@ public class PostService {
         if(!(member.getMemberRoleEnum() == MANAGER || member.getMemberRoleEnum() == ADMIN)){
             throw new CustomException(UNAUTHORIZED_MANAGER);
         }
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Post> postPage = postRepository.findByPostTypeAndIsDeletedOrderByDeletedDtDesc(PostTypeEnum.valueOf(postType), true, pageable);
         List<PostResponseDto> dtoList = new ArrayList<>();
-        for (Post post : postPage) {
-            PostResponseDto dto = PostResponseDto.of(post).build();
-            dtoList.add(dto);
+        if(postType.equals("all")){
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Post> postPage = postRepository.findByIsDeletedOrderByDeletedDtDesc(true, pageable);
+            for (Post post : postPage) {
+                PostResponseDto dto = PostResponseDto.of(post).build();
+                dtoList.add(dto);
+            }
+        }else{
+            Pageable pageable = PageRequest.of(page, size);
+            Page<Post> postPage = postRepository.findByPostTypeAndIsDeletedOrderByDeletedDtDesc(PostTypeEnum.valueOf(postType), true, pageable);
+            for (Post post : postPage) {
+                PostResponseDto dto = PostResponseDto.of(post).build();
+                dtoList.add(dto);
+            }
         }
+
         return ResponseDto.toResponseEntity(POST_LIST_READING_SUCCESS, dtoList);
     }
 
