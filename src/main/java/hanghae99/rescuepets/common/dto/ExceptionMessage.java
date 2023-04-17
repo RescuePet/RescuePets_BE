@@ -32,7 +32,7 @@ public enum ExceptionMessage {
 
 
     /* 403 FORBIDDEN : 권한 없음 */
-    USER_FORBIDDEN(FORBIDDEN, "실행할 수 없습니다."),
+    BAD_MEMBER_FORBIDDEN(FORBIDDEN, "현재 활동 정지된 계정입니다."),
     PROFANITY_CHECK(FORBIDDEN, "닉네임에는 비속어를 포함할 수 없습니다."),
     NOT_ALLOWED_GRADE(FORBIDDEN, "해당 등급설정에 대한 권한이 없습니다."),
     TOO_FREQUENT_POST(FORBIDDEN, "한 번에 너무 많은 게시글들을 작성할 수 없습니다. 잠시 후 다시 시도해주세요."),

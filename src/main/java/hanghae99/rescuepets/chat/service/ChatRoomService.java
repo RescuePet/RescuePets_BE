@@ -21,6 +21,7 @@ import java.util.List;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.BAD_MEMBER;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +32,9 @@ public class ChatRoomService {
 
     @Transactional
     public String createChatRoom(Long postId, Member member) {
+        if(member.getMemberRoleEnum().equals(BAD_MEMBER)){
+            throw new CustomException(BAD_MEMBER_FORBIDDEN);
+        }
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         if (post.getMember().getId().equals(member.getId())) {
             throw new CustomException(CREATE_CHAT_ROOM_EXCEPTION);

@@ -28,6 +28,7 @@ import java.util.List;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.BAD_MEMBER;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,9 @@ public class CommentService {
 
     @Transactional
     public ResponseEntity<ResponseDto> createComment(Long postId, CommentRequestDto requestDto, Member member) {
+        if(member.getMemberRoleEnum().equals(BAD_MEMBER)){
+            throw new CustomException(BAD_MEMBER_FORBIDDEN);
+        }
         if(!checkFrequency(member.getId())||!checkFrequencyDB()){
             throw new CustomException(TOO_FREQUENT_COMMENT);
         }

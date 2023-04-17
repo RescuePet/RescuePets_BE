@@ -28,8 +28,7 @@ import java.util.List;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
-import static hanghae99.rescuepets.common.entity.MemberRoleEnum.ADMIN;
-import static hanghae99.rescuepets.common.entity.MemberRoleEnum.MANAGER;
+import static hanghae99.rescuepets.common.entity.MemberRoleEnum.*;
 import static hanghae99.rescuepets.common.entity.PostTypeEnum.MISSING;
 
 @Slf4j
@@ -44,6 +43,9 @@ public class PostService {
 
     @Transactional
     public ResponseEntity<ResponseDto> createPost(PostRequestDto requestDto, Member member) {
+        if(member.getMemberRoleEnum().equals(BAD_MEMBER)){
+            throw new CustomException(BAD_MEMBER_FORBIDDEN);
+        }
         List<String> postImageURLs = new ArrayList<>();
         if (!checkFrequencyMember(member.getId()) || !checkFrequencyDB()) {
             throw new CustomException(TOO_FREQUENT_POST);
@@ -324,6 +326,9 @@ public class PostService {
 
     @Transactional
     public ResponseEntity<ResponseDto> createLink(Long postId, PostLinkRequestDto requestDto, Member member) {
+        if(member.getMemberRoleEnum().equals(BAD_MEMBER)){
+            throw new CustomException(BAD_MEMBER_FORBIDDEN);
+        }
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomException(POST_NOT_FOUND));
         PostLink postLink = new PostLink(post, requestDto.getLinkedPostId(), member);
         if ((postLinkRepository.findByPostAndMemberIdAndLinkedPostId(post, member.getId(), requestDto.getLinkedPostId())).isPresent()) {
