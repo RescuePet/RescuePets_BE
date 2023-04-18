@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.memberpet.controller;
 
+import hanghae99.rescuepets.common.annotation.CheckAuthority;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.security.MemberDetails;
 import hanghae99.rescuepets.memberpet.dto.MissingPosterRequestDto;
@@ -50,6 +51,7 @@ public class PostController {
         return postService.getPostAll();
     }
 
+    @CheckAuthority
     @GetMapping("/temporary/{postType}")
     @Operation(summary = "임시삭제 게시글 목록 불러오기", description = "소프트 딜리트된 게시글을 카테고리 별로 분류해서 확인할 수 있습니다")
     public ResponseEntity<ResponseDto> getSoftDeletedPost(@RequestParam int page,
@@ -106,7 +108,7 @@ public class PostController {
     public ResponseEntity<ResponseDto> softDeletePost(@PathVariable Long postId,@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return postService.softDeletePost(postId, memberDetails.getMember());
     }
-
+    @CheckAuthority
     @PutMapping("/temporary/{postId}")
     @Operation(summary = "임시삭제 게시글 복구하기", description = "임시삭제 게시글 목록에서 게시글 하나를 복구합니다")
     public ResponseEntity<ResponseDto> restoreSoftDeletedPost(@PathVariable Long postId,
