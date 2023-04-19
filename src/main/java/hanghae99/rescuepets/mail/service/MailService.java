@@ -25,7 +25,7 @@ public class MailService {
 
         try {
             message.addRecipients(MimeMessage.RecipientType.TO, member.getEmail());
-            message.setSubject("신고 알림");
+            message.setSubject("계정 정지 알림");
             message.setText(setTemplate(member), "utf-8", "html");
         } catch (MessagingException e) {
             throw new CustomException(ExceptionMessage.MAIL_SEND_FAIL);

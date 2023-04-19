@@ -1,12 +1,34 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
 <body>
-<div align="center" style="font-size: 15px">
-    <span>계정 정지 알림</span>
-    <br>
-    <span th:text="${member}"></span>
-    <span>님 께서는</span>
-    <span>15회 이상 신고당하여 계정이 3일동안 정지됩니다.</span>
+<div style="
+border-radius: 15px;
+overflow: hidden;
+width: 500px;
+border: 1px solid #797979;
+margin: 0 auto;
+">
+    <table align="center" cellpadding="0" cellspacing="0" style="width: 100%;max-width: 600px;border-collapse: collapse;">
+        <tbody style="
+"><tr style="
+"><td style="padding: 20px;text-align: center;background-color: #f8f8f8;">
+            <table cellpadding="0" cellspacing="0" style="width: 100%">
+                <tbody><tr><td style="text-align: center;">
+                    <img src="https://heukwu.s3.ap-northeast-2.amazonaws.com/images/rescuepet/%EA%B5%AC%ED%95%B4%EC%A4%98%ED%8C%BB%EC%B8%A0+LOGO-2+(3).png" style="width: 50px;height: 50px;margin-right: 5px;" loading="lazy">
+                    <h1 style="display: inline-block;line-height: 55px;margin: 0;color: #000000 !important;">
+                        구해줘! 펫츠
+                    </h1>
+                </td></tr>
+                </tbody></table>
+        </td></tr>
+        <tr><td style="padding: 20px;text-align: center;background-color: #ffe4bc;font-size: 20px;">
+            <h4 style=" margin-bottom: 5px; color: #000 !important;">안내 사항</h4>
+            <span style="color: #000 !important;" th:text="${member}"></span>
+            <span style="color: #000 !important;">님께서는 신고를 5회 이상 받아
+                <br>계정이 3일동안 정지됩니다.</span>
+            <img src="https://heukwu.s3.ap-northeast-2.amazonaws.com/images/rescuepet/mail_image.jpg" style="max-width: 100%;height: auto;object-fit: cover;margin-top: 15px;" loading="lazy">
+        </td></tr>
+        </tbody></table>
 </div>
 </body>
 </html>

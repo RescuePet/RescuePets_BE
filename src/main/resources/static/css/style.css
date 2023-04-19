@@ -1,0 +1,28 @@
+.contents {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title-wrapper {
+    display: flex;
+    flex-direction: row;
+}
+
+.title {
+    line-height: 55px;
+}
+
+.contents-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #FFE4BC;
+    border-radius: 16px;
+}
+
+.contents-span {
+    margin-bottom: 8px;
+}

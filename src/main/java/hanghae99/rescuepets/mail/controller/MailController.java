@@ -5,6 +5,7 @@ import hanghae99.rescuepets.mail.service.MailService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,8 @@ public class MailController {
     private final MailService mailService;
 
     @PostMapping(value = "/mail")
-    public void sendMail(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
+    public ResponseEntity<?> sendMail(@Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         mailService.send(memberDetails.getMember());
+        return ResponseEntity.ok().body("메일 전송 완료");
     }
 }
