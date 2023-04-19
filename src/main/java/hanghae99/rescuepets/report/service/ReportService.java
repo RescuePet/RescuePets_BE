@@ -155,7 +155,7 @@ public class ReportService {
     }
 
     private void stopRespondent(int count, Member respondent) {
-        if(count >15){
+        if (count > 4) {
             respondent.stop(LocalDateTime.now());
             mailService.send(respondent);
         }
