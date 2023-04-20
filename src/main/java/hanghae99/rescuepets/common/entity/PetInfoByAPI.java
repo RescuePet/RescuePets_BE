@@ -1,5 +1,6 @@
 package hanghae99.rescuepets.common.entity;
 
+import hanghae99.rescuepets.common.dto.CustomException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,12 +12,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.NOT_FOUND_PET_INFO_UPDATE_DESERTION_NO;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class PetInfoByAPI extends TimeStamped implements Serializable {
+public class PetInfoByAPI extends TimeStamped {
     @Id
     @Column(nullable = false, name = "desertion_no")
     private Long desertionNo;
@@ -113,29 +116,29 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
         if (desertionNoStr != null && !desertionNoStr.isEmpty()) {
             this.desertionNo = Long.parseLong(desertionNoStr);
         } else {
-            this.desertionNo = null;
+            throw new CustomException(NOT_FOUND_PET_INFO_UPDATE_DESERTION_NO);
         }
-        this.filename = itemObject.optString(filename);
-        this.happenDt = itemObject.optString(happenDt);
-        this.happenPlace = itemObject.optString(happenPlace);
-        this.kindCd = itemObject.optString(kindCd);
-        this.colorCd = itemObject.optString(colorCd);
-        this.age = itemObject.optString(age);
-        this.weight = itemObject.optString(weight);
-        this.noticeNo = itemObject.optString(noticeNo);
-        this.noticeSdt = itemObject.optString(noticeSdt);
-        this.noticeEdt = itemObject.optString(noticeEdt);
-        this.popfile = itemObject.optString(popfile);
-        this.processState = itemObject.optString(processState);
-        this.sexCd = itemObject.optString(sexCd);
-        this.neuterYn = itemObject.optString(neuterYn);
-        this.specialMark = itemObject.optString(specialMark);
-        this.careNm = itemObject.optString(careNm);
-        this.careTel = itemObject.optString(careTel);
-        this.careAddr = itemObject.optString(careAddr);
-        this.orgNm = itemObject.optString(orgNm);
-        this.chargeNm = itemObject.optString(chargeNm);
-        this.officetel = itemObject.optString(officetel);
+        this.filename = itemObject.optString("filename");
+        this.happenDt = itemObject.optString("happenDt");
+        this.happenPlace = itemObject.optString("happenPlace");
+        this.kindCd = itemObject.optString("kindCd");
+        this.colorCd = itemObject.optString("colorCd");
+        this.age = itemObject.optString("age");
+        this.weight = itemObject.optString("weight");
+        this.noticeNo = itemObject.optString("noticeNo");
+        this.noticeSdt = itemObject.optString("noticeSdt");
+        this.noticeEdt = itemObject.optString("noticeEdt");
+        this.popfile = itemObject.optString("popfile");
+        this.processState = itemObject.optString("processState");
+        this.sexCd = itemObject.optString("sexCd");
+        this.neuterYn = itemObject.optString("neuterYn");
+        this.specialMark = itemObject.optString("specialMark");
+        this.careNm = itemObject.optString("careNm");
+        this.careTel = itemObject.optString("careTel");
+        this.careAddr = itemObject.optString("careAddr");
+        this.orgNm = itemObject.optString("orgNm");
+        this.chargeNm = itemObject.optString("chargeNm");
+        this.officetel = itemObject.optString("officetel");
         this.petStateEnum = state;
     }
 

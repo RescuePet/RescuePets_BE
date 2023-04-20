@@ -45,6 +45,7 @@ public enum ExceptionMessage {
     POST_NOT_FOUND(NOT_FOUND, "대상 게시글을 찾을 수 없습니다."),
     ENUM_NOT_FOUND(NOT_FOUND, "해당 이넘값은 존재하지 않습니다."),
     NOT_FOUND_IMAGE(NOT_FOUND, "이미지가 없습니다."),
+    NOT_FOUND_PET_INFO_UPDATE_DESERTION_NO(NOT_FOUND, "desertionNo가 없는 상태에서 업데이트를 시도하였습니다."),
     POST_ALREADY_DELETED(NOT_FOUND, "삭제된 게시글입니다."),
     COMMENT_NOT_FOUND(NOT_FOUND, "대상 댓글을 찾을 수 없습니다."),
     MEMBER_NOT_FOUND(NOT_FOUND, "회원을 찾을 수 없습니다."),

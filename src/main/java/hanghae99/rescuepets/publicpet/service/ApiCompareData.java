@@ -3,6 +3,7 @@ package hanghae99.rescuepets.publicpet.service;
 import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 import static hanghae99.rescuepets.common.entity.PetStateEnum.*;
 
+@Log4j2
 @Component
 @RequiredArgsConstructor
 public class ApiCompareData {
@@ -48,6 +50,25 @@ public class ApiCompareData {
 
             } else {
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.get();
+                if (petInfoByAPI.getProcessState().contains("종료") && petInfoByAPI.getPetStateEnum().equals(END)){
+                    continue;
+                }
+                if (!petInfoByAPI.getPetStateEnum().equals(state)) {
+                    if (state.equals(END) && itemObject.optString("processState").contains("종료")) {
+                        compareDataList.add("state");
+                    }
+                    if ((state.equals(PROTECT) || state.equals(NOTICE)) && itemObject.optString("processState").contains("보호")) {
+                        compareDataList.add("state");
+                    }
+                    if (!compareDataList.isEmpty()) {
+                        String compareDataKey = String.join(", ", compareDataList);
+                        log.info("compareDataKey: " + compareDataKey + "/ update 동작");
+                        petInfoByAPI.update(itemObject, state);
+                        publicPetInfoRepository.saveAndFlush(petInfoByAPI);
+                        continue;
+                    }
+                }
+                //entity 클래스 필드 전체를 조회하기 보다 하드코딩으로 비교하는게 비용적으로 유리하다고 판단되지만 일단 보류
                 Field[] fields = petInfoByAPI.getClass().getDeclaredFields();
                 for (Field field : fields) {
                     field.setAccessible(true);
@@ -59,31 +80,37 @@ public class ApiCompareData {
                         e.printStackTrace();
                     }
                     if (itemObject.has(name)) {
-                        if (!value.equals(itemObject.optString(name))) {
-                            compareDataList.add(name);
+                        if (name.equals("desertionNo")) {
+                            String oldValue = value.toString();
+                            if (!oldValue.equals(itemObject.optString(name))) {
+                                compareDataList.add(name);
+                                break;
+                            }
+                        } else {
+                            if (!value.equals(itemObject.optString(name))) {
+                                compareDataList.add(name);
+                                break;
+                            }
                         }
                     }
-//                    log.info(field.getName() + ": " + value);
-                }
-                if (!petInfoByAPI.getPetStateEnum().equals(state)) {
-                    if (state.equals(END) && itemObject.optString("processState").contains("종료")) { //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
-                        compareDataList.add("state");
-                    }
-                    if ((state.equals(PROTECT) || state.equals(NOTICE)) && itemObject.optString("processState").contains("보호")) {
-                        compareDataList.add("state");
-                    }
+                    log.info(field.getName() + ": " + value);
                 }
                 if (!compareDataList.isEmpty()) {
+                    String compareDataKey = String.join(", ", compareDataList);
+                    log.info("compareDataKey: " + compareDataKey + "/ update 동작");
                     petInfoByAPI.update(itemObject, state);
-//                    publicPetInfoRepository.saveAndFlush(petInfoByAPI);
-//                    List<Scrap> scrapList = scrapRepository.findByPetInfoByAPI_desertionNo(petInfoByAPI.getDesertionNo());
-//                    for (Scrap scrap : scrapList) {
-//                        sseService.send(scrap.getMember(), NotificationType.UPDATE, "회원님이 스크랩한 게시물 정보가 업데이트 되었습니다.");
-                    }
+                    publicPetInfoRepository.saveAndFlush(petInfoByAPI);
                 }
             }
         }
     }
+
+
+
+
+
+
+}
 
 //    private PetInfoByAPI buildPetInfo(JSONObject itemObject, PetStateEnum state) {
 //        return PetInfoByAPI.builder()
