@@ -19,7 +19,7 @@ public class ApiScheduler {
     private final ApiClient apiClient;
     private final ApiCompareData apiCompareData;
 
-    @Scheduled(cron = "50 52 16 * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     private void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
         long startTime = System.currentTimeMillis();//시작 시간
