@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface PublicPetInfoRepository extends JpaRepository<PetInfoByAPI, Long> {
-    Optional<PetInfoByAPI> findByDesertionNo(String desertionNo);
+    Optional<PetInfoByAPI> findByDesertionNo(Long desertionNo);
 
     Optional<PetInfoByAPI> findById(Long Id);
 

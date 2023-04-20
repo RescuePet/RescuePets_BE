@@ -9,8 +9,7 @@ import lombok.Getter;
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PublicPetResponseDto {
-    private Long id;//전체/상세
-    private String desertionNo;//무조건 사용
+    private Long desertionNo;
     private String filename; //전체
     private String happenDt; //발생일자
     private String happenPlace; //발생 장소
@@ -40,7 +39,6 @@ public class PublicPetResponseDto {
     public static PublicPetResponseDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap) {
         String neuterYn = neuterYnChange(petInfoByAPI.getNeuterYn());
         return PublicPetResponseDto.builder()
-                .id(petInfoByAPI.getId())
                 .desertionNo(petInfoByAPI.getDesertionNo())
                 .filename(petInfoByAPI.getFilename().replace("http://", "https://"))
                 .kindCd(petInfoByAPI.getKindCd())
@@ -57,7 +55,6 @@ public class PublicPetResponseDto {
     public static PublicPetResponseDto of(PetInfoByAPI petInfoByAPI, Boolean isScrap, Integer scrapCount, Boolean isInquiry, Integer InquiryCount) {
         String neuterYn = neuterYnChange(petInfoByAPI.getNeuterYn());
         return PublicPetResponseDto.builder()
-                .id(petInfoByAPI.getId())
                 .desertionNo(petInfoByAPI.getDesertionNo())
                 .filename(petInfoByAPI.getFilename().replace("http://", "https://"))
                 .happenDt(petInfoByAPI.getHappenDt())

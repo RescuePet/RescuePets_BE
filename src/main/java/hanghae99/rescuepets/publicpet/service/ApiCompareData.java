@@ -2,8 +2,6 @@ package hanghae99.rescuepets.publicpet.service;
 
 import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
-import hanghae99.rescuepets.scrap.repository.ScrapRepository;
-import hanghae99.rescuepets.sse.service.SseService;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,7 +28,7 @@ public class ApiCompareData {
     protected void compareData(JSONArray itemList, PetStateEnum state) {
         for (int i = 0; i < itemList.length(); i++) {
             JSONObject itemObject = itemList.getJSONObject(i);
-            Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetInfoRepository.findByDesertionNo(itemObject.optString("desertionNo"));
+            Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetInfoRepository.findByDesertionNo(itemObject.optLong("desertionNo"));
             List<String> compareDataList = new ArrayList<>();
             if (petInfoByAPIOptional.isEmpty()) {
                 String careAddr = itemObject.optString("careAddr");
@@ -47,7 +45,6 @@ public class ApiCompareData {
                     }
                 }
                 publicPetInfoRepository.save(petInfo);
-
 
             } else {
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.get();

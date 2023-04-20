@@ -1,18 +1,12 @@
 package hanghae99.rescuepets.publicpet.service;
 
 import hanghae99.rescuepets.common.entity.*;
-import hanghae99.rescuepets.publicpet.repository.PetInfoCompareRepository;
-import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
-import hanghae99.rescuepets.scrap.repository.ScrapRepository;
-import hanghae99.rescuepets.sse.service.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
-import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 
 
@@ -25,7 +19,7 @@ public class ApiScheduler {
     private final ApiClient apiClient;
     private final ApiCompareData apiCompareData;
 
-    @Scheduled(cron = "30 53 03 * * *")
+    @Scheduled(cron = "50 52 16 * * *")
     private void apiSchedule() throws IOException {
         log.info("apiSchedule 동작");
         long startTime = System.currentTimeMillis();//시작 시간

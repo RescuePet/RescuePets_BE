@@ -22,22 +22,13 @@ public class Scrap extends TimeStamped{
     @JoinColumn(name = "postId")
     private Post post;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "petPostMissingId")
-//    private PetPostMissing petPostMissing;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "petInfoByAPIdesertionNo", referencedColumnName = "desertionNo")
+    @JoinColumn(name = "petInfoByAPIdesertionNo")
     private PetInfoByAPI petInfoByAPI;
 
     public void setPost(Post post) {
         this.post = post;
     }
-
-//    public Scrap(Member member, PetPostMissing petPostMissing) {
-//        this.member = member;
-//        this.petPostMissing = petPostMissing;
-//    }
 
     public Scrap(Member member, Post post) {
         this.member = member;

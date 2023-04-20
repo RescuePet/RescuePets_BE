@@ -1,7 +1,5 @@
 package hanghae99.rescuepets.common.entity;
 
-
-import hanghae99.rescuepets.chat.dto.ChatRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,10 +18,8 @@ import java.util.List;
 @Builder
 public class PetInfoByAPI extends TimeStamped implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false, unique = true)
-    private String desertionNo;
+    @Column(nullable = false, name = "desertion_no")
+    private Long desertionNo;
     @Column
     private String filename;
     @Column
@@ -81,8 +77,13 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
     private List<Scrap> scrapList = new ArrayList<>();
 
     public static PetInfoByAPI of(JSONObject itemObject, PetStateEnum state) {
+        Long desertionNo = null;
+        String desertionNoStr = itemObject.optString("desertionNo");
+        if (desertionNoStr != null && !desertionNoStr.isEmpty()) {
+            desertionNo = Long.parseLong(desertionNoStr);
+        }
         return PetInfoByAPI.builder()
-                .desertionNo(itemObject.optString("desertionNo"))
+                .desertionNo(desertionNo)
                 .filename(itemObject.optString("filename"))
                 .happenDt(itemObject.optString("happenDt"))
                 .happenPlace(itemObject.optString("happenPlace"))
@@ -108,7 +109,12 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
                 .build();
     }
     public void update(JSONObject itemObject, PetStateEnum state) {
-        this.desertionNo = itemObject.optString(desertionNo);
+        String desertionNoStr = itemObject.optString("desertionNo");
+        if (desertionNoStr != null && !desertionNoStr.isEmpty()) {
+            this.desertionNo = Long.parseLong(desertionNoStr);
+        } else {
+            this.desertionNo = null;
+        }
         this.filename = itemObject.optString(filename);
         this.happenDt = itemObject.optString(happenDt);
         this.happenPlace = itemObject.optString(happenPlace);
@@ -139,30 +145,3 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
         this.isExactAddress = isExactAddress;
     }
 }
-
-
-//    public void update(PetInfoByAPI petInfo) {
-//        this.desertionNo = petInfo.desertionNo;
-//        this.filename = petInfo.filename;
-//        this.happenDt = petInfo.happenDt;
-//        this.happenPlace = petInfo.happenPlace;
-//        this.kindCd = petInfo.kindCd;
-//        this.colorCd = petInfo.colorCd;
-//        this.age = petInfo.age;
-//        this.weight = petInfo.weight;
-//        this.noticeNo = petInfo.noticeNo;
-//        this.noticeSdt = petInfo.noticeSdt;
-//        this.noticeEdt = petInfo.noticeEdt;
-//        this.popfile = petInfo.popfile;
-//        this.processState = petInfo.processState;
-//        this.sexCd = petInfo.sexCd;
-//        this.neuterYn = petInfo.neuterYn;
-//        this.specialMark = petInfo.specialMark;
-//        this.careNm = petInfo.careNm;
-//        this.careTel = petInfo.careTel;
-//        this.careAddr = petInfo.careAddr;
-//        this.orgNm = petInfo.orgNm;
-//        this.chargeNm = petInfo.chargeNm;
-//        this.officetel = petInfo.officetel;
-//        this.petStateEnum = petInfo.petStateEnum;
-//    }

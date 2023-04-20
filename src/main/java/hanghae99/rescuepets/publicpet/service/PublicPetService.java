@@ -40,8 +40,6 @@ public class PublicPetService {
     @Transactional(readOnly = true)
     public ResponseEntity<ResponseDto> getPublicPet(int page, int size, String sortBy, Member member) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy, "desertionNo");
-//        Sort sort = Sort.by(Sort.Direction.DESC, "desertionNo").and(Sort.by(Sort.Direction.DESC, sortBy));
-//        Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<PetInfoByAPI> postPage = publicPetInfoRepository.findAll(pageable);
         List<PublicPetResponseDto> dtoList = new ArrayList<>();
@@ -56,7 +54,7 @@ public class PublicPetService {
 
     //상세 페이지
     @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDto> getPublicPetDetails(String desertionNo, Member member) {
+    public ResponseEntity<ResponseDto> getPublicPetDetails(Long desertionNo, Member member) {
         PetInfoByAPI petInfoByAPI = getPetInfo(desertionNo);
         Boolean isScrap = scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(member.getId(), desertionNo).isPresent();
         Integer scrapCount = scrapRepository.countByPetInfoByAPI_desertionNo(desertionNo);
@@ -67,7 +65,7 @@ public class PublicPetService {
 
     //문의 기록
     @Transactional
-    public ResponseEntity<ResponseDto> petInfoInquiry(String desertionNo, Member member) {
+    public ResponseEntity<ResponseDto> petInfoInquiry(Long desertionNo, Member member) {
         getPetInfo(desertionNo);
         if (petInfoInquiryRepository.findByMemberIdAndDesertionNo(member.getId(), desertionNo).isPresent()) {
             throw new CustomException(DUPLICATE_RESOURCE_PET_INFO_INQUIRY);
@@ -76,15 +74,15 @@ public class PublicPetService {
         return ResponseDto.toResponseEntity(PET_INFO_INQUIRY_SUCCESS);
     }
 
-    private PetInfoByAPI getPetInfo(String desertionNo) {
+    private PetInfoByAPI getPetInfo(Long desertionNo) {
         return publicPetInfoRepository.findByDesertionNo(desertionNo).orElseThrow(
                 () -> new CustomException(NOT_FOUND_PET_INFO)
         );
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDto> getapiListByDistance(int page, int size, Double Longitude, Double Latitude,
-                                                            Double description, String searchKey, String searchValue, Member member) {
+    public ResponseEntity<ResponseDto> getapiListBySearch(int page, int size, Double Longitude, Double Latitude,
+                                                          Double description, String searchKey, String searchValue, Member member) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PetInfoByAPI> postPage = null;
         Boolean test = StringUtils.isBlank(searchKey);
