@@ -26,7 +26,7 @@ public class ScrapResponseDto {
         return ScrapResponseDto.builder()
                 .postType(postType)
                 .scrapId(scrapId)
-                .postId(Long.parseLong(petInfoByAPI.getDesertionNo()))
+                .postId((petInfoByAPI.getDesertionNo()))
                 .state(petInfoByAPI.getPetStateEnum().getKorean())
                 .filename(petInfoByAPI.getFilename())
                 .kindCd(petInfoByAPI.getKindCd())

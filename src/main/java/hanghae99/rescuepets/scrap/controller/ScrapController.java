@@ -36,7 +36,7 @@ public class ScrapController {
 
     @PostMapping("/petinfo/{desertionNo}")
     @Operation(summary = "유기동물 스크랩 등록")
-    public ResponseEntity<ResponseDto> scrapPetInfo(@PathVariable(value = "desertionNo") String desertionNo,
+    public ResponseEntity<ResponseDto> scrapPetInfo(@PathVariable(value = "desertionNo") Long desertionNo,
                                                     @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return scrapService.scrapPetInfo(desertionNo, memberDetails.getMember());
     }
@@ -50,7 +50,7 @@ public class ScrapController {
 
     @DeleteMapping("/petinfo/{desertionNo}")
     @Operation(summary = "유기동물 관심 해제")
-    public ResponseEntity<ResponseDto> deletePetInfoScrap(@PathVariable(value = "desertionNo") String desertionNo,
+    public ResponseEntity<ResponseDto> deletePetInfoScrap(@PathVariable(value = "desertionNo") Long desertionNo,
                                                           @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return scrapService.deleteScrapPublicPet(desertionNo, memberDetails.getMember());
     }

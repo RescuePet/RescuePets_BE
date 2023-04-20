@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
@@ -20,7 +19,6 @@ public class ApiDataService {
     private final ApiClient apiClient;
     private final ApiCompareData apiCompareData;
 
-    @Transactional
     public ResponseEntity<ResponseDto> apiCompareData(String pageNo, PetStateEnum state, String size, Member member) throws IOException {
         String apiUrl = apiClient.createPublicDataApiUrl(pageNo, state, size);
         JSONArray itemList = apiClient.fetchDataFromApi(apiUrl);

@@ -31,14 +31,14 @@ public class PublicPetController {
 
     @GetMapping("/details/{desertionNo}")
     @Operation(summary = "유기동물 상세 정보 가져오기")
-    public ResponseEntity<ResponseDto> getPublicPetDetails(@PathVariable(value = "desertionNo") String desertionNo,
+    public ResponseEntity<ResponseDto> getPublicPetDetails(@PathVariable(value = "desertionNo") Long desertionNo,
                                                            @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.getPublicPetDetails(desertionNo, memberDetails.getMember());
     }
 
     @PostMapping("/inquiry/{desertionNo}")
     @Operation(summary = "유기동물 문의내역 기록")
-    public ResponseEntity<ResponseDto> petInfoInquiry(@PathVariable(value = "desertionNo") String desertionNo,
+    public ResponseEntity<ResponseDto> petInfoInquiry(@PathVariable(value = "desertionNo") Long desertionNo,
                                                       @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
         return publicPetService.petInfoInquiry(desertionNo, memberDetails.getMember());
     }
@@ -53,6 +53,6 @@ public class PublicPetController {
                                                             @RequestParam(value = "searchKey", required = false) String searchKey,
                                                             @RequestParam(value = "searchValue", required = false) String searchValue,
                                                             @Parameter(hidden = true) @AuthenticationPrincipal MemberDetails memberDetails) {
-        return publicPetService.getapiListByDistance(page - 1, size, memberLatitude, memberLongitude, description, searchKey, searchValue, memberDetails.getMember());
+        return publicPetService.getapiListBySearch(page - 1, size, memberLatitude, memberLongitude, description, searchKey, searchValue, memberDetails.getMember());
     }
 }

@@ -2,8 +2,6 @@ package hanghae99.rescuepets.publicpet.service;
 
 import hanghae99.rescuepets.common.entity.*;
 import hanghae99.rescuepets.publicpet.repository.PublicPetInfoRepository;
-import hanghae99.rescuepets.scrap.repository.ScrapRepository;
-import hanghae99.rescuepets.sse.service.SseService;
 import lombok.RequiredArgsConstructor;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,7 +28,7 @@ public class ApiCompareData {
     protected void compareData(JSONArray itemList, PetStateEnum state) {
         for (int i = 0; i < itemList.length(); i++) {
             JSONObject itemObject = itemList.getJSONObject(i);
-            Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetInfoRepository.findByDesertionNo(itemObject.optString("desertionNo"));
+            Optional<PetInfoByAPI> petInfoByAPIOptional = publicPetInfoRepository.findByDesertionNo(itemObject.optLong("desertionNo"));
             List<String> compareDataList = new ArrayList<>();
             if (petInfoByAPIOptional.isEmpty()) {
                 String careAddr = itemObject.optString("careAddr");
@@ -48,9 +46,26 @@ public class ApiCompareData {
                 }
                 publicPetInfoRepository.save(petInfo);
 
-
             } else {
                 PetInfoByAPI petInfoByAPI = petInfoByAPIOptional.get();
+                if (petInfoByAPI.getProcessState().contains("종료") && petInfoByAPI.getPetStateEnum().equals(END)){
+                    continue;
+                }
+                if (!petInfoByAPI.getPetStateEnum().equals(state)) {
+                    if (state.equals(END) && itemObject.optString("processState").contains("종료")) {
+                        compareDataList.add("state");
+                    }
+                    if ((state.equals(PROTECT) || state.equals(NOTICE)) && itemObject.optString("processState").contains("보호")) {
+                        compareDataList.add("state");
+                    }
+                    if (!compareDataList.isEmpty()) {
+                        String compareDataKey = String.join(", ", compareDataList);
+                        petInfoByAPI.update(itemObject, state);
+                        publicPetInfoRepository.saveAndFlush(petInfoByAPI);
+                        continue;
+                    }
+                }
+                //entity 클래스 필드 전체를 조회하기 보다 하드코딩으로 비교하는게 비용적으로 유리하다고 판단되지만 일단 보류
                 Field[] fields = petInfoByAPI.getClass().getDeclaredFields();
                 for (Field field : fields) {
                     field.setAccessible(true);
@@ -62,57 +77,26 @@ public class ApiCompareData {
                         e.printStackTrace();
                     }
                     if (itemObject.has(name)) {
-                        if (!value.equals(itemObject.optString(name))) {
-                            compareDataList.add(name);
+                        if (name.equals("desertionNo")) {
+                            String oldValue = value.toString();
+                            if (!oldValue.equals(itemObject.optString(name))) {
+                                compareDataList.add(name);
+                                break;
+                            }
+                        } else {
+                            if (!value.equals(itemObject.optString(name))) {
+                                compareDataList.add(name);
+                                break;
+                            }
                         }
-                    }
-//                    log.info(field.getName() + ": " + value);
-                }
-                if (!petInfoByAPI.getPetStateEnum().equals(state)) {
-                    if (state.equals(END) && itemObject.optString("processState").contains("종료")) { //json 요청 state가 ""일 때 getProcessState도 종료 상태라면 데이터베이스 수정 요청
-                        compareDataList.add("state");
-                    }
-                    if ((state.equals(PROTECT) || state.equals(NOTICE)) && itemObject.optString("processState").contains("보호")) {
-                        compareDataList.add("state");
                     }
                 }
                 if (!compareDataList.isEmpty()) {
+                    String compareDataKey = String.join(", ", compareDataList);
                     petInfoByAPI.update(itemObject, state);
-//                    publicPetInfoRepository.saveAndFlush(petInfoByAPI);
-//                    List<Scrap> scrapList = scrapRepository.findByPetInfoByAPI_desertionNo(petInfoByAPI.getDesertionNo());
-//                    for (Scrap scrap : scrapList) {
-//                        sseService.send(scrap.getMember(), NotificationType.UPDATE, "회원님이 스크랩한 게시물 정보가 업데이트 되었습니다.");
-                    }
+                    publicPetInfoRepository.saveAndFlush(petInfoByAPI);
                 }
             }
         }
     }
-
-//    private PetInfoByAPI buildPetInfo(JSONObject itemObject, PetStateEnum state) {
-//        return PetInfoByAPI.builder()
-//                .desertionNo(itemObject.optString("desertionNo"))
-//                .filename(itemObject.optString("filename"))
-//                .happenDt(itemObject.optString("happenDt"))
-//                .happenPlace(itemObject.optString("happenPlace"))
-//                .kindCd(itemObject.optString("kindCd"))
-//                .colorCd(itemObject.optString("colorCd"))
-//                .age(itemObject.optString("age"))
-//                .weight(itemObject.optString("weight"))
-//                .noticeNo(itemObject.optString("noticeNo"))
-//                .noticeSdt(itemObject.optString("noticeSdt"))
-//                .noticeEdt(itemObject.optString("noticeEdt"))
-//                .popfile(itemObject.optString("popfile"))
-//                .processState(itemObject.optString("processState"))
-//                .sexCd(itemObject.optString("sexCd"))
-//                .neuterYn(itemObject.optString("neuterYn"))
-//                .specialMark(itemObject.optString("specialMark"))
-//                .careNm(itemObject.optString("careNm"))
-//                .careTel(itemObject.optString("careTel"))
-//                .careAddr(itemObject.optString("careAddr"))
-//                .orgNm(itemObject.optString("orgNm"))
-//                .chargeNm(itemObject.optString("chargeNm"))
-//                .officetel(itemObject.optString("officetel"))
-//                .petStateEnum(state)
-//                .build();
-//    }
-//}
+}

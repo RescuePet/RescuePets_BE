@@ -68,7 +68,7 @@ public class ScrapService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> scrapPetInfo(String desertionNo, Member member) {
+    public ResponseEntity<ResponseDto> scrapPetInfo(Long desertionNo, Member member) {
         PetInfoByAPI petInfoByAPI = publicPetInfoRepository.findByDesertionNo(desertionNo).orElseThrow(
                 () -> new CustomException(NOT_FOUND_PET_INFO)
         );
@@ -91,7 +91,7 @@ public class ScrapService {
     }
 
     @Transactional
-    public ResponseEntity<ResponseDto> deleteScrapPublicPet(String desertionNo, Member member) {
+    public ResponseEntity<ResponseDto> deleteScrapPublicPet(Long desertionNo, Member member) {
         if (!publicPetIsScrap(desertionNo, member.getId())) {
             throw new CustomException(NOT_FOUND_PET_INFO_SCRAP_MEMBER);
         }
@@ -99,7 +99,7 @@ public class ScrapService {
         return ResponseDto.toResponseEntity(PET_INFO_SCRAP_DELETE_SUCCESS);
     }
 
-    private boolean publicPetIsScrap(String desertionNo, Long memberId) {
+    private boolean publicPetIsScrap(Long desertionNo, Long memberId) {
         return scrapRepository.findByMemberIdAndPetInfoByAPI_desertionNo(memberId, desertionNo).isPresent();
     }
     private Post getPost(Long postId) {

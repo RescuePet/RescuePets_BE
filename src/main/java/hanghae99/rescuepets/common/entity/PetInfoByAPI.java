@@ -1,7 +1,6 @@
 package hanghae99.rescuepets.common.entity;
 
-
-import hanghae99.rescuepets.chat.dto.ChatRequestDto;
+import hanghae99.rescuepets.common.dto.CustomException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,17 +12,17 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import static hanghae99.rescuepets.common.dto.ExceptionMessage.NOT_FOUND_PET_INFO_UPDATE_DESERTION_NO;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Builder
-public class PetInfoByAPI extends TimeStamped implements Serializable {
+public class PetInfoByAPI extends TimeStamped {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(nullable = false, unique = true)
-    private String desertionNo;
+    @Column(nullable = false, name = "desertion_no")
+    private Long desertionNo;
     @Column
     private String filename;
     @Column
@@ -81,8 +80,13 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
     private List<Scrap> scrapList = new ArrayList<>();
 
     public static PetInfoByAPI of(JSONObject itemObject, PetStateEnum state) {
+        Long desertionNo = null;
+        String desertionNoStr = itemObject.optString("desertionNo");
+        if (desertionNoStr != null && !desertionNoStr.isEmpty()) {
+            desertionNo = Long.parseLong(desertionNoStr);
+        }
         return PetInfoByAPI.builder()
-                .desertionNo(itemObject.optString("desertionNo"))
+                .desertionNo(desertionNo)
                 .filename(itemObject.optString("filename"))
                 .happenDt(itemObject.optString("happenDt"))
                 .happenPlace(itemObject.optString("happenPlace"))
@@ -108,28 +112,33 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
                 .build();
     }
     public void update(JSONObject itemObject, PetStateEnum state) {
-        this.desertionNo = itemObject.optString(desertionNo);
-        this.filename = itemObject.optString(filename);
-        this.happenDt = itemObject.optString(happenDt);
-        this.happenPlace = itemObject.optString(happenPlace);
-        this.kindCd = itemObject.optString(kindCd);
-        this.colorCd = itemObject.optString(colorCd);
-        this.age = itemObject.optString(age);
-        this.weight = itemObject.optString(weight);
-        this.noticeNo = itemObject.optString(noticeNo);
-        this.noticeSdt = itemObject.optString(noticeSdt);
-        this.noticeEdt = itemObject.optString(noticeEdt);
-        this.popfile = itemObject.optString(popfile);
-        this.processState = itemObject.optString(processState);
-        this.sexCd = itemObject.optString(sexCd);
-        this.neuterYn = itemObject.optString(neuterYn);
-        this.specialMark = itemObject.optString(specialMark);
-        this.careNm = itemObject.optString(careNm);
-        this.careTel = itemObject.optString(careTel);
-        this.careAddr = itemObject.optString(careAddr);
-        this.orgNm = itemObject.optString(orgNm);
-        this.chargeNm = itemObject.optString(chargeNm);
-        this.officetel = itemObject.optString(officetel);
+        String desertionNoStr = itemObject.optString("desertionNo");
+        if (desertionNoStr != null && !desertionNoStr.isEmpty()) {
+            this.desertionNo = Long.parseLong(desertionNoStr);
+        } else {
+            throw new CustomException(NOT_FOUND_PET_INFO_UPDATE_DESERTION_NO);
+        }
+        this.filename = itemObject.optString("filename");
+        this.happenDt = itemObject.optString("happenDt");
+        this.happenPlace = itemObject.optString("happenPlace");
+        this.kindCd = itemObject.optString("kindCd");
+        this.colorCd = itemObject.optString("colorCd");
+        this.age = itemObject.optString("age");
+        this.weight = itemObject.optString("weight");
+        this.noticeNo = itemObject.optString("noticeNo");
+        this.noticeSdt = itemObject.optString("noticeSdt");
+        this.noticeEdt = itemObject.optString("noticeEdt");
+        this.popfile = itemObject.optString("popfile");
+        this.processState = itemObject.optString("processState");
+        this.sexCd = itemObject.optString("sexCd");
+        this.neuterYn = itemObject.optString("neuterYn");
+        this.specialMark = itemObject.optString("specialMark");
+        this.careNm = itemObject.optString("careNm");
+        this.careTel = itemObject.optString("careTel");
+        this.careAddr = itemObject.optString("careAddr");
+        this.orgNm = itemObject.optString("orgNm");
+        this.chargeNm = itemObject.optString("chargeNm");
+        this.officetel = itemObject.optString("officetel");
         this.petStateEnum = state;
     }
 
@@ -139,30 +148,3 @@ public class PetInfoByAPI extends TimeStamped implements Serializable {
         this.isExactAddress = isExactAddress;
     }
 }
-
-
-//    public void update(PetInfoByAPI petInfo) {
-//        this.desertionNo = petInfo.desertionNo;
-//        this.filename = petInfo.filename;
-//        this.happenDt = petInfo.happenDt;
-//        this.happenPlace = petInfo.happenPlace;
-//        this.kindCd = petInfo.kindCd;
-//        this.colorCd = petInfo.colorCd;
-//        this.age = petInfo.age;
-//        this.weight = petInfo.weight;
-//        this.noticeNo = petInfo.noticeNo;
-//        this.noticeSdt = petInfo.noticeSdt;
-//        this.noticeEdt = petInfo.noticeEdt;
-//        this.popfile = petInfo.popfile;
-//        this.processState = petInfo.processState;
-//        this.sexCd = petInfo.sexCd;
-//        this.neuterYn = petInfo.neuterYn;
-//        this.specialMark = petInfo.specialMark;
-//        this.careNm = petInfo.careNm;
-//        this.careTel = petInfo.careTel;
-//        this.careAddr = petInfo.careAddr;
-//        this.orgNm = petInfo.orgNm;
-//        this.chargeNm = petInfo.chargeNm;
-//        this.officetel = petInfo.officetel;
-//        this.petStateEnum = petInfo.petStateEnum;
-//    }
