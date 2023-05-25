@@ -2,7 +2,6 @@ package hanghae99.rescuepets.report.service;
 
 
 import hanghae99.rescuepets.comment.repository.CommentRepository;
-import hanghae99.rescuepets.common.annotation.CheckAuthority;
 import hanghae99.rescuepets.common.dto.CustomException;
 import hanghae99.rescuepets.common.dto.ResponseDto;
 import hanghae99.rescuepets.common.entity.Comment;
@@ -12,8 +11,8 @@ import hanghae99.rescuepets.common.entity.Report;
 import hanghae99.rescuepets.mail.service.MailService;
 import hanghae99.rescuepets.member.repository.MemberRepository;
 import hanghae99.rescuepets.memberpet.repository.PostRepository;
-import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
 import hanghae99.rescuepets.report.dto.ReportCommentRequestDto;
+import hanghae99.rescuepets.report.dto.ReportMemberRequestDto;
 import hanghae99.rescuepets.report.dto.ReportPostRequestDto;
 import hanghae99.rescuepets.report.dto.ReportResponseDto;
 import hanghae99.rescuepets.report.repository.ReportRepository;
@@ -29,8 +28,6 @@ import java.util.List;
 
 import static hanghae99.rescuepets.common.dto.ExceptionMessage.*;
 import static hanghae99.rescuepets.common.dto.SuccessMessage.*;
-import static hanghae99.rescuepets.common.entity.MemberRoleEnum.ADMIN;
-import static hanghae99.rescuepets.common.entity.MemberRoleEnum.MANAGER;
 import static hanghae99.rescuepets.common.entity.ReportTypeEnum.*;
 
 @Service
@@ -125,7 +122,7 @@ public class ReportService {
 
         return ResponseDto.toResponseEntity(REPORT_SUCCESS);
     }
-    @CheckAuthority
+
     public ResponseEntity<ResponseDto> getReportAll(String sortBy,Member member) {
         Sort sort = Sort.by(Sort.Direction.DESC, sortBy);
         List<Report> reports = reportRepository.findAll(sort);

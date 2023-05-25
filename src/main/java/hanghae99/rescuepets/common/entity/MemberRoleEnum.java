@@ -17,9 +17,9 @@ public enum MemberRoleEnum {
     }
 
     public static class Role {
-        public static final String ADMIN = "관리자";
-        public static final String MANAGER = "매니저";
-        public static final String MEMBER = "일반회원";
-        public static final String BAD_MEMBER = "불량회원";
+        public static final String ADMIN = "ROLE_ADMIN";
+        public static final String MANAGER = "ROLE_MANAGER";
+        public static final String MEMBER = "ROLE_MEMBER";
+        public static final String BAD_MEMBER = "ROLE_BAD_MEMBER";
     }
 }
