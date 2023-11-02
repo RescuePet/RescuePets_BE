@@ -351,39 +351,35 @@ useEffect(() => {
 <details> 
   <summary> 페이지 방문 통계 </summary>
  <br>
-    <img  width='800px' src="https://file.notion.so/f/s/f61f370f-0e8d-4d82-b7b9-59aab2b4c117/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-04-18_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_2.32.13.png?id=16efed88-4e93-4ace-8032-03727d12c1f6&table=block&spaceId=0bce464c-a908-4cab-85b1-79089b1ca00e&expirationTimestamp=1682076404894&signature=rX-_PxwNffE97wdScqmjK40vYQnFDMUzqAaT_U2jFlY&downloadName=%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA+2023-04-18+%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE+2.32.13.png"/>
->  <span>
- - 페이치 첫 방문을 고려 했을 때, Home에 가장 많이 접속
+    <img  width='800px' src="https://github.com/RescuePet/RescuePets_BE/assets/100930333/cb5cf361-5bca-4d4d-a3ec-4a094069bfac"/>
+
+- 페이치 첫 방문을 고려 했을 때, Home에 가장 많이 접속
 - Petwork(사용자가 작성하는 게시물 페이지)에서 Map 페이지가 먼저 나오기 때문에 Map에 많이 접속 함
 - Petwork에서 Map은 접속을 많이 했지만 Petwork List를 보는 페이지는 많이 접속 하지 않은 것을 보아 List가 있는 플로팅 버튼을 많이 누르지 않았음을 알 수 있음
-  </sapn>
 </details>
 
 <details> 
   <summary> 카테고리 검색 비교 통계 </summary>
  <br>
-    <img width='800px' src="https://file.notion.so/f/s/919e9029-1af9-4a27-825d-30ee7a7aad71/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-04-18_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_2.32.32.png?id=a9d0a308-1b21-4878-9a3f-f06cc083f91e&table=block&spaceId=0bce464c-a908-4cab-85b1-79089b1ca00e&expirationTimestamp=1682076594167&signature=5z1P4dlD7RqLVkRWi5wQQEi50UhhPxg8xsc3Nf7tFdY&downloadName=%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA+2023-04-18+%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE+2.32.32.png"/>
-<span>
+    <img width='800px' src="https://github.com/RescuePet/RescuePets_BE/assets/100930333/cc0bcc41-a727-4346-8818-a3d16cd4c4b3"/>
+
 - 사용자가 거리 별 검색을 사용했을 때 가장 가까운 위치를 많이 사용했음을 알 수 있음
-  </sapn>
 </details>
 
 <details> 
   <summary> 거리 별 검색 비교 통계 </summary>
  <br>
-    <img width='800px' src="https://file.notion.so/f/s/0b8f652f-21e2-4837-bd3f-a028cc49ce69/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-04-18_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_2.32.44.png?id=0f8caf6b-d114-48b4-bb22-ffd290b198e3&table=block&spaceId=0bce464c-a908-4cab-85b1-79089b1ca00e&expirationTimestamp=1682076671250&signature=6as11b7BcfO-ThWRqC_-EMd5lK8pLY4zVCSilfouCgc&downloadName=%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA+2023-04-18+%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE+2.32.44.png"/>
-<span>
+    <img width='800px' src="https://github.com/RescuePet/RescuePets_BE/assets/100930333/5e407abd-0d68-4a65-aaac-bd6c0fb10fce"/>
+
 - 동물 종류 (KindType - 강아지, 고양이, 기타) 검색 기능 중에서 사용자가 가장 많이 검색한 종류는 “강아지”임을 알 수 있음
-  </sapn>
 </details>
 
 <details> 
   <summary> 동물 종류 별 검색 비교 통계</summary>
  <br>
-    <img width='800px' src="https://file.notion.so/f/s/a3fc80d9-e982-4eed-bef0-0a10c817fb47/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA_2023-04-18_%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE_2.33.04.png?id=4b892b44-80b6-4a52-afad-455e73136a19&table=block&spaceId=0bce464c-a908-4cab-85b1-79089b1ca00e&expirationTimestamp=1682076656656&signature=l-dAp1RbNkbsQFvPY5A-IzKu2-IGg3yPqIMJ5s7UuL0&downloadName=%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA+2023-04-18+%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE+2.33.04.png"/>
-<span>
+    <img width='800px' src="https://github.com/RescuePet/RescuePets_BE/assets/100930333/aeef6b64-c656-481a-8edd-27af27d74ff4"/>
+
 - 사용자들은 내 위치 기반 거리별 검색과 동물의 종류(KindType - 강아지, 고양이, 기타) 검색을 가장 많이 사용했음을 알 수 있음
-  </sapn>
 </details>
 
 
@@ -393,7 +389,7 @@ useEffect(() => {
 
 ### 🌐 아키텍쳐 
 
-<img width='600px' src='https://file.notion.so/f/s/d467577c-d9e7-46e7-9b7c-1a6cafa38c65/03_03.png?id=73657ae5-6101-4485-892c-6cbbf5af0fef&table=block&spaceId=0bce464c-a908-4cab-85b1-79089b1ca00e&expirationTimestamp=1682005302739&signature=nTpyFFyBrZuSjAwYvaRMTyo3hNhgs0ja_1HTGazl-j4&downloadName=03_03.png'>
+<img width='600px' src='https://github.com/RescuePet/RescuePets_BE/assets/100930333/0781dc30-92db-4c7d-979f-fc902f660240'>
 
 
 ### ERD
